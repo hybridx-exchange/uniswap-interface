@@ -15,6 +15,7 @@ import {
   parseCallKey,
   updateMulticallResults
 } from './actions'
+import { ZERO_ADDRESS } from 'oasis-uniswap-v2-sdk'
 
 // chunk calls so we do not exceed the gas limit
 const CALL_CHUNK_SIZE = 500
@@ -33,7 +34,9 @@ async function fetchChunk(
   console.debug('Fetching chunk', multicallContract, chunk, minBlockNumber)
   let resultsBlockNumber, returnData
   try {
-    ;[resultsBlockNumber, returnData] = await multicallContract.aggregate(chunk.map(obj => [obj.address, obj.callData]))
+    ;[resultsBlockNumber, returnData] = await multicallContract.aggregate(
+      chunk.filter(obj => obj.address !== ZERO_ADDRESS).map(obj => [obj.address, obj.callData])
+    )
   } catch (error) {
     console.debug('Failed to fetch chunk inside retry', error)
     throw error

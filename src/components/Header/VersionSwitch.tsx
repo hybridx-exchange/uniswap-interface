@@ -50,7 +50,7 @@ export default function VersionSwitch() {
     return versionSwitchAvailable
       ? {
           ...location,
-          search: `?${stringify({ ...query, use: version === Version.v1 ? undefined : Version.v1 })}`
+          search: `?${stringify({ ...query, use: version === Version.v1 ? undefined : Version.v2 })}`
         }
       : location
   }, [location, query, version, versionSwitchAvailable])
@@ -65,7 +65,6 @@ export default function VersionSwitch() {
   const toggle = (
     <VersionToggle enabled={versionSwitchAvailable} to={toggleDest} onClick={handleClick}>
       <VersionLabel enabled={version === Version.v2 || !versionSwitchAvailable}>V2</VersionLabel>
-      <VersionLabel enabled={version === Version.v1 && versionSwitchAvailable}>V1</VersionLabel>
     </VersionToggle>
   )
   return versionSwitchAvailable ? (
