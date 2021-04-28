@@ -40,6 +40,22 @@ yarn
 yarn start
 ```
 
+### deploy in heroku
+```shell script
+heroku login -i
+
+create-react-app app-dltswap
+cd app-dltswap
+
+#copy source from other direction
+
+git init
+heroku create -b https://github.com/mars/create-react-app-buildpack.git app-dltswap
+git add .
+git commit -m "react-create-app on Heroku"
+git push heroku master
+```
+
 ### Configuring the environment (optional)
 
 To have the interface default to a different network when a wallet is not connected:
