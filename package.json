@@ -1,5 +1,5 @@
 {
-  "name": "@uniswap/interface",
+  "name": "dltswap/interface",
   "description": "Uniswap Interface",
   "homepage": ".",
   "private": true,
@@ -25,8 +25,8 @@
     "@types/testing-library__cypress": "^5.0.5",
     "@typescript-eslint/eslint-plugin": "^2.31.0",
     "@typescript-eslint/parser": "^2.31.0",
-    "oasis-default-token-list": "0.0.1",
-    "oasis-uniswap-v2-sdk": "0.0.3",
+    "oasis-default-token-list": "2.0.0",
+    "oasis-uniswap-v2-sdk": "2.0.0",
     "@uniswap/token-lists": "^1.0.0-beta.16",
     "@uniswap/v2-core": "1.0.0",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",

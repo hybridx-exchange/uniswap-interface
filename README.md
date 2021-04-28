@@ -5,25 +5,25 @@
 
 An open source interface for Uniswap -- a protocol for decentralized exchange of Ethereum tokens.
 
-- Website: [uniswap.org](https://uniswap.org/)
-- Interface: [app.uniswap.org](https://app.uniswap.org)
+- Website: [app-dltswap](https://app-dltswap.herokuapp.com)
+- Interface: [app-oasis-uniswap](https://app-dltswap.herokuapp.com)
 - Docs: [uniswap.org/docs/](https://uniswap.org/docs/)
 - Twitter: [@UniswapProtocol](https://twitter.com/UniswapProtocol)
 - Reddit: [/r/Uniswap](https://www.reddit.com/r/Uniswap/)
 - Email: [contact@uniswap.org](mailto:contact@uniswap.org)
-- Discord: [Uniswap](https://discord.gg/Y7TF6QA)
+- Discord: [Oasis Uniswap](https://discord.gg/VyB9YJWX)
 - Whitepaper: [Link](https://hackmd.io/C-DvwDSfSxuh-Gd4WKE_ig)
 
 ## Accessing the Uniswap Interface
 
 To access the Uniswap Interface, use an IPFS gateway link from the
-[latest release](https://github.com/Uniswap/uniswap-interface/releases/latest), 
-or visit [app.uniswap.org](https://app.uniswap.org).
+[latest release](https://github.com/dltswap/uniswap-interface/releases/latest), 
+or visit [app-dltswap.herokuapp.com](https://app-dltswap.herokuapp.com).
 
 ## Listing a token
 
 Please see the
-[@uniswap/default-token-list](https://github.com/uniswap/default-token-list) 
+[dltswap/default-token-list](https://github.com/dltswap/default-token-list) 
 repository.
 
 ## Development
