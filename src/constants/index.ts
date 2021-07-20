@@ -3,21 +3,21 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 
-export const ROUTER_ADDRESS = '0x9ECAcd84ecbF8a3eA3a83906b775aF94f3f3849C'
+export const ROUTER_ADDRESS = '0x189c028D882d7543Dc370b082328fd49A08E802E'
 
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-export const USDT = new Token(
+export const OUSD = new Token(
   ChainId.OETH,
-  '0xE2E343b5ead6C65EDBb213719658b2f867626939',
+  '0x7ad7F515E61107343B69F9FF2EDEBC3f50e187ab',
   6,
-  'OUSDT',
-  'Oasis Tether USD'
+  'OUSD',
+  'Oasis USD'
 )
-export const OUNI = new Token(ChainId.OETH, '0x50a9846f79D79b71b459AE8F15a1b5D76Dd6ddBc', 18, 'OUNI', 'Oasis Uniswap')
+export const DLT = new Token(ChainId.OETH, '0x528d4D52c3F70533E8FbA55F3461B1d67Ac8D129', 18, 'DLT', 'DLT token')
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
@@ -31,7 +31,7 @@ const WETH_ONLY: ChainTokenList = {
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.OETH]: [...WETH_ONLY[ChainId.OETH], USDT]
+  [ChainId.OETH]: [...WETH_ONLY[ChainId.OETH], OUSD]
 }
 
 /**
@@ -43,13 +43,13 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.OETH]: [...WETH_ONLY[ChainId.OETH], USDT, OUNI]
+  [ChainId.OETH]: [...WETH_ONLY[ChainId.OETH], OUSD, DLT]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.OETH]: [...WETH_ONLY[ChainId.OETH], USDT, OUNI]
+  [ChainId.OETH]: [...WETH_ONLY[ChainId.OETH], OUSD, DLT]
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {}

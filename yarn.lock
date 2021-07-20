@@ -10798,15 +10798,15 @@ nwsapi@^2.0.7, nwsapi@^2.1.3:
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"
   integrity sha512-h2AatdwYH+JHiZpv7pt/gSX1XoRGb7L/qSIeuqA6GwYoF9w1vP1cw42TO0aI2pNyshRK5893hNSl+1//vHK7hQ==
 
-oasis-default-token-list@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/oasis-default-token-list/-/oasis-default-token-list-2.0.0.tgz#b4d137d73f03e2ae85eaa384cbdd0a5ad0498a01"
-  integrity sha512-zyzrp4gv4nm47Gz0L6caiUEzAUHkQGDD+Kbj3J6QJxIrFmf0iNPPDwE9iTA87KPqEwktzGWPYUDws+NAQdA7sA==
+oasis-default-token-list@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/oasis-default-token-list/-/oasis-default-token-list-2.0.2.tgz#bd3de0df9156367cc67450166e87e7b686a77233"
+  integrity sha512-cwcTXRox17q5FHe2xLJ3+94G+w6uzmLSXZmkwqgMvvomQmVYr9Ft8NOS0MESsvry5DuYZ3Bbi30U9iO0SzSaaQ==
 
-oasis-uniswap-v2-sdk@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/oasis-uniswap-v2-sdk/-/oasis-uniswap-v2-sdk-2.0.0.tgz#a5663d2850a8ceb00bbbc98f14d43e52f4492052"
-  integrity sha512-8dW4BvBhfOo2QtAHjEcaM0GNEzEGxmm61keMx4ikKa3HV9qlT4aBUez6fYbs1ATnxfxJIxu1E3o1psw5MdH1Lw==
+oasis-uniswap-v2-sdk@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/oasis-uniswap-v2-sdk/-/oasis-uniswap-v2-sdk-2.0.2.tgz#96a1a72976e94a223650878fd221b446aae167ca"
+  integrity sha512-8iOKcdm2ARovurAFjRvT7YeSM7oM3RMglY000RE0k0fRzVcVNbUWrYL+5gx+xGKGUYuevLEmqBxPeSnVCxXTpA==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
