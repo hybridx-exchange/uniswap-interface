@@ -35,7 +35,7 @@ async function fetchChunk(
   let resultsBlockNumber, returnData
   try {
     ;[resultsBlockNumber, returnData] = await multicallContract.aggregate(
-      chunk.filter(obj => obj.address !== ZERO_ADDRESS).map(obj => [obj.address, obj.callData])
+      chunk.map(obj => [obj.address, obj.callData])
     )
   } catch (error) {
     console.debug('Failed to fetch chunk inside retry', error)
@@ -140,7 +140,7 @@ export default function Updater(): null {
 
     const outdatedCallKeys: string[] = JSON.parse(serializedOutdatedCallKeys)
     if (outdatedCallKeys.length === 0) return
-    const calls = outdatedCallKeys.map(key => parseCallKey(key))
+    const calls = outdatedCallKeys.map(key => parseCallKey(key)).filter(obj => obj.address !== ZERO_ADDRESS)
 
     const chunkedCalls = chunkArray(calls, CALL_CHUNK_SIZE)
 
