@@ -10803,10 +10803,10 @@ oasis-default-token-list@2.1.0:
   resolved "https://registry.yarnpkg.com/oasis-default-token-list/-/oasis-default-token-list-2.1.0.tgz#794ff2c4d2f8479156b75b5eafb08e849143ff44"
   integrity sha512-4/MG0JPa61iYJIDLjgY90oHuATpme8/7Tf9A/HPOIRICtCSyPR0/YMdgF5De90PdN869sLSEeKXY5qmcXsbLlw==
 
-oasis-uniswap-v2-sdk@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/oasis-uniswap-v2-sdk/-/oasis-uniswap-v2-sdk-2.1.0.tgz#1c4572ae0d441da8cb4a982b5496a7a95b1ca6aa"
-  integrity sha512-LysMIsyg4IQXMBZFF7iNdZrAZ077t/+fx4476+68cJjc6pmb7YujkN40mjzoiA8TUblTqs2ImFMY7glwoRaH7A==
+oasis-uniswap-v2-sdk@2.1.9:
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/oasis-uniswap-v2-sdk/-/oasis-uniswap-v2-sdk-2.1.9.tgz#8e17bb6754f8c9505e6b4372382d422b6568d172"
+  integrity sha512-OSJ2uGgkqul6ZvJde7wcMgHdMzM/Zc6eAHaHOeFMC6lUGEs3i+Eura7CiD664jCn5NpIBtBjvF3YC7ijArYbWQ==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
