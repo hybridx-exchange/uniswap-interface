@@ -29,7 +29,7 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
 export function getEtherscanLink(chainId: ChainId, data: string, type: 'transaction' | 'token' | 'address'): string {
   let prefix
   if (chainId === 69) {
-    prefix = 'http://scan.oasiseth.org'
+    prefix = 'https://oasiseth-scan.pasco-tech.com'
   } else {
     prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
   }
@@ -40,15 +40,12 @@ export function getEtherscanLink(chainId: ChainId, data: string, type: 'transact
     }
     case 'token': {
       if (chainId === 69) {
-        return `${prefix}/account/${data}`
+        return `${prefix}/tokens/${data}`
       }
       return `${prefix}/token/${data}`
     }
     case 'address':
     default: {
-      if (chainId === 69) {
-        return `${prefix}/account/${data}`
-      }
       return `${prefix}/address/${data}`
     }
   }
