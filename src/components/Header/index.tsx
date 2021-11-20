@@ -14,6 +14,8 @@ import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
 
 import { YellowCard } from '../Card'
+import Settings from '../Settings'
+import Menu from '../Menu'
 
 import Row, { RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
@@ -37,6 +39,15 @@ const HeaderFrame = styled.div`
 const HeaderElement = styled.div`
   display: flex;
   align-items: center;
+`
+
+const HeaderElementWrap = styled.div`
+  display: flex;
+  align-items: center;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-top: 0.5rem;
+`};
 `
 
 const Title = styled.a`
@@ -152,6 +163,10 @@ export default function Header() {
               <Web3Status />
             </AccountElement>
           </HeaderElement>
+          <HeaderElementWrap>
+            <Settings />
+            <Menu />
+          </HeaderElementWrap>
         </HeaderControls>
       </RowBetween>
     </HeaderFrame>
