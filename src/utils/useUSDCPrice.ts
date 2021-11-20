@@ -29,7 +29,7 @@ export default function useUSDCPrice(currency?: Currency): Price | undefined {
     if (!currency || !wrapped || !chainId) {
       return undefined
     }
-    // handle weth/eth
+    // handle wrose/rose
     if (wrapped.equals(WETH[chainId])) {
       if (usdcPair) {
         const price = usdcPair.priceOf(WETH[chainId])

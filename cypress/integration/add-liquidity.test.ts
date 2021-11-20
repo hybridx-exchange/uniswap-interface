@@ -2,13 +2,13 @@ describe('Add Liquidity', () => {
   it('loads the two correct tokens', () => {
     cy.visit('/add/0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85-0xc778417E063141139Fce010982780140Aa0cD5Ab')
     cy.get('#add-liquidity-input-tokena .token-symbol-container').should('contain.text', 'MKR')
-    cy.get('#add-liquidity-input-tokenb .token-symbol-container').should('contain.text', 'ETH')
+    cy.get('#add-liquidity-input-tokenb .token-symbol-container').should('contain.text', 'ROSE')
   })
 
-  it('does not crash if ETH is duplicated', () => {
+  it('does not crash if ROSE is duplicated', () => {
     cy.visit('/add/0xc778417E063141139Fce010982780140Aa0cD5Ab-0xc778417E063141139Fce010982780140Aa0cD5Ab')
-    cy.get('#add-liquidity-input-tokena .token-symbol-container').should('contain.text', 'ETH')
-    cy.get('#add-liquidity-input-tokenb .token-symbol-container').should('not.contain.text', 'ETH')
+    cy.get('#add-liquidity-input-tokena .token-symbol-container').should('contain.text', 'ROSE')
+    cy.get('#add-liquidity-input-tokenb .token-symbol-container').should('not.contain.text', 'ROSE')
   })
 
   it('token not in storage is loaded', () => {
@@ -40,7 +40,7 @@ describe('Add Liquidity', () => {
     )
   })
 
-  it('redirects /add/token-WETH to /add/token/WETH-address', () => {
+  it('redirects /add/token-WROSE to /add/token/WROSE-address', () => {
     cy.visit('/add/0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85-0xc778417E063141139Fce010982780140Aa0cD5Ab')
     cy.url().should(
       'contain',

@@ -17,7 +17,7 @@ describe('v1SwapArguments', () => {
     expect(parseInt(hex) - now).toBeLessThanOrEqual(ttl + 3)
   }
 
-  it('exact eth to token', () => {
+  it('exact rose to token', () => {
     const trade = Trade.exactIn(new Route([USDC_WETH], ETHER), CurrencyAmount.ether('100'))
     const result = v1SwapArguments(trade, {
       recipient: TEST_RECIPIENT_ADDRESS,

@@ -4,7 +4,7 @@ import { queryParametersToSwapState } from './hooks'
 
 describe('hooks', () => {
   describe('#queryParametersToSwapState', () => {
-    test('ETH to DAI', () => {
+    test('ROSE to DAI', () => {
       expect(
         queryParametersToSwapState(
           parse(
@@ -14,32 +14,32 @@ describe('hooks', () => {
         )
       ).toEqual({
         [Field.OUTPUT]: { currencyId: '0x6B175474E89094C44Da98b954EedeAC495271d0F' },
-        [Field.INPUT]: { currencyId: 'ETH' },
+        [Field.INPUT]: { currencyId: 'ROSE' },
         typedValue: '20.5',
         independentField: Field.OUTPUT,
         recipient: null
       })
     })
 
-    test('does not duplicate eth for invalid output token', () => {
+    test('does not duplicate rose for invalid output token', () => {
       expect(
         queryParametersToSwapState(parse('?outputCurrency=invalid', { parseArrays: false, ignoreQueryPrefix: true }))
       ).toEqual({
         [Field.INPUT]: { currencyId: '' },
-        [Field.OUTPUT]: { currencyId: 'ETH' },
+        [Field.OUTPUT]: { currencyId: 'ROSE' },
         typedValue: '',
         independentField: Field.INPUT,
         recipient: null
       })
     })
 
-    test('output ETH only', () => {
+    test('output ROSE only', () => {
       expect(
         queryParametersToSwapState(
           parse('?outputCurrency=eth&exactAmount=20.5', { parseArrays: false, ignoreQueryPrefix: true })
         )
       ).toEqual({
-        [Field.OUTPUT]: { currencyId: 'ETH' },
+        [Field.OUTPUT]: { currencyId: 'ROSE' },
         [Field.INPUT]: { currencyId: '' },
         typedValue: '20.5',
         independentField: Field.INPUT,
@@ -53,7 +53,7 @@ describe('hooks', () => {
           parse('?outputCurrency=eth&exactAmount=20.5&recipient=abc', { parseArrays: false, ignoreQueryPrefix: true })
         )
       ).toEqual({
-        [Field.OUTPUT]: { currencyId: 'ETH' },
+        [Field.OUTPUT]: { currencyId: 'ROSE' },
         [Field.INPUT]: { currencyId: '' },
         typedValue: '20.5',
         independentField: Field.INPUT,
@@ -70,7 +70,7 @@ describe('hooks', () => {
           })
         )
       ).toEqual({
-        [Field.OUTPUT]: { currencyId: 'ETH' },
+        [Field.OUTPUT]: { currencyId: 'ROSE' },
         [Field.INPUT]: { currencyId: '' },
         typedValue: '20.5',
         independentField: Field.INPUT,
@@ -86,7 +86,7 @@ describe('hooks', () => {
           })
         )
       ).toEqual({
-        [Field.OUTPUT]: { currencyId: 'ETH' },
+        [Field.OUTPUT]: { currencyId: 'ROSE' },
         [Field.INPUT]: { currencyId: '' },
         typedValue: '20.5',
         independentField: Field.INPUT,
