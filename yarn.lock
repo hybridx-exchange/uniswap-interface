@@ -6376,10 +6376,10 @@ elliptic@6.5.4:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-emerald-uniswap-sdk@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/emerald-uniswap-sdk/-/emerald-uniswap-sdk-2.0.1.tgz#5f4a6beafe8f1306c291a48c49cfcac05e15c298"
-  integrity sha512-RsUlye1qcJiZfSaa1RIpS8fCPsSqS8qDVKJ6EHO7SW4Q95PsAlnfyYsRaRR5oMTqExgplmBsLzWVL2FPdcHKIA==
+emerald-uniswap-sdk@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/emerald-uniswap-sdk/-/emerald-uniswap-sdk-2.0.5.tgz#5d9357c8d0f8ddc0ae77ea6bcb3f972fc9e63ca9"
+  integrity sha512-c3f+C3Y9J8k2uxo//v05emJewHNGzwDrXtZBPH1RIWDN66I/QGOB/u9ITl6A1tckoJetcCc7aaT8KTwIzlQc4w==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
