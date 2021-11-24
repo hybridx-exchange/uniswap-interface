@@ -2818,11 +2818,6 @@
     semver "^7.3.2"
     tsutils "^3.17.1"
 
-"@uniswap/default-token-list@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@uniswap/default-token-list/-/default-token-list-1.3.1.tgz#e856aa8e7d4112fcb39229df3023af0da1727699"
-  integrity sha512-nLBSzWGxVlbKby6xtf3ph56NltMyHCk8ohFD97Wub7K0I66YyHKuhyV7NZq05unB8TEWWpYDcdghmgztSv6H8Q==
-
 "@uniswap/lib@1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@uniswap/lib/-/lib-1.1.1.tgz#0afd29601846c16e5d082866cbb24a9e0758e6bc"
@@ -6375,6 +6370,11 @@ elliptic@6.5.4:
     inherits "^2.0.4"
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
+
+emerald-default-token-list@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/emerald-default-token-list/-/emerald-default-token-list-2.0.2.tgz#715bf80a332ddcc8c50b8bd814b13253b0c63300"
+  integrity sha512-83oE16IR3G/bfmHx5oDjGXzCvnFKINjLhJzp/peVR6K7iOCm7Ou8dORrwwQ6nHBp8LZJzU/H/aCa5U1+rX7Iyg==
 
 emerald-uniswap-sdk@2.0.5:
   version "2.0.5"
