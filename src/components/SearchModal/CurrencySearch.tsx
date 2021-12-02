@@ -67,7 +67,7 @@ export function CurrencySearch({
 
   const showETH: boolean = useMemo(() => {
     const s = searchQuery.toLowerCase().trim()
-    return s === '' || s === 'r' || s === 'ro' || s === 'ros' || s === 'rose'
+    return s === '' || s === 'e' || s === 'et' || s === 'rose'
   }, [searchQuery])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
