@@ -1,4 +1,4 @@
-import { Percent } from 'emerald-uniswap-sdk'
+import { Percent } from '@hybridx-exchange/uniswap-sdk'
 import React from 'react'
 import { ONE_BIPS } from '../../constants'
 import { warningSeverity } from '../../utils/prices'

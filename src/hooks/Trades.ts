@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Pair, Token, Trade } from 'emerald-uniswap-sdk'
+import { Currency, CurrencyAmount, Pair, Token, Trade } from '@hybridx-exchange/uniswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 

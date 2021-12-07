@@ -1,4 +1,4 @@
-import { JSBI, Pair, Percent } from 'emerald-uniswap-sdk'
+import { JSBI, Pair, Percent } from '@hybridx-exchange/uniswap-sdk'
 import { darken } from 'polished'
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
@@ -224,7 +224,7 @@ export default function FullPositionCard({ pair, border }: PositionCardProps) {
             </FixedHeightRow>
 
             <AutoRow justify="center" marginTop={'10px'}>
-              <ExternalLink href={`https://uniswap.info/pair/${pair.liquidityToken.address}`}>
+              <ExternalLink href={`https://hybridx-exchange.github.io/info/pair/${pair.liquidityToken.address}`}>
                 View pool information ↗
               </ExternalLink>
             </AutoRow>

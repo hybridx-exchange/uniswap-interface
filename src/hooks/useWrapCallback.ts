@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, ETHER, WETH } from 'emerald-uniswap-sdk'
+import { Currency, currencyEquals, ETHER, WETH } from '@hybridx-exchange/uniswap-sdk'
 import { useMemo } from 'react'
 import { tryParseAmount } from '../state/swap/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'

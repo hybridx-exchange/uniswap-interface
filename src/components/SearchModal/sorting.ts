@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from 'emerald-uniswap-sdk'
+import { Token, TokenAmount } from '@hybridx-exchange/uniswap-sdk'
 import { useMemo } from 'react'
 import { useAllTokenBalances } from '../../state/wallet/hooks'
 

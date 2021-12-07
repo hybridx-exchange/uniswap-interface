@@ -1,4 +1,4 @@
-import { Trade } from 'emerald-uniswap-sdk'
+import { Trade } from '@hybridx-exchange/uniswap-sdk'
 import React, { Fragment, memo, useContext } from 'react'
 import { ChevronRight } from 'react-feather'
 import { Flex } from 'rebass'

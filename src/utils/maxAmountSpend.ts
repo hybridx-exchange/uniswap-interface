@@ -1,4 +1,4 @@
-import { CurrencyAmount, ETHER, JSBI } from 'emerald-uniswap-sdk'
+import { CurrencyAmount, ETHER, JSBI } from '@hybridx-exchange/uniswap-sdk'
 import { MIN_ETH } from '../constants'
 
 /**
