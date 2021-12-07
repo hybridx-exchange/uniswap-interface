@@ -55,7 +55,7 @@ const Title = styled.a`
   display: flex;
   align-items: center;
   pointer-events: auto;
-
+  text-decoration:none;
   :hover {
     cursor: pointer;
   }
@@ -68,7 +68,8 @@ const TitleText = styled(Row)`
     display: none;
   `};
   margin-left:4px;
-  color:#555;
+  color: #fff;
+  // font-size: 20px;
   font-weight: 700;
 `
 
