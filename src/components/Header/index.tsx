@@ -68,7 +68,7 @@ const TitleText = styled(Row)`
     display: none;
   `};
   margin-left:4px;
-  color: #fff;
+  color: #555;
   // font-size: 20px;
   font-weight: 700;
 `
@@ -154,7 +154,7 @@ export default function Header() {
               <img src={isDark ? Logo : Logo} alt="logo" />
             </UniIcon>
             <TitleText>
-              Hybrid-X
+              HybridX
               {/* <img style={{ marginLeft: '4px', marginTop: '4px' }} src={isDark ? WordmarkDark : Wordmark} alt="logo" /> */}
             </TitleText>
           </Title>
