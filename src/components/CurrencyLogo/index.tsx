@@ -8,7 +8,7 @@ import { WrappedTokenInfo } from '../../state/lists/hooks'
 import Logo from '../Logo'
 
 const getTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/hybridx-exchange/default-token-list/emerald/logo/${address}.png`
+  `https://raw.githubusercontent.com/hybridx-exchange/default-token-list/hybridx-exchange-v1/logo/${address}.png`
 
 const StyledEthereumLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
