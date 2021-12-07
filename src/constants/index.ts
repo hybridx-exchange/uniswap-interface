@@ -1,10 +1,10 @@
-import { ChainId, JSBI, Percent, Token, WETH } from 'emerald-uniswap-sdk'
+import { ChainId, JSBI, Percent, Token, WETH } from '@hybridx-exchange/uniswap-sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 //import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 import { injected } from '../connectors'
 
-export const ROUTER_ADDRESS = '0xB59855afdb27d59403213801f22c991572F17437'
+export const ROUTER_ADDRESS = '0x65e55c5129D5998Db1F9d05C3f9C49Bc5518E5b7'
 
 // a list of tokens by chain
 type ChainTokenList = {
@@ -12,6 +12,7 @@ type ChainTokenList = {
 }
 
 export const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C')
+export const DAI = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18, 'DAI', 'Dai Stablecoin')
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],

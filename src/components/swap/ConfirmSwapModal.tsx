@@ -1,4 +1,4 @@
-import { currencyEquals, Trade } from 'emerald-uniswap-sdk'
+import { currencyEquals, Trade } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,

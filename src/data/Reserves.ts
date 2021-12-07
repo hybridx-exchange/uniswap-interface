@@ -1,6 +1,6 @@
-import { TokenAmount, Pair, Currency } from 'emerald-uniswap-sdk'
+import { TokenAmount, Pair, Currency } from '@hybridx-exchange/uniswap-sdk'
 import { useMemo } from 'react'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { abi as IUniswapV2PairABI } from '@hybridx-exchange/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
 import { useActiveWeb3React } from '../hooks'
 

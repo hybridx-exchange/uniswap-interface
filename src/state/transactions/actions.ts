@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { ChainId } from 'emerald-uniswap-sdk'
+import { ChainId } from '@hybridx-exchange/uniswap-sdk'
 
 export interface SerializableTransactionReceipt {
   to: string

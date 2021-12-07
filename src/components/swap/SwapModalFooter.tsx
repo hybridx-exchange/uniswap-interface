@@ -1,4 +1,4 @@
-import { Trade, TradeType } from 'emerald-uniswap-sdk'
+import { Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext, useMemo, useState } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'

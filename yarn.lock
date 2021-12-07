@@ -1961,6 +1961,41 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@hybridx-exchange/token-list@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/token-list/-/token-list-0.1.0.tgz#9646fe2b3c4eed9be3c0e7750ce4434c1a8ddd70"
+  integrity sha512-hLZ7+CxlJ0BIXUtS9PKW2qM2gYYVCTR3olqnj6ifgDilUSXN/YPNOmO7lS9nSF8dIH3SYM7tVh3m3KZHSH7g4w==
+
+"@hybridx-exchange/uniswap-sdk@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.1.0.tgz#a3ce81900fe2711c03d92a7999dd023e6fa0ae8b"
+  integrity sha512-ajojkQR93ozbjEE0bmBgm7g9fB8xJ1Uxk58yPUbUcQRPF9Pks9EZV8l8/GRkMgqJymaR9+6ZhcIThxIcRqcbZw==
+  dependencies:
+    "@ethersproject/address" "^5.0.0-beta.134"
+    "@ethersproject/contracts" "^5.0.0-beta.143"
+    "@ethersproject/networks" "^5.0.0-beta.135"
+    "@ethersproject/providers" "^5.0.0-beta.153"
+    "@ethersproject/solidity" "^5.0.0-beta.131"
+    "@hybridx-exchange/v2-core" "0.1.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
+"@hybridx-exchange/v2-core@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-core/-/v2-core-0.1.0.tgz#83534c7e59a3d942a30c202a47580ab7a9061ded"
+  integrity sha512-xGjrWYAnKEXbXChY5iVjO3Jqg40tAQ2ZDtNQhHBUkDmz30PiZLZaFQVUmzlmOpwtpoipmSw+H18t0Pl3aCcIlQ==
+
+"@hybridx-exchange/v2-periphery@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-periphery/-/v2-periphery-0.1.0.tgz#b7f610696e5e69ade135172d359eec8ec8d04de0"
+  integrity sha512-/Xmk5JyjyVZtHDMsfKJ4AzCnwOaZiH9UsATvJSKRtrHWmI/9H1kwp2xlAoJcu3hbRNTVQbiR8G9GCOjLld8TaA==
+  dependencies:
+    "@uniswap/lib" "4.0.1-alpha"
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -2818,33 +2853,15 @@
     semver "^7.3.2"
     tsutils "^3.17.1"
 
-"@uniswap/lib@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@uniswap/lib/-/lib-1.1.1.tgz#0afd29601846c16e5d082866cbb24a9e0758e6bc"
-  integrity sha512-2yK7sLpKIT91TiS5sewHtOa7YuM8IuBXVl4GZv2jZFys4D2sY7K5vZh6MqD25TPA95Od+0YzCVq6cTF2IKrOmg==
+"@uniswap/lib@4.0.1-alpha":
+  version "4.0.1-alpha"
+  resolved "https://registry.yarnpkg.com/@uniswap/lib/-/lib-4.0.1-alpha.tgz#2881008e55f075344675b3bca93f020b028fbd02"
+  integrity sha512-f6UIliwBbRsgVLxIaBANF6w09tYqc6Y/qXdsrbEmXHyFA7ILiKrIwRFXe1yOg8M3cksgVsO9N7yuL2DdCGQKBA==
 
 "@uniswap/token-lists@^1.0.0-beta.16":
   version "1.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/@uniswap/token-lists/-/token-lists-1.0.0-beta.16.tgz#17c5e781d490490b4f61a35a9c3106b2b1b6a57f"
   integrity sha512-+Pu4yUQ8vUPsJW88d3pGEZTkA1T3bC7jI6wgBIcrtkQK90rfUOvgWiwj0mZBuKy/VGDm9AmSnyxYGUW2f0xn4A==
-
-"@uniswap/v2-core@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@uniswap/v2-core/-/v2-core-1.0.0.tgz#e0fab91a7d53e8cafb5326ae4ca18351116b0844"
-  integrity sha512-BJiXrBGnN8mti7saW49MXwxDBRFiWemGetE58q8zgfnPPzQKq55ADltEILqOt6VFZ22kVeVKbF8gVd8aY3l7pA==
-
-"@uniswap/v2-core@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@uniswap/v2-core/-/v2-core-1.0.1.tgz#af8f508bf183204779938969e2e54043e147d425"
-  integrity sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==
-
-"@uniswap/v2-periphery@^1.1.0-beta.0":
-  version "1.1.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@uniswap/v2-periphery/-/v2-periphery-1.1.0-beta.0.tgz#20a4ccfca22f1a45402303aedb5717b6918ebe6d"
-  integrity sha512-6dkwAMKza8nzqYiXEr2D86dgW3TTavUvCR0w2Tu33bAbM8Ah43LKAzH7oKKPRT5VJQaMi1jtkGs1E8JPor1n5g==
-  dependencies:
-    "@uniswap/lib" "1.1.1"
-    "@uniswap/v2-core" "1.0.0"
 
 "@walletconnect/client@^1.1.1-alpha.0":
   version "1.1.1-alpha.0"
@@ -6370,29 +6387,6 @@ elliptic@6.5.4:
     inherits "^2.0.4"
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
-
-emerald-default-token-list@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/emerald-default-token-list/-/emerald-default-token-list-2.0.2.tgz#715bf80a332ddcc8c50b8bd814b13253b0c63300"
-  integrity sha512-83oE16IR3G/bfmHx5oDjGXzCvnFKINjLhJzp/peVR6K7iOCm7Ou8dORrwwQ6nHBp8LZJzU/H/aCa5U1+rX7Iyg==
-
-emerald-uniswap-sdk@2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/emerald-uniswap-sdk/-/emerald-uniswap-sdk-2.0.5.tgz#5d9357c8d0f8ddc0ae77ea6bcb3f972fc9e63ca9"
-  integrity sha512-c3f+C3Y9J8k2uxo//v05emJewHNGzwDrXtZBPH1RIWDN66I/QGOB/u9ITl6A1tckoJetcCc7aaT8KTwIzlQc4w==
-  dependencies:
-    "@ethersproject/address" "^5.0.0-beta.134"
-    "@ethersproject/contracts" "^5.0.0-beta.143"
-    "@ethersproject/networks" "^5.0.0-beta.135"
-    "@ethersproject/providers" "^5.0.0-beta.153"
-    "@ethersproject/solidity" "^5.0.0-beta.131"
-    "@uniswap/v2-core" "^1.0.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
 
 emoji-regex@^7.0.1, emoji-regex@^7.0.2:
   version "7.0.3"
