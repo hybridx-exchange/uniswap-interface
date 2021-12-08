@@ -19,11 +19,11 @@ export function isAddress(value: any): string | false {
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   42262: '',
-  42261: '-testnet'
+  42261: '.testnet'
 }
 
 export function getEtherscanLink(chainId: ChainId, data: string, type: 'transaction' | 'token' | 'address'): string {
-  const prefix = `https://explorer${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[42262]}.hybridx.exchange`
+  const prefix = `https://explorer${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[42262]}.oasis.updev.si`
 
   switch (type) {
     case 'transaction': {
