@@ -216,6 +216,6 @@ body {
   min-height: 100vh;
   // background-position: 0 -30vh;
   background-repeat: no-repeat;
-  background-image: linear-gradient(rgb(70,146,185),rgba(255,255,255,0.6))
+  background-image: linear-gradient(rgba(255,255,255,0.9),rgb(0,127,186),rgba(255,255,255,0.6))
 }
 `

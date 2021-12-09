@@ -6,7 +6,9 @@ import { Text } from 'rebass'
 import styled from 'styled-components'
 
 // import Logo from '../../assets/svg/logo.svg'
-import Logo from '../../assets/images/logo_h.png'
+// import Logo from '../../assets/images/logo_h.png'
+import Logo from '../../assets/images/test-3.png'
+
 // import LogoDark from '../../assets/svg/logo_white.svg'
 // import Wordmark from '../../assets/svg/wordmark.svg'
 // import WordmarkDark from '../../assets/svg/wordmark_white.svg'
@@ -107,7 +109,7 @@ const UniIcon = styled.div`
     transform: rotate(-5deg);
   }
   img{
-    width: 1.8rem;
+    width: 10rem;
     // height:30px;
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -154,7 +156,7 @@ export default function Header() {
               <img src={isDark ? Logo : Logo} alt="logo" />
             </UniIcon>
             <TitleText>
-              HybridX
+              {/* HybridX */}
               {/* <img style={{ marginLeft: '4px', marginTop: '4px' }} src={isDark ? WordmarkDark : Wordmark} alt="logo" /> */}
             </TitleText>
           </Title>
