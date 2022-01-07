@@ -58,8 +58,8 @@ export default function Pool() {
 
   return (
     <>
+     <SwapPoolTabs active={'pool'} />
       <AppBody>
-        <SwapPoolTabs active={'pool'} />
         <AutoColumn gap="lg" justify="center">
           <ButtonPrimary id="join-pool-button" as={Link} style={{ padding: 16 }} to="/add/ROSE">
             <Text fontWeight={500} fontSize={20}>

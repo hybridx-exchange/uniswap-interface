@@ -1,0 +1,10 @@
+
+.padding10{
+  padding: 10px;
+}
+.flexRow{
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   /* position: absolute; */
+}

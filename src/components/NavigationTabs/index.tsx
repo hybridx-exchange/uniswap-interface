@@ -11,8 +11,16 @@ import QuestionHelper from '../QuestionHelper'
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  border-radius: 3rem;
+  border-radius: 1rem;
   justify-content: space-evenly;
+
+  // position: relative;
+  max-width: 420px;
+  width: 100%;
+  background: ${({ theme }) => theme.bg1};
+  // box-shadow: 10px 10px 1px rgba(0, 0, 0, 0.2), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+  //   0px 24px 32px rgba(0, 0, 0, 0.01);
+  padding: 1rem;
 `
 
 const activeClassName = 'ACTIVE'
@@ -23,7 +31,7 @@ const StyledNavLink = styled(NavLink).attrs({
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   justify-content: center;
-  height: 3rem;
+  height: 2rem;
   border-radius: 3rem;
   outline: none;
   cursor: pointer;
@@ -52,7 +60,7 @@ const StyledArrowLeft = styled(ArrowLeft)`
   color: ${({ theme }) => theme.text1};
 `
 
-export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
+export function SwapPoolTabs({ active }: { active: 'swap' | 'trade' | 'pool' }) {
   const { t } = useTranslation()
   return (
     <Tabs style={{ marginBottom: '20px' }}>
@@ -61,6 +69,9 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
       </StyledNavLink>
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
         {t('pool')}
+      </StyledNavLink>
+      <StyledNavLink id={`swap-nav-link`} to={'/trade'} isActive={() => active === 'trade'}>
+        {t('trade')}
       </StyledNavLink>
     </Tabs>
   )
