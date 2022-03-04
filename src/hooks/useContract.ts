@@ -1,6 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, WETH } from '@hybridx-exchange/uniswap-sdk'
 import { abi as IUniswapV2PairABI } from '@hybridx-exchange/v2-core/build/IUniswapV2Pair.json'
+import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
 import { useMemo } from 'react'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
@@ -75,6 +76,10 @@ export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossi
 
 export function usePairContract(pairAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
+}
+
+export function useOrderBookContract(orderBookAddress: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(orderBookAddress, IOrderBookABI, withSignerIfPossible)
 }
 
 export function useMulticallContract(): Contract | null {
