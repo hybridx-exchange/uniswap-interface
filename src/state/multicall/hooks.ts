@@ -20,9 +20,9 @@ export interface Result extends ReadonlyArray<any> {
 }
 
 type MethodArg = string | number | BigNumber
-type MethodArgs = Array<MethodArg | MethodArg[]>
+type MethodArgs = Array<MethodArg | MethodArg[] | MethodArg[][]>
 
-type OptionalMethodInputs = Array<MethodArg | MethodArg[] | undefined> | undefined
+type OptionalMethodInputs = Array<MethodArg | MethodArg[] | MethodArg[][] | undefined> | undefined
 
 function isMethodArg(x: unknown): x is MethodArg {
   return ['string', 'number'].indexOf(typeof x) !== -1

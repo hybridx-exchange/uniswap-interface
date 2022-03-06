@@ -1978,10 +1978,10 @@
   resolved "https://registry.yarnpkg.com/@hybridx-exchange/token-list/-/token-list-0.1.0.tgz#9646fe2b3c4eed9be3c0e7750ce4434c1a8ddd70"
   integrity sha512-hLZ7+CxlJ0BIXUtS9PKW2qM2gYYVCTR3olqnj6ifgDilUSXN/YPNOmO7lS9nSF8dIH3SYM7tVh3m3KZHSH7g4w==
 
-"@hybridx-exchange/uniswap-sdk@0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.1.6.tgz#0e05c58773da356a87c5c9adb65bbf62eb4c43c7"
-  integrity sha512-ffcYOII+sMGnjPbzPO+RsJNr7LnpAenMASVjmm2aEvbmoOadu1igtylRiBWFVGUkdVm7HjQCDZEAIbH8HglQ8Q==
+"@hybridx-exchange/uniswap-sdk@0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.1.7.tgz#d2c85b1632677df32910d85dd2d930925d6fc98f"
+  integrity sha512-jazB6Kn/o3C30t3CrlqZ9kudY3CvhKCo3VjcJnopCQ5JqxPZeW9MjgCQXqtoFX1q04AgjswdyxR4cKQWein5ag==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
