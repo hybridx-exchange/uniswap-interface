@@ -1,14 +1,4 @@
-import {
-  Route,
-  Currency,
-  CurrencyAmount,
-  JSBI,
-  Pair,
-  Token,
-  TokenAmount,
-  Trade,
-  TradeType
-} from '@hybridx-exchange/uniswap-sdk'
+import { Route, Currency, CurrencyAmount, Pair, Token, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
@@ -164,31 +154,72 @@ export function useGetBestOutputAmount(
 /**
  * Returns the amount in for the exact amount of tokens out to the given token in
  */
-export function useTradeGetPairInputAmount(
-  tokenAmountOut?: TokenAmount,
-  tokenIn?: Token,
-  tokenOut?: Token
-): { loading: boolean; amountIn: TokenAmount | null } {
+export function useGetBestInputAmount(
+  currencyIn?: Currency,
+  currencyAmountOut?: CurrencyAmount,
+  allPairs?: Pair[],
+  allTrades?: Trade[] | null
+): { loading: boolean; bestTrade: Trade | null } {
+  const paths = allTrades?.map(trade => {
+    return trade.route.path.map(token => {
+      return token.address
+    })
+  })
+
+  const lens = allTrades?.map(trade => {
+    return trade.route.path.length
+  })
+
+  const paths2 = paths ? Array.prototype.concat.apply([], paths) : undefined
   const results = useMultipleContractSingleData(
     [ROUTER_ADDRESS],
     new Interface(IUniswapV2Router02ABI),
-    'getAmountsIn',
-    [tokenAmountOut?.toExact(), [tokenIn ? tokenIn.address : '', tokenOut ? tokenOut.address : '']]
+    'getBestAmountsIn',
+    [currencyAmountOut?.raw.toString(), paths2, lens]
   )
-
+  console.log('amountOut', currencyAmountOut?.raw.toString(), 'result:', results)
   return useMemo(() => {
-    const { result: amounts, loading: loading } = results[0]
-    if (loading || !amounts) {
-      return { loading: true, amountIn: null }
+    const returns = results?.map(result => {
+      if (!result || result.loading) return { data: null, loading: result.loading }
+      const {
+        result: [path, amounts],
+        loading
+      } = result
+      return { data: { path, amounts }, loading: loading }
+    })
+
+    if (!returns || returns.length === 0 || returns[0].loading) {
+      return { loading: true, bestTrade: null }
     }
-    const amount = amounts[0] ? JSBI.BigInt(amounts[0].toString()) : null
-    const amountIn = amount && tokenIn ? new TokenAmount(tokenIn, amount) : null
-    console.log('amount in:', amountIn?.toExact())
-    return {
-      amountIn: amountIn,
-      loading: loading
+    console.log('data:', returns[0].data)
+    const data = returns[0].data
+    const path = data && data.path ? data.path : []
+    const amounts = data && data.amounts ? data.amounts : []
+    const pairs: Pair[] = []
+    for (let i = 1; i < path?.length; i++) {
+      if (allPairs) {
+        const pair = allPairs.find(
+          e =>
+            (e.token0.address === path[i - 1] && e.token1.address === path[i]) ||
+            (e.token1.address === path[i - 1] && e.token0.address === path[i])
+        )
+        if (pair) pairs.push(pair)
+      }
     }
-  }, [results, tokenIn])
+
+    if (!currencyAmountOut || !currencyIn || !allPairs || !allTrades) {
+      return { loading: true, bestTrade: null }
+    } else {
+      return {
+        loading: false,
+        bestTrade: new Trade(
+          new Route(pairs, amounts, currencyIn, currencyAmountOut.currency),
+          currencyAmountOut,
+          TradeType.EXACT_OUTPUT
+        )
+      }
+    }
+  }, [allPairs, allTrades, currencyAmountOut, currencyIn, results])
 }
 
 /**
@@ -211,14 +242,11 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
  */
 export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
-
-  return useMemo(() => {
+  const allTrade = useMemo(() => {
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
-      return (
-        Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })[0] ??
-        null
-      )
+      return Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })
     }
     return null
   }, [allowedPairs, currencyIn, currencyAmountOut])
+  return useGetBestInputAmount(currencyIn, currencyAmountOut, allowedPairs, allTrade).bestTrade
 }

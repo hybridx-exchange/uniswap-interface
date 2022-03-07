@@ -123,7 +123,7 @@ export function useV1Trade(
     pairs = [inputPair, outputPair]
   }
 
-  const route = inputCurrency && pairs && pairs.length > 0 && new Route(pairs, inputCurrency, outputCurrency)
+  const route = inputCurrency && pairs && pairs.length > 0 && new Route(pairs, [], inputCurrency, outputCurrency)
   let v1Trade: Trade | undefined
   try {
     v1Trade =
