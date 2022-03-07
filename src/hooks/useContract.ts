@@ -12,6 +12,7 @@ import UNISOCKS_ABI from '../constants/abis/unisocks.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
+import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/build/IUniswapV2Router02.json'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 
@@ -76,6 +77,10 @@ export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossi
 
 export function usePairContract(pairAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
+}
+
+export function useRouterContract(routerAddress?: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(routerAddress, IUniswapV2Router02ABI, withSignerIfPossible)
 }
 
 export function useOrderBookContract(orderBookAddress: string, withSignerIfPossible?: boolean): Contract | null {

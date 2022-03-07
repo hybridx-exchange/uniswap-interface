@@ -105,27 +105,42 @@ export function useGetBestOutputAmount(
     })
   })
 
+  const lens = allTrades?.map(trade => {
+    return trade.route.path.length
+  })
+
+  const paths2 = paths ? Array.prototype.concat.apply([], paths) : undefined
   const results = useMultipleContractSingleData(
     [ROUTER_ADDRESS],
     new Interface(IUniswapV2Router02ABI),
     'getBestAmountsOut',
-    [currencyAmountIn?.toExact(), paths]
+    [currencyAmountIn?.raw.toString(), paths2, lens]
   )
-
+  console.log('amountIn', currencyAmountIn?.raw.toString(), 'result:', results)
   return useMemo(() => {
-    const { result: returns, loading: loading } = results ? results[0] : { loading: true, result: undefined }
-    if (loading || !returns) {
+    const returns = results?.map(result => {
+      if (!result || result.loading) return { data: null, loading: result.loading }
+      const {
+        result: [path, amounts],
+        loading
+      } = result
+      return { data: { path, amounts }, loading: loading }
+    })
+
+    if (!returns || returns.length === 0 || returns[0].loading) {
       return { loading: true, bestTrade: null }
     }
-    const path = returns[0]
-    //const amounts = returns[1]
+    console.log('data:', returns[0].data)
+    const data = returns[0].data
+    const path = data && data.path ? data.path : []
+    const amounts = data && data.amounts ? data.amounts : []
     const pairs: Pair[] = []
-    for (let i = 1; i < path.length; i++) {
+    for (let i = 1; i < path?.length; i++) {
       if (allPairs) {
         const pair = allPairs.find(
           e =>
-            (e.token0.address == path[i - 1] && e.token1.address == path[i]) ||
-            (e.token1.address == path[i - 1] && e.token0.address == path[i])
+            (e.token0.address === path[i - 1] && e.token1.address === path[i]) ||
+            (e.token1.address === path[i - 1] && e.token0.address === path[i])
         )
         if (pair) pairs.push(pair)
       }
@@ -135,15 +150,15 @@ export function useGetBestOutputAmount(
       return { loading: true, bestTrade: null }
     } else {
       return {
-        loading: loading,
+        loading: false,
         bestTrade: new Trade(
-          new Route(pairs, currencyAmountIn.currency, currencyOut),
+          new Route(pairs, amounts, currencyAmountIn.currency, currencyOut),
           currencyAmountIn,
           TradeType.EXACT_INPUT
         )
       }
     }
-  }, [allTrades, results])
+  }, [allPairs, allTrades, currencyAmountIn, currencyOut, results])
 }
 
 /**
@@ -162,7 +177,7 @@ export function useTradeGetPairInputAmount(
   )
 
   return useMemo(() => {
-    const { result: amounts, loading: loading } = results ? results[0] : { loading: true, result: undefined }
+    const { result: amounts, loading: loading } = results[0]
     if (loading || !amounts) {
       return { loading: true, amountIn: null }
     }
