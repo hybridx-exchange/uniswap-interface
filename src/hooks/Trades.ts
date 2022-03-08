@@ -106,7 +106,7 @@ export function useGetBestOutputAmount(
     'getBestAmountsOut',
     [currencyAmountIn?.raw.toString(), paths2, lens]
   )
-  console.log('amountIn', currencyAmountIn?.raw.toString())
+
   return useMemo(() => {
     const returns = results?.map(result => {
       if (!result || result.loading) return { data: null, loading: result.loading }
@@ -120,7 +120,7 @@ export function useGetBestOutputAmount(
     if (!returns || returns.length === 0 || returns[0].loading) {
       return { loading: true, bestTrade: null }
     }
-    console.log('data:', returns[0].data)
+
     const data = returns[0].data
     const path = data && data.path ? data.path : []
     const amounts = data && data.amounts ? data.amounts : []
@@ -178,7 +178,7 @@ export function useGetBestInputAmount(
     'getBestAmountsIn',
     [currencyAmountOut?.raw.toString(), paths2, lens]
   )
-  console.log('amountOut', currencyAmountOut?.raw.toString())
+
   return useMemo(() => {
     const returns = results?.map(result => {
       if (!result || result.loading) return { data: null, loading: result.loading }
@@ -192,7 +192,7 @@ export function useGetBestInputAmount(
     if (!returns || returns.length === 0 || returns[0].loading) {
       return { loading: true, bestTrade: null }
     }
-    console.log('data:', returns[0].data)
+
     const data = returns[0].data
     const path = data && data.path ? data.path : []
     const amounts = data && data.amounts ? data.amounts : []
