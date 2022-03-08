@@ -106,15 +106,15 @@ export function useGetBestOutputAmount(
     'getBestAmountsOut',
     [currencyAmountIn?.raw.toString(), paths2, lens]
   )
-  console.log('amountIn', currencyAmountIn?.raw.toString(), 'result:', results)
+  console.log('amountIn', currencyAmountIn?.raw.toString())
   return useMemo(() => {
     const returns = results?.map(result => {
       if (!result || result.loading) return { data: null, loading: result.loading }
       const {
-        result: [path, amounts],
+        result: [path, amounts, nextReserves],
         loading
       } = result
-      return { data: { path, amounts }, loading: loading }
+      return { data: { path, amounts, nextReserves }, loading: loading }
     })
 
     if (!returns || returns.length === 0 || returns[0].loading) {
@@ -124,6 +124,7 @@ export function useGetBestOutputAmount(
     const data = returns[0].data
     const path = data && data.path ? data.path : []
     const amounts = data && data.amounts ? data.amounts : []
+    const nextReserves = data && data.nextReserves ? data.nextReserves : []
     const pairs: Pair[] = []
     for (let i = 1; i < path?.length; i++) {
       if (allPairs) {
@@ -142,7 +143,7 @@ export function useGetBestOutputAmount(
       return {
         loading: false,
         bestTrade: new Trade(
-          new Route(pairs, amounts, currencyAmountIn.currency, currencyOut),
+          new Route(pairs, amounts, nextReserves, currencyAmountIn.currency, currencyOut),
           currencyAmountIn,
           TradeType.EXACT_INPUT
         )
@@ -177,15 +178,15 @@ export function useGetBestInputAmount(
     'getBestAmountsIn',
     [currencyAmountOut?.raw.toString(), paths2, lens]
   )
-  console.log('amountOut', currencyAmountOut?.raw.toString(), 'result:', results)
+  console.log('amountOut', currencyAmountOut?.raw.toString())
   return useMemo(() => {
     const returns = results?.map(result => {
       if (!result || result.loading) return { data: null, loading: result.loading }
       const {
-        result: [path, amounts],
+        result: [path, amounts, nextReserves],
         loading
       } = result
-      return { data: { path, amounts }, loading: loading }
+      return { data: { path, amounts, nextReserves }, loading: loading }
     })
 
     if (!returns || returns.length === 0 || returns[0].loading) {
@@ -195,6 +196,7 @@ export function useGetBestInputAmount(
     const data = returns[0].data
     const path = data && data.path ? data.path : []
     const amounts = data && data.amounts ? data.amounts : []
+    const nextReserves = data && data.nextReserves ? data.nextReserves : []
     const pairs: Pair[] = []
     for (let i = 1; i < path?.length; i++) {
       if (allPairs) {
@@ -213,7 +215,7 @@ export function useGetBestInputAmount(
       return {
         loading: false,
         bestTrade: new Trade(
-          new Route(pairs, amounts, currencyIn, currencyAmountOut.currency),
+          new Route(pairs, amounts, nextReserves, currencyIn, currencyAmountOut.currency),
           currencyAmountOut,
           TradeType.EXACT_OUTPUT
         )
