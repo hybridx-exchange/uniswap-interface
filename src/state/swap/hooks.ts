@@ -110,7 +110,6 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
   inputError?: string
-  v1Trade: Trade | undefined
 } {
   const { account } = useActiveWeb3React()
 
@@ -201,8 +200,7 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
-    inputError,
-    v1Trade: undefined
+    inputError
   }
 }
 
