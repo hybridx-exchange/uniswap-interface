@@ -228,6 +228,59 @@ export function useMultipleContractSingleData(
   }, [fragment, results, contractInterface, latestBlockNumber])
 }
 
+export function useMultipleContractMultipleData(
+  addresses: string[],
+  contractInterfaces: Interface[],
+  methodNames: string[],
+  callInputs: OptionalMethodInputs[],
+  options?: ListenerOptions
+): CallState[] {
+  const fragments = useMemo(() => {
+    const fragmentsArray: FunctionFragment[] = []
+    for (let i = 0; i < contractInterfaces.length; i++)
+      fragmentsArray.push(contractInterfaces[i].getFunction(methodNames[i]))
+    return fragmentsArray
+  }, [contractInterfaces, methodNames])
+
+  const callDatas: string[] = useMemo(() => {
+    const callDatasArray: string[] = []
+    for (let i = 0; i < contractInterfaces.length; i++) {
+      callDatasArray.push(
+        fragments[i] && isValidMethodArgs(callInputs[i])
+          ? contractInterfaces[i].encodeFunctionData(fragments[i], callInputs[i])
+          : ''
+      )
+    }
+    return callDatasArray
+  }, [callInputs, contractInterfaces, fragments])
+
+  const calls = useMemo(() => {
+    const callsArray: Call[] = []
+    if (fragments && addresses && addresses.length > 0 && callDatas && callDatas.length === addresses.length) {
+      for (let i = 0; i < addresses?.length; i++) {
+        if (addresses[i] !== '') {
+          callsArray.push({ address: addresses[i], callData: callDatas[i] })
+        }
+      }
+    }
+    return callsArray
+  }, [addresses, callDatas, fragments])
+
+  const results = useCallsData(calls, options)
+
+  const latestBlockNumber = useBlockNumber()
+
+  return useMemo(() => {
+    const resultsArray: CallState[] = []
+    if (results.length === contractInterfaces.length) {
+      for (let i = 0; i < results.length; i++) {
+        resultsArray.push(toCallState(results[i], contractInterfaces[i], fragments[i], latestBlockNumber))
+      }
+    }
+    return resultsArray
+  }, [fragments, results, contractInterfaces, latestBlockNumber])
+}
+
 export function useSingleCallResult(
   contract: Contract | null | undefined,
   methodName: string,

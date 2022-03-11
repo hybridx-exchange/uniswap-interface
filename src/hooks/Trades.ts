@@ -1,15 +1,34 @@
-import { Route, Currency, CurrencyAmount, Pair, Token, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
+import {
+  Route,
+  Currency,
+  CurrencyAmount,
+  Pair,
+  Token,
+  Trade,
+  TradeType,
+  OrderBook,
+  TokenAmount
+} from '@hybridx-exchange/uniswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
-import { BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES, ROUTER_ADDRESS } from '../constants'
+import {
+  BASES_TO_CHECK_TRADES_AGAINST,
+  CUSTOM_BASES,
+  ROUTER_ADDRESS,
+  HYBRIDX_ROUTER_ADDRESS,
+  DEFAULT_LIMIT_SIZE
+} from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
-import { wrappedCurrency } from '../utils/wrappedCurrency'
+import { wrappedCurrency, wrappedCurrencyAmount } from '../utils/wrappedCurrency'
 
 import { useActiveWeb3React } from './index'
-import { useMultipleContractSingleData } from '../state/multicall/hooks'
+import { useMultipleContractMultipleData, useMultipleContractSingleData } from '../state/multicall/hooks'
 import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/build/IUniswapV2Router02.json'
+import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
+import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
 import { Interface } from '@ethersproject/abi'
+import { Order } from '@hybridx-exchange/uniswap-sdk'
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
 
@@ -251,4 +270,75 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
     return null
   }, [allowedPairs, currencyIn, currencyAmountOut])
   return useGetBestInputAmount(currencyIn, currencyAmountOut, allowedPairs, allTrade).bestTrade
+}
+
+/**
+ * Returns the best trade for the token in to the exact amount of token out
+ */
+export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Currency | undefined): OrderBook | null {
+  const { chainId } = useActiveWeb3React()
+  const tokenIn = wrappedCurrency(currencyIn, chainId)
+  const tokenOut = wrappedCurrency(currencyOut, chainId)
+  const orderBookAddress = tokenIn && tokenOut ? OrderBook.getAddress(tokenIn, tokenOut) : ''
+  const orderBookInterface = new Interface(IOrderBookABI)
+  const results = useMultipleContractMultipleData(
+    [HYBRIDX_ROUTER_ADDRESS, orderBookAddress, orderBookAddress, orderBookAddress, orderBookAddress],
+    [new Interface(IHybridRouterABI), orderBookInterface, orderBookInterface, orderBookInterface, orderBookInterface],
+    ['getOrderBook', 'getReserves', 'baseToken', 'protocolFeeRate', 'subsidyFeeRate'],
+    [[tokenIn?.address, tokenOut?.address, DEFAULT_LIMIT_SIZE], [], [], [], [], []]
+  )
+
+  return useMemo(() => {
+    const returns = results?.map(result => {
+      if (!result || result.loading) return { data: null, loading: result.loading }
+      const { result: data, loading } = result
+      return { data, loading }
+    })
+
+    if (!returns || returns.length === 0 || returns[0].loading || returns.length !== 5) {
+      return null
+    }
+
+    const {
+      data: [price, buyPrices, buyAmounts, sellPrices, sellAmounts]
+    } = returns[0]
+    const {
+      data: [baseReserve, quoteReserve]
+    } = returns[1]
+    const {
+      data: [baseTokenAddress]
+    } = returns[2]
+    const {
+      data: [protocolFeeRate]
+    } = returns[3]
+    const {
+      data: [subsidyFeeRate]
+    } = returns[4]
+    const baseToken = baseTokenAddress === tokenIn?.address ? tokenIn : tokenOut
+    const quoteToken = baseTokenAddress === tokenIn?.address ? tokenOut : tokenIn
+    if (baseToken && quoteToken && buyPrices && buyAmounts && sellPrices && sellAmounts) {
+      const baseAmount = wrappedCurrencyAmount(new TokenAmount(baseToken, baseReserve), baseToken.chainId)
+      const quoteAmount = wrappedCurrencyAmount(new TokenAmount(quoteToken, quoteReserve), quoteToken.chainId)
+      const curPrice = wrappedCurrencyAmount(new TokenAmount(quoteToken, price), quoteToken.chainId)
+      const buyOrders: Order[] = []
+      for (let i = 0; i < buyPrices.length; i++) {
+        const buyPrice = wrappedCurrencyAmount(new TokenAmount(quoteToken, buyPrices[i]), quoteToken.chainId)
+        const buyAmount = wrappedCurrencyAmount(new TokenAmount(baseToken, buyAmounts[i]), baseToken.chainId)
+        if (buyPrice && buyAmount) buyOrders.push(new Order(buyPrice, buyAmount))
+      }
+
+      const sellOrders: Order[] = []
+      for (let i = 0; i < sellPrices.length; i++) {
+        const sellPrice = wrappedCurrencyAmount(new TokenAmount(quoteToken, sellPrices[i]), quoteToken.chainId)
+        const sellAmount = wrappedCurrencyAmount(new TokenAmount(quoteToken, sellAmounts[i]), quoteToken.chainId)
+        if (sellPrice && sellAmount) sellOrders.push(new Order(sellPrice, sellAmount))
+      }
+
+      return baseAmount && quoteAmount && curPrice
+        ? new OrderBook(baseAmount, quoteAmount, protocolFeeRate, subsidyFeeRate, curPrice, buyOrders, sellOrders)
+        : null
+    }
+
+    return null
+  }, [tokenIn, tokenOut, results])
 }

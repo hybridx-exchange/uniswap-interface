@@ -1961,10 +1961,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@hybridx-exchange/orderbook-core@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/orderbook-core/-/orderbook-core-0.2.0.tgz#36b759ff3d0839377d834ffceb8e107f84bd5f0c"
-  integrity sha512-KhSA8EBcKDPEwPA52ZZ+2m141k90UGiGbfuXbywrz3Urga7t6RtWSq3mxiEx7IxoVUjovXVVl2m5ZGbIqPq2WA==
+"@hybridx-exchange/orderbook-core@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/orderbook-core/-/orderbook-core-0.2.3.tgz#496227617afa799b8cbc6ae3ea05bfa45d141c11"
+  integrity sha512-2BnOMzR8b8PIdyERLOXqhwf1y1+Mj189TgX3ieLOmwVEFUhiEyhXt+CwdzJddCia4haqwp1A2XJqJirX0cQzBw==
 
 "@hybridx-exchange/orderbook-periphery@0.2.0":
   version "0.2.0"
@@ -1978,10 +1978,10 @@
   resolved "https://registry.yarnpkg.com/@hybridx-exchange/token-list/-/token-list-0.1.0.tgz#9646fe2b3c4eed9be3c0e7750ce4434c1a8ddd70"
   integrity sha512-hLZ7+CxlJ0BIXUtS9PKW2qM2gYYVCTR3olqnj6ifgDilUSXN/YPNOmO7lS9nSF8dIH3SYM7tVh3m3KZHSH7g4w==
 
-"@hybridx-exchange/uniswap-sdk@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.2.2.tgz#76275d2c9f08bd7086dd304866cc1e93d50fa7cf"
-  integrity sha512-S4rKdd5I+OSOmuDe4fz7Y5FeK+4w4ySnzLPVwa5rYcaYk9EQiTuYt5448A7jA41xogDXSxrflUaAPcWO5OT3mg==
+"@hybridx-exchange/uniswap-sdk@0.2.6":
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.2.6.tgz#265707bfb40d7e92452859f0c0b3717795f7ff25"
+  integrity sha512-CmUSaDAKlX0pL7OZKdB0DkxkZP/OPGV1BqHlACfcPmYfCF2owmPYockKinUfawWAavaJtHHePHzLmVpnn0Zvdw==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
