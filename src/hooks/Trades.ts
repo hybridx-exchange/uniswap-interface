@@ -17,7 +17,8 @@ import {
   CUSTOM_BASES,
   ROUTER_ADDRESS,
   HYBRIDX_ROUTER_ADDRESS,
-  DEFAULT_LIMIT_SIZE
+  DEFAULT_LIMIT_SIZE,
+  ZERO_ADDRESS
 } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
 import { wrappedCurrency, wrappedCurrencyAmount } from '../utils/wrappedCurrency'
@@ -282,20 +283,46 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
   const orderBookAddress = tokenIn && tokenOut ? OrderBook.getAddress(tokenIn, tokenOut) : ''
   const orderBookInterface = new Interface(IOrderBookABI)
   const results = useMultipleContractMultipleData(
-    [HYBRIDX_ROUTER_ADDRESS, orderBookAddress, orderBookAddress, orderBookAddress, orderBookAddress],
+    [
+      tokenIn && tokenOut ? HYBRIDX_ROUTER_ADDRESS : '',
+      orderBookAddress,
+      orderBookAddress,
+      orderBookAddress,
+      orderBookAddress
+    ],
     [new Interface(IHybridRouterABI), orderBookInterface, orderBookInterface, orderBookInterface, orderBookInterface],
     ['getOrderBook', 'getReserves', 'baseToken', 'protocolFeeRate', 'subsidyFeeRate'],
-    [[tokenIn?.address, tokenOut?.address, DEFAULT_LIMIT_SIZE], [], [], [], [], []]
+    [
+      tokenIn && tokenOut
+        ? [tokenIn.address, tokenOut.address, DEFAULT_LIMIT_SIZE]
+        : [ZERO_ADDRESS, ZERO_ADDRESS, DEFAULT_LIMIT_SIZE],
+      [],
+      [],
+      [],
+      [],
+      []
+    ]
   )
 
   return useMemo(() => {
+    console.log('results:', results)
     const returns = results?.map(result => {
       if (!result || result.loading) return { data: null, loading: result.loading }
       const { result: data, loading } = result
       return { data, loading }
     })
 
-    if (!returns || returns.length === 0 || returns[0].loading || returns.length !== 5) {
+    if (
+      !returns ||
+      returns.length === 0 ||
+      returns[0].loading ||
+      returns.length !== 5 ||
+      !returns[0].data ||
+      !returns[1].data ||
+      !returns[2].data ||
+      !returns[3].data ||
+      !returns[4].data
+    ) {
       return null
     }
 
@@ -304,7 +331,7 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
     } = returns[0]
     const {
       data: [baseReserve, quoteReserve]
-    } = returns[1]
+    } = returns[1] ?? [undefined, undefined]
     const {
       data: [baseTokenAddress]
     } = returns[2]

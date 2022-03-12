@@ -258,7 +258,7 @@ export function useMultipleContractMultipleData(
     const callsArray: Call[] = []
     if (fragments && addresses && addresses.length > 0 && callDatas && callDatas.length === addresses.length) {
       for (let i = 0; i < addresses?.length; i++) {
-        if (addresses[i] !== '') {
+        if (addresses[i] && addresses[i] !== '') {
           callsArray.push({ address: addresses[i], callData: callDatas[i] })
         }
       }
@@ -266,6 +266,7 @@ export function useMultipleContractMultipleData(
     return callsArray
   }, [addresses, callDatas, fragments])
 
+  console.log('calls:', calls)
   const results = useCallsData(calls, options)
 
   const latestBlockNumber = useBlockNumber()

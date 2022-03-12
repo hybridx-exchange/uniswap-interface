@@ -7,6 +7,7 @@ import { injected } from '../connectors'
 export const ROUTER_ADDRESS = '0x99809bd8b83D9e9314CcE8AF2c3252fbF4534fd6'
 export const HYBRIDX_ROUTER_ADDRESS = '0xe3182FC423D9c83728d6716F42131268f90E8c75'
 export const DEFAULT_LIMIT_SIZE = 8
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 // a list of tokens by chain
 type ChainTokenList = {
