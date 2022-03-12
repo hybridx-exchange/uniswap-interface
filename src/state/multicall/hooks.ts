@@ -266,7 +266,6 @@ export function useMultipleContractMultipleData(
     return callsArray
   }, [addresses, callDatas, fragments])
 
-  console.log('calls:', calls)
   const results = useCallsData(calls, options)
 
   const latestBlockNumber = useBlockNumber()

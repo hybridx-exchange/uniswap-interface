@@ -305,7 +305,6 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
   )
 
   return useMemo(() => {
-    console.log('results:', results)
     const returns = results?.map(result => {
       if (!result || result.loading) return { data: null, loading: result.loading }
       const { result: data, loading } = result

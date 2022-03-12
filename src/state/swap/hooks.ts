@@ -1,6 +1,15 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@hybridx-exchange/uniswap-sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  ETHER,
+  JSBI,
+  OrderBook,
+  Token,
+  TokenAmount,
+  Trade
+} from '@hybridx-exchange/uniswap-sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -109,6 +118,7 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  orderBook: OrderBook | undefined
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
@@ -137,7 +147,6 @@ export function useDerivedSwapInfo(): {
   const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
   const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
   const orderBook = useOrderBook(inputCurrency ?? undefined, outputCurrency ?? undefined)
-  console.log('order book:', orderBook)
 
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
@@ -202,6 +211,7 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
+    orderBook: orderBook ?? undefined,
     inputError
   }
 }

@@ -19,12 +19,12 @@ const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
   transition: transform 300ms ease-in-out;
 `
 
-export default function OrderBookDetailsDropdown({ trade, ...rest }: OrderBookDetailsProps) {
-  const lastTrade = useLastTruthy(trade)
+export default function OrderBookDetailsDropdown({ orderBook, ...rest }: OrderBookDetailsProps) {
+  const lastOrderBook = useLastTruthy(orderBook)
 
   return (
-    <OrderBookDetailsFooter show={Boolean(trade)}>
-      <OrderBookDetails {...rest} trade={trade ?? lastTrade ?? undefined} />
+    <OrderBookDetailsFooter show={Boolean(orderBook)}>
+      <OrderBookDetails {...rest} orderBook={orderBook ?? lastOrderBook ?? undefined} />
     </OrderBookDetailsFooter>
   )
 }
