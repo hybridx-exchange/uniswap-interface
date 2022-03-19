@@ -71,12 +71,16 @@ export function useDerivedOrderBookInfo(
     error = error ?? 'Create pair first'
   }
 
-  if (!priceStepAmount) {
+  if (!orderBook && !priceStepAmount) {
     error = error ?? 'Enter price step for order book'
   }
 
-  if (!minAmountAmount) {
+  if (!orderBook && !minAmountAmount) {
     error = error ?? 'Enter minimum amount for order'
+  }
+
+  if (orderBook && !priceStepAmount && !minAmountAmount) {
+    error = error ?? 'Enter the parameter value'
   }
 
   return {

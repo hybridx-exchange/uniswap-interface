@@ -1,5 +1,5 @@
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, WETH } from '@hybridx-exchange/uniswap-sdk'
+import { Currency, Token } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -7,16 +7,14 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonLight } from '../../components/Button'
-import { BlueCard, GreyCard, LightCard } from '../../components/Card'
+import { BlueCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { CreateEditTabs } from '../../components/NavigationTabs'
-import { MinimalPositionCard } from '../../components/PositionCard'
-import Row, { RowBetween, RowFlat } from '../../components/Row'
+import Row, { RowFlat } from '../../components/Row'
 
-import { PairState } from '../../data/Reserves'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -24,13 +22,16 @@ import { Field } from '../../state/orderBook/actions'
 import { useDerivedOrderBookInfo, useOrderBookActionHandlers, useOrderBookState } from '../../state/orderBook/hooks'
 
 import { useTransactionAdder } from '../../state/transactions/hooks'
-import { TYPE } from '../../theme'
+import { StyledInternalLink, TYPE } from '../../theme'
 import { calculateGasMargin, getOrderBookFactoryContract } from '../../utils'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
 import { ConfirmCreateModalBottom } from './ConfirmCreateModalBottom'
 import { currencyId } from '../../utils/currencyId'
+import { PairState } from '../../data/Reserves'
+import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
+import { Field as SwapField } from '../../state/swap/actions'
 
 export default function CreateOrderBook({
   match: {
@@ -43,12 +44,6 @@ export default function CreateOrderBook({
 
   const currencyBase = useCurrency(currencyIdBase)
   const currencyQuote = useCurrency(currencyIdQuote)
-
-  const oneCurrencyIsWETH = Boolean(
-    chainId &&
-      ((currencyBase && currencyEquals(currencyBase, WETH[chainId])) ||
-        (currencyQuote && currencyEquals(currencyQuote, WETH[chainId])))
-  )
 
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
 
@@ -66,7 +61,7 @@ export default function CreateOrderBook({
   } = useDerivedOrderBookInfo(currencyBase ?? undefined, currencyQuote ?? undefined)
   const { onFieldBaseInput, onFieldQuoteInput } = useOrderBookActionHandlers(noLiquidity, orderBook !== null)
 
-  const isValid = !error
+  const isValid = !error && pair && pairState === PairState.EXISTS
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -82,6 +77,12 @@ export default function CreateOrderBook({
   }
 
   const addTransaction = useTransactionAdder()
+  const wrappedCurrencyBase = wrappedCurrency(currencyBase ?? undefined, chainId)
+  const wrappedCurrencyQuote = wrappedCurrency(currencyQuote ?? undefined, chainId)
+  const wrappedCurrencies: { [field in SwapField]?: Token | undefined } = {
+    [SwapField.INPUT]: wrappedCurrencyBase,
+    [SwapField.OUTPUT]: wrappedCurrencyQuote
+  }
 
   async function onAdd() {
     if (!priceStepAmount || !minAmountAmount || !currencyBase || !currencyQuote) {
@@ -94,8 +95,8 @@ export default function CreateOrderBook({
       estimate = orderBookFactory.estimateGas.createOrderBook
       method = orderBookFactory.createOrderBook
       args = [
-        wrappedCurrency(currencyBase, chainId)?.address ?? '',
-        wrappedCurrency(currencyQuote, chainId)?.address ?? '',
+        wrappedCurrencyBase?.address ?? '',
+        wrappedCurrencyQuote?.address ?? '',
         priceStepAmount?.raw.toString() ?? '0',
         minAmountAmount?.raw.toString() ?? '0',
         account
@@ -261,20 +262,31 @@ export default function CreateOrderBook({
                 <BlueCard>
                   <AutoColumn gap="10px">
                     <TYPE.link fontWeight={600} color={'primaryText1'}>
-                      You are the first liquidity provider.
+                      You need to create the token pair before creating an order book.
                     </TYPE.link>
-                    <TYPE.link fontWeight={400} color={'primaryText1'}>
-                      The ratio of tokens you add will set the price of this pool.
-                    </TYPE.link>
-                    <TYPE.link fontWeight={400} color={'primaryText1'}>
-                      Once you are happy with the rate click supply to review.
+                    <StyledInternalLink
+                      id="add-liquidity-before-create-order-book"
+                      to={'/add/' + wrappedCurrencyBase?.address + '/' + wrappedCurrencyQuote?.address}
+                    >
+                      {'Add Liquidity'}
+                    </StyledInternalLink>
+                  </AutoColumn>
+                </BlueCard>
+              </ColumnCenter>
+            )}
+            {orderBook && orderBook.buyOrders.length > 0 && orderBook.sellOrders.length > 0 && (
+              <ColumnCenter>
+                <BlueCard>
+                  <AutoColumn gap="10px">
+                    <TYPE.link fontWeight={600} color={'primaryText1'}>
+                      You can only modify order book parameters without any orders.
                     </TYPE.link>
                   </AutoColumn>
                 </BlueCard>
               </ColumnCenter>
             )}
             <CurrencyInputPanel
-              label={'Base token'}
+              label={'Choose base token and input minimum amount'}
               value={formattedAmounts[Field.CURRENCY_BASE]}
               showMaxButton={false}
               hideBalance={true}
@@ -288,7 +300,7 @@ export default function CreateOrderBook({
               <Plus size="16" color={theme.text2} />
             </ColumnCenter>
             <CurrencyInputPanel
-              label={'Quote token'}
+              label={'Choose quote token and input price step'}
               value={formattedAmounts[Field.CURRENCY_QUOTE]}
               showMaxButton={false}
               hideBalance={true}
@@ -298,17 +310,6 @@ export default function CreateOrderBook({
               id="create-order-book-quote-token-price-step"
               showCommonBases
             />
-            {currencies[Field.CURRENCY_BASE] && currencies[Field.CURRENCY_QUOTE] && pairState !== PairState.INVALID && (
-              <>
-                <GreyCard padding="0px" borderRadius={'20px'}>
-                  <RowBetween padding="1rem">
-                    <TYPE.subHeader fontWeight={500} fontSize={14}>
-                      {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
-                    </TYPE.subHeader>
-                  </RowBetween>{' '}
-                </GreyCard>
-              </>
-            )}
 
             {!account ? (
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
@@ -322,7 +323,7 @@ export default function CreateOrderBook({
                   error={!isValid && !!priceStepAmount && !!minAmountAmount}
                 >
                   <Text fontSize={20} fontWeight={500}>
-                    {error ?? 'Supply'}
+                    {error ?? (!orderBook ? 'Create' : 'Update')}
                   </Text>
                 </ButtonError>
               </AutoColumn>
@@ -330,12 +331,9 @@ export default function CreateOrderBook({
           </AutoColumn>
         </Wrapper>
       </AppBody>
-
-      {pair && !noLiquidity && pairState !== PairState.INVALID ? (
-        <AutoColumn style={{ minWidth: '20rem', marginTop: '1rem' }}>
-          <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
-        </AutoColumn>
-      ) : null}
+      {orderBook && (
+        <OrderBookDetailsDropdown orderBook={orderBook ?? undefined} wrappedCurrencies={wrappedCurrencies} />
+      )}
     </>
   )
 }
