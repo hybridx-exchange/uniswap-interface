@@ -111,7 +111,7 @@ export function useOrderBookActionHandlers(
           field: Field.CURRENCY_BASE,
           typedValue,
           noLiquidity: noLiquidity === true,
-          orderBookExist: orderBookExist === true
+          orderBookExist: orderBookExist === false
         })
       )
     },
@@ -124,7 +124,7 @@ export function useOrderBookActionHandlers(
           field: Field.CURRENCY_QUOTE,
           typedValue,
           noLiquidity: noLiquidity === true,
-          orderBookExist: orderBookExist === true
+          orderBookExist: orderBookExist === false
         })
       )
     },
