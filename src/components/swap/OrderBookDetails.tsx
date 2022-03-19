@@ -1,11 +1,13 @@
-import { OrderBook } from '@hybridx-exchange/uniswap-sdk'
+import { Token, OrderBook } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
-import { TYPE } from '../../theme'
+import { StyledInternalLink, TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import { SectionBreak } from './styleds'
+import { Text } from 'rebass'
+import { Field } from '../../state/swap/actions'
 
 function OrderBookSummary({ orderBook }: { orderBook: OrderBook }) {
   const theme = useContext(ThemeContext)
@@ -58,9 +60,10 @@ function OrderBookSummary({ orderBook }: { orderBook: OrderBook }) {
 
 export interface OrderBookDetailsProps {
   orderBook?: OrderBook
+  wrappedCurrencies: { [field in Field]?: Token }
 }
 
-export function OrderBookDetails({ orderBook }: OrderBookDetailsProps) {
+export function OrderBookDetails({ orderBook, wrappedCurrencies }: OrderBookDetailsProps) {
   const theme = useContext(ThemeContext)
 
   const showPrice = Boolean(orderBook && orderBook.curPrice)
@@ -87,6 +90,21 @@ export function OrderBookDetails({ orderBook }: OrderBookDetailsProps) {
             </>
           )}
         </>
+      )}
+      {!orderBook && wrappedCurrencies[Field.INPUT]?.address !== wrappedCurrencies[Field.OUTPUT]?.address && (
+        <div>
+          <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+            {'Want to use limit orders?'}{' '}
+            <StyledInternalLink
+              id="create-order-book"
+              to={
+                '/orderbook/' + wrappedCurrencies[Field.INPUT]?.address + '/' + wrappedCurrencies[Field.OUTPUT]?.address
+              }
+            >
+              {'Create order book for this pair.'}
+            </StyledInternalLink>
+          </Text>
+        </div>
       )}
     </AutoColumn>
   )

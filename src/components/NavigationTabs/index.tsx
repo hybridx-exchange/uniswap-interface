@@ -99,3 +99,23 @@ export function AddRemoveTabs({ adding }: { adding: boolean }) {
     </Tabs>
   )
 }
+
+export function CreateEditTabs({ creating }: { creating: boolean }) {
+  return (
+    <Tabs>
+      <RowBetween style={{ padding: '1rem' }}>
+        <HistoryLink to="/trade">
+          <StyledArrowLeft />
+        </HistoryLink>
+        <ActiveText>{creating ? 'Create' : 'Edit'} OrderBook</ActiveText>
+        <QuestionHelper
+          text={
+            creating
+              ? 'When a token pair exists, you can create an order book for that token pair to support limit orders.'
+              : 'Order book parameters can only be modified if there is no order in the current order book.'
+          }
+        />
+      </RowBetween>
+    </Tabs>
+  )
+}

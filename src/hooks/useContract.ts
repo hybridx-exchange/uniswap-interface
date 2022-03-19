@@ -2,6 +2,7 @@ import { Contract } from '@ethersproject/contracts'
 import { ChainId, WETH } from '@hybridx-exchange/uniswap-sdk'
 import { abi as IUniswapV2PairABI } from '@hybridx-exchange/v2-core/build/IUniswapV2Pair.json'
 import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
+import { abi as IOrderBookFactoryABI } from '@hybridx-exchange/orderbook-core/build/IOrderBookFactory.json'
 import { useMemo } from 'react'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
@@ -13,6 +14,7 @@ import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/build/IUniswapV2Router02.json'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
+import { ORDER_BOOK_FACTORY_ADDRESS } from '@hybridx-exchange/uniswap-sdk'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -70,6 +72,10 @@ export function useRouterContract(routerAddress?: string, withSignerIfPossible?:
 
 export function useOrderBookContract(orderBookAddress: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(orderBookAddress, IOrderBookABI, withSignerIfPossible)
+}
+
+export function useOrderBookFactoryContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(ORDER_BOOK_FACTORY_ADDRESS, IOrderBookFactoryABI, withSignerIfPossible)
 }
 
 export function useMulticallContract(): Contract | null {

@@ -280,11 +280,12 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
   const { chainId } = useActiveWeb3React()
   const tokenIn = wrappedCurrency(currencyIn, chainId)
   const tokenOut = wrappedCurrency(currencyOut, chainId)
-  const orderBookAddress = tokenIn && tokenOut ? OrderBook.getAddress(tokenIn, tokenOut) : ''
+  const orderBookAddress =
+    tokenIn && tokenOut && tokenIn.address !== tokenOut.address ? OrderBook.getAddress(tokenIn, tokenOut) : ''
   const orderBookInterface = new Interface(IOrderBookABI)
   const results = useMultipleContractMultipleData(
     [
-      tokenIn && tokenOut ? HYBRIDX_ROUTER_ADDRESS : '',
+      tokenIn && tokenOut && tokenIn.address !== tokenOut.address ? HYBRIDX_ROUTER_ADDRESS : '',
       orderBookAddress,
       orderBookAddress,
       orderBookAddress,

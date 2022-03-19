@@ -43,6 +43,7 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
+import { wrappedCurrency } from '../../utils/wrappedCurrency'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -77,12 +78,24 @@ export default function Swap() {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { v2Trade, orderBook, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const {
+    v2Trade,
+    orderBook,
+    currencyBalances,
+    parsedAmount,
+    currencies,
+    inputError: swapInputError
+  } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
     typedValue
   )
+  const { chainId } = useActiveWeb3React()
+  const wrappedCurrencies: { [field in Field]?: Token | undefined } = {
+    [Field.INPUT]: wrappedCurrency(currencies[Field.INPUT], chainId),
+    [Field.OUTPUT]: wrappedCurrency(currencies[Field.OUTPUT], chainId)
+  }
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
   const trade = showWrap ? undefined : v2Trade
@@ -447,7 +460,7 @@ export default function Swap() {
         </Wrapper>
       </AppBody>
       <AdvancedSwapDetailsDropdown trade={trade} />
-      <OrderBookDetailsDropdown orderBook={orderBook} />
+      <OrderBookDetailsDropdown orderBook={orderBook} wrappedCurrencies={wrappedCurrencies} />
     </>
   )
 }
