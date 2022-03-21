@@ -9,6 +9,7 @@ import { AppDispatch, AppState } from '../index'
 import { tryParseAmount } from '../swap/hooks'
 import { Field, orderBookTypeInput } from './actions'
 import { useOrderBook } from '../../hooks/Trades'
+import { useCurrencyBalances } from '../wallet/hooks'
 
 const ZERO = JSBI.BigInt(0)
 
@@ -21,6 +22,7 @@ export function useDerivedOrderBookInfo(
   currencyQuote: Currency | undefined
 ): {
   currencies: { [field in Field]?: Currency }
+  currencyBalances: { [field in Field]?: CurrencyAmount }
   pair?: Pair | null
   pairState: PairState
   orderBook?: OrderBook | null
@@ -49,6 +51,16 @@ export function useDerivedOrderBookInfo(
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS || Boolean(totalSupply && JSBI.equal(totalSupply.raw, ZERO))
 
+  const balances = useCurrencyBalances(account ?? undefined, [
+    currencyBase ?? undefined,
+    currencyQuote ?? undefined
+  ])
+
+  const currencyBalances: { [field in Field]?: CurrencyAmount } = {
+    [Field.CURRENCY_BASE]: balances[0],
+    [Field.CURRENCY_QUOTE]: balances[1]
+  }
+
   // amounts
   const priceStepAmount: CurrencyAmount | undefined = tryParseAmount(priceStepValue, currencies[Field.CURRENCY_QUOTE])
   const minAmountAmount: CurrencyAmount | undefined = tryParseAmount(minAmountValue, currencies[Field.CURRENCY_BASE])
@@ -71,12 +83,12 @@ export function useDerivedOrderBookInfo(
     error = error ?? 'Create pair first'
   }
 
-  if (!orderBook && !priceStepAmount) {
-    error = error ?? 'Enter price step for order book'
+  if (!orderBook && !minAmountAmount) {
+    error = error ?? 'Enter minimum amount'
   }
 
-  if (!orderBook && !minAmountAmount) {
-    error = error ?? 'Enter minimum amount for order'
+  if (!orderBook && !priceStepAmount) {
+    error = error ?? 'Enter price step'
   }
 
   if (orderBook && !priceStepAmount && !minAmountAmount) {
@@ -85,6 +97,7 @@ export function useDerivedOrderBookInfo(
 
   return {
     currencies,
+    currencyBalances,
     pair,
     pairState,
     orderBook,

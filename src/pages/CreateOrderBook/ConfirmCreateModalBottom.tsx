@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Fraction } from '@hybridx-exchange/uniswap-sdk'
+import { BigintIsh, Currency, CurrencyAmount, Price } from '@hybridx-exchange/uniswap-sdk'
 import React from 'react'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'
@@ -8,58 +8,77 @@ import { Field } from '../../state/orderBook/actions'
 import { TYPE } from '../../theme'
 
 export function ConfirmCreateModalBottom({
-  noLiquidity,
-  price,
   currencies,
+  currencyBalances,
   priceStepAmount,
   minAmountAmount,
   onAdd
 }: {
-  noLiquidity?: boolean
-  price?: Fraction
   currencies: { [field in Field]?: Currency }
+  currencyBalances: { [field in Field]?: CurrencyAmount }
   priceStepAmount: CurrencyAmount | undefined
   minAmountAmount: CurrencyAmount | undefined
   onAdd: () => void
 }) {
+  const LPPrice =
+    currencies[Field.CURRENCY_BASE] &&
+    currencies[Field.CURRENCY_QUOTE] &&
+    currencyBalances[Field.CURRENCY_BASE] &&
+    currencyBalances[Field.CURRENCY_QUOTE]
+      ? new Price(
+          currencies[Field.CURRENCY_BASE] as Currency,
+          currencies[Field.CURRENCY_QUOTE] as Currency,
+          currencyBalances[Field.CURRENCY_BASE]?.raw as BigintIsh,
+          currencyBalances[Field.CURRENCY_QUOTE]?.raw as BigintIsh
+        )
+      : undefined
   return (
     <>
       <RowBetween>
-        <TYPE.body>{currencies[Field.CURRENCY_BASE]?.symbol} Deposited</TYPE.body>
+        <TYPE.body>Base token</TYPE.body>
         <RowFixed>
+          <label>{currencies[Field.CURRENCY_BASE]?.symbol}</label>
           <CurrencyLogo currency={currencies[Field.CURRENCY_BASE]} style={{ marginRight: '8px' }} />
-          <TYPE.body>{minAmountAmount?.toSignificant(6)}</TYPE.body>
         </RowFixed>
       </RowBetween>
       <RowBetween>
-        <TYPE.body>{currencies[Field.CURRENCY_QUOTE]?.symbol} Deposited</TYPE.body>
+        <TYPE.body>Quote token</TYPE.body>
         <RowFixed>
+          <label>{currencies[Field.CURRENCY_QUOTE]?.symbol}</label>
           <CurrencyLogo currency={currencies[Field.CURRENCY_QUOTE]} style={{ marginRight: '8px' }} />
-          <TYPE.body>{priceStepAmount?.toSignificant(6)}</TYPE.body>
         </RowFixed>
       </RowBetween>
       <RowBetween>
-        <TYPE.body>Rates</TYPE.body>
+        <TYPE.body>Price step</TYPE.body>
         <TYPE.body>
-          {`1 ${currencies[Field.CURRENCY_BASE]?.symbol} = ${price?.toSignificant(4)} ${
-            currencies[Field.CURRENCY_QUOTE]?.symbol
-          }`}
+          {priceStepAmount?.toSignificant(4)} {currencies[Field.CURRENCY_QUOTE]?.symbol}
         </TYPE.body>
       </RowBetween>
-      <RowBetween style={{ justifyContent: 'flex-end' }}>
+      <RowBetween>
+        <TYPE.body>Minimum amount</TYPE.body>
         <TYPE.body>
-          {`1 ${currencies[Field.CURRENCY_QUOTE]?.symbol} = ${price?.invert().toSignificant(4)} ${
+          {minAmountAmount?.toSignificant(4)} {currencies[Field.CURRENCY_BASE]?.symbol}
+        </TYPE.body>
+      </RowBetween>
+      <RowBetween>
+        <TYPE.body>Pool reserves</TYPE.body>
+        <TYPE.body>
+          {`${currencyBalances[Field.CURRENCY_BASE]?.toSignificant(4)} ${
+            currencies[Field.CURRENCY_BASE]?.symbol
+          } / ${currencyBalances[Field.CURRENCY_QUOTE]?.toSignificant(4)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`}
+        </TYPE.body>
+      </RowBetween>
+      <RowBetween>
+        <TYPE.body>Pool price</TYPE.body>
+        <TYPE.body>
+          {`1 ${currencies[Field.CURRENCY_QUOTE]?.symbol} = ${LPPrice?.toSignificant(4)} ${
             currencies[Field.CURRENCY_BASE]?.symbol
           }`}
         </TYPE.body>
       </RowBetween>
-      <RowBetween>
-        <TYPE.body>Share of Pool:</TYPE.body>
-        <TYPE.body>{noLiquidity ? '100' : '200'}%</TYPE.body>
-      </RowBetween>
       <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onAdd}>
         <Text fontWeight={500} fontSize={20}>
-          {noLiquidity ? 'Create Pool & Supply' : 'Confirm Supply'}
+          {'Confirm Create'}
         </Text>
       </ButtonPrimary>
     </>

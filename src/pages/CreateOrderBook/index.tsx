@@ -51,6 +51,7 @@ export default function CreateOrderBook({
   const { priceStepValue, minAmountValue } = useOrderBookState()
   const {
     currencies,
+    currencyBalances,
     pair,
     pairState,
     orderBook,
@@ -59,7 +60,8 @@ export default function CreateOrderBook({
     noLiquidity,
     error
   } = useDerivedOrderBookInfo(currencyBase ?? undefined, currencyQuote ?? undefined)
-  const { onFieldBaseInput, onFieldQuoteInput } = useOrderBookActionHandlers(noLiquidity, orderBook !== null)
+  const orderBookExist = orderBook != null
+  const { onFieldBaseInput, onFieldQuoteInput } = useOrderBookActionHandlers(noLiquidity, orderBookExist)
 
   const isValid = !error && pair && pairState === PairState.EXISTS
 
@@ -143,7 +145,7 @@ export default function CreateOrderBook({
   }
 
   const modalHeader = () => {
-    return noLiquidity || orderBook ? (
+    return !orderBookExist ? (
       <AutoColumn gap="20px">
         <LightCard mt="20px" borderRadius="20px">
           <RowFlat>
@@ -186,9 +188,8 @@ export default function CreateOrderBook({
   const modalBottom = () => {
     return (
       <ConfirmCreateModalBottom
-        price={orderBook?.curPrice.multiply('1')}
         currencies={currencies}
-        noLiquidity={noLiquidity}
+        currencyBalances={currencyBalances}
         priceStepAmount={priceStepAmount}
         minAmountAmount={minAmountAmount}
         onAdd={onAdd}
@@ -196,9 +197,9 @@ export default function CreateOrderBook({
     )
   }
 
-  const pendingText = `Supplying ${minAmountAmount?.toSignificant(6)} ${
+  const pendingText = `Creating order book with minimum amount ${minAmountAmount?.toSignificant(6)} ${
     currencies[Field.CURRENCY_BASE]?.symbol
-  } and ${priceStepAmount?.toSignificant(6)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
+  } and price step ${priceStepAmount?.toSignificant(6)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
 
   const handleCurrencyBaseSelect = useCallback(
     (currencyBase: Currency) => {
@@ -239,7 +240,7 @@ export default function CreateOrderBook({
   return (
     <>
       <AppBody>
-        <CreateEditTabs creating={!orderBook} />
+        <CreateEditTabs creating={!orderBookExist} />
         <Wrapper>
           <TransactionConfirmationModal
             isOpen={showConfirm}
@@ -248,7 +249,7 @@ export default function CreateOrderBook({
             hash={txHash}
             content={() => (
               <ConfirmationModalContent
-                title={noLiquidity ? 'You are creating a pool' : 'You will receive'}
+                title={!orderBookExist ? 'You are creating a order book' : 'You are editing the order book'}
                 onDismiss={handleDismissConfirmation}
                 topContent={modalHeader}
                 bottomContent={modalBottom}
@@ -323,7 +324,7 @@ export default function CreateOrderBook({
                   error={!isValid && !!priceStepAmount && !!minAmountAmount}
                 >
                   <Text fontSize={20} fontWeight={500}>
-                    {error ?? (!orderBook ? 'Create' : 'Update')}
+                    {error ?? (!orderBookExist ? 'Create' : 'Update')}
                   </Text>
                 </ButtonError>
               </AutoColumn>
