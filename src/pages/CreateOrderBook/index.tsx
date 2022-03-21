@@ -100,8 +100,7 @@ export default function CreateOrderBook({
         wrappedCurrencyBase?.address ?? '',
         wrappedCurrencyQuote?.address ?? '',
         priceStepAmount?.raw.toString() ?? '0',
-        minAmountAmount?.raw.toString() ?? '0',
-        account
+        minAmountAmount?.raw.toString() ?? '0'
       ]
     }
 
@@ -109,7 +108,6 @@ export default function CreateOrderBook({
     await estimate(...args, {})
       .then(estimatedGasLimit =>
         method(...args, {
-          ...{},
           gasLimit: calculateGasMargin(estimatedGasLimit)
         }).then(response => {
           setAttemptingTxn(false)
