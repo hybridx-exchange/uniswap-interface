@@ -26,7 +26,7 @@ export function RedirectDuplicateTokenIdsForCreateOrderBook(
     }
   } = props
   if (currencyIdBase.toLowerCase() === currencyIdQuote.toLowerCase()) {
-    return <Redirect to={`/add/${currencyIdBase}`} />
+    return <Redirect to={`/orderbook/${currencyIdBase}`} />
   }
   return <CreateOrderBook {...props} />
 }
