@@ -350,14 +350,14 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
       const buyOrders: Order[] = []
       for (let i = 0; i < buyPrices.length; i++) {
         const buyPrice = wrappedCurrencyAmount(new TokenAmount(quoteToken, buyPrices[i]), quoteToken.chainId)
-        const buyAmount = wrappedCurrencyAmount(new TokenAmount(baseToken, buyAmounts[i]), baseToken.chainId)
+        const buyAmount = wrappedCurrencyAmount(new TokenAmount(quoteToken, buyAmounts[i]), quoteToken.chainId)
         if (buyPrice && buyAmount) buyOrders.push(new Order(buyPrice, buyAmount))
       }
 
       const sellOrders: Order[] = []
       for (let i = 0; i < sellPrices.length; i++) {
         const sellPrice = wrappedCurrencyAmount(new TokenAmount(quoteToken, sellPrices[i]), quoteToken.chainId)
-        const sellAmount = wrappedCurrencyAmount(new TokenAmount(quoteToken, sellAmounts[i]), quoteToken.chainId)
+        const sellAmount = wrappedCurrencyAmount(new TokenAmount(baseToken, sellAmounts[i]), baseToken.chainId)
         if (sellPrice && sellAmount) sellOrders.push(new Order(sellPrice, sellAmount))
       }
 

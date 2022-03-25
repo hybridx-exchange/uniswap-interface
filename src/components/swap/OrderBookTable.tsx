@@ -4,7 +4,6 @@ import styled, { ThemeContext } from 'styled-components'
 import { RowBetween, RowFixed } from '../Row'
 import { TYPE } from '../../theme'
 import QuestionHelper from '../QuestionHelper'
-import { AutoColumn } from '../Column'
 
 const Wrapper = styled.div<{ show: boolean }>`
   position: relative;
@@ -45,7 +44,7 @@ const Right = styled.div`
 `
 
 const Table = styled.table`
-  font-size: 16px;
+  font-size: 14px;
   width: 100%;
 `
 
@@ -72,67 +71,76 @@ interface OrderBookTableProps {
 
 export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
   const show = Boolean(orderBook)
-  const buyData = orderBook?.buyOrders ?? [],
-    sellData = orderBook?.sellOrders ?? []
-
+  const buyData = orderBook?.buyOrders ?? []
+  const sellData = orderBook?.sellOrders ?? []
+  console.log(buyData, sellData)
   const buyOrdersLength = buyData.length
   const sellOrdersLength = sellData.length
+  const quoteSymbol = orderBook?.quoteToken.currency.symbol ?? ''
+  const baseSymbol = orderBook?.baseToken.currency.symbol ?? ''
+  const minLen = buyOrdersLength > sellOrdersLength ? sellOrdersLength : buyOrdersLength
+  const maxLen = buyOrdersLength > sellOrdersLength ? buyOrdersLength : sellOrdersLength
   const tb: any[] = []
-  const symbol = orderBook?.quoteToken.currency.symbol ?? ''
-  console.log('symbol', symbol)
-  let row: string[] = []
-  if (buyOrdersLength > 0) {
-    buyData.forEach((v, i) => {
-      row = []
-      row[0] = v?.amount ? v.amount.toSignificant(4) + ' ' + v?.amount?.currency.symbol : ''
-      row[1] = v?.price ? v.price.toSignificant(4) + ' ' + v?.price?.currency.symbol : ''
+  let row: string[]
+  let i
+  for (i = 0; i < minLen; i++) {
+    row = []
+    row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) + ' ' + buyData[i]?.amount?.currency.symbol : ''
+    row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) + ' ' + buyData[i]?.price?.currency.symbol : ''
+    row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) + ' ' + sellData[i]?.price.currency.symbol : ''
+    row[3] = sellData[i]?.amount ? sellData[i].amount.toSignificant(4) + ' ' + sellData[i]?.amount.currency.symbol : ''
+    tb[i] = row
+  }
+
+  for (; i < maxLen; i++) {
+    row = ['', '', '', '']
+    if (maxLen === buyOrdersLength) {
+      row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) + ' ' + buyData[i]?.amount?.currency.symbol : ''
+      row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) + ' ' + buyData[i]?.price?.currency.symbol : ''
+    } else {
       row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) + ' ' + sellData[i]?.price.currency.symbol : ''
       row[3] = sellData[i]?.amount
         ? sellData[i].amount.toSignificant(4) + ' ' + sellData[i]?.amount.currency.symbol
         : ''
-      tb[i] = row
-    })
-  } else if (sellOrdersLength > 0) {
-    sellData.forEach((v, i) => {
-      row = []
-      row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) + ' ' + buyData[i]?.amount.currency.symbol : ''
-      row[1] = buyData[i]?.price ? buyData[i].amount.toSignificant(4) + ' ' + buyData[i]?.price.currency.symbol : ''
-      row[2] = v?.price ? v.price.toSignificant(4) + ' ' + v?.price?.currency.symbol : ''
-      row[3] = v?.amount ? v.amount.toSignificant(4) + ' ' + v?.amount?.currency.symbol : ''
-      tb[i] = row
-    })
-    console.log('tb', tb)
+    }
+
+    tb[i] = row
   }
+
   const theme = useContext(ThemeContext)
   return (
     <Wrapper show={show}>
       <RowBetween>
         <RowFixed>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            {'Current price'}
+            {'Price'}
           </TYPE.black>
-          <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+          <QuestionHelper text="The price calculated based on the liquidity pool" />
         </RowFixed>
         <RowFixed>
           <TYPE.black color={theme.text1} fontSize={14}>
-            {orderBook?.curPrice.toExact() + ' ' + symbol}
+            {orderBook?.curPrice.toExact() + ' ' + quoteSymbol}
           </TYPE.black>
         </RowFixed>
       </RowBetween>
-      <AutoColumn style={{ padding: '0 24px' }}>
+      <RowBetween>
         <RowFixed>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Reserves
           </TYPE.black>
-          <QuestionHelper text="Routing through these tokens resulted in the best price for your trade." />
+          <QuestionHelper text="Amount of base token and quote token reserved in the liquidity pool" />
         </RowFixed>
-        <TYPE.black fontSize={14} color={theme.text1}>
-          {orderBook?.baseToken.toSignificant(4)}-{orderBook?.quoteToken.toSignificant(4)}
-        </TYPE.black>
-      </AutoColumn>
+        <RowFixed>
+          <TYPE.black fontSize={14} color={theme.text1}>
+            {orderBook?.baseToken.toSignificant(4) + ' '}
+            {baseSymbol} / {orderBook?.quoteToken.toSignificant(4) + ' '}
+            {quoteSymbol}
+          </TYPE.black>
+        </RowFixed>
+      </RowBetween>
       <Title>
-        <Left>买</Left>
-        <Right>卖</Right>
+        <Left>Limit Buy</Left>
+        <Right>Limit Sell</Right>
       </Title>
       <Table>
         <Tr>

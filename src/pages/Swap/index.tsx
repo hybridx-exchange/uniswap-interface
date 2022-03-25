@@ -463,7 +463,7 @@ export default function Swap() {
         </Wrapper>
       </AppBody>
       <AdvancedSwapDetailsDropdown trade={trade} />
-      <OrderBookTable thData={['数量', '价格', '价格', '数量']} orderBook={orderBook} />
+      <OrderBookTable thData={['Amount', 'Price', 'Price', 'Amount']} orderBook={orderBook} />
     </>
   )
 }
