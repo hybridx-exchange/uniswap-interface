@@ -13,7 +13,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { AutoRow, RowBetween } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
-import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
+// import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
 import TradePrice from '../../components/swap/TradePrice'
@@ -44,6 +44,8 @@ import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
+import { OrderBookTable } from '../../components/swap/OrderBookTable'
+import OrderBookTip from '../../components/swap/OrderBookTip'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -457,10 +459,11 @@ export default function Swap() {
             {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
           </BottomGrouping>
+          <OrderBookTip orderBook={orderBook} wrappedCurrencies={wrappedCurrencies} />
         </Wrapper>
       </AppBody>
       <AdvancedSwapDetailsDropdown trade={trade} />
-      <OrderBookDetailsDropdown orderBook={orderBook} wrappedCurrencies={wrappedCurrencies} />
+      <OrderBookTable thData={['数量', '价格', '价格', '数量']} orderBook={orderBook} />
     </>
   )
 }

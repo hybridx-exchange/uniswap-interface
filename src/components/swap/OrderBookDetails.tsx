@@ -1,15 +1,15 @@
 import { Token, OrderBook } from '@hybridx-exchange/uniswap-sdk'
-import React, { useContext } from 'react'
-import { ThemeContext } from 'styled-components'
-import { StyledInternalLink, TYPE } from '../../theme'
+import React from 'react'
+// import { ThemeContext } from 'styled-components'
+import { StyledInternalLink } from '../../theme'
 import { AutoColumn } from '../Column'
-import QuestionHelper from '../QuestionHelper'
-import { RowBetween, RowFixed } from '../Row'
-import { SectionBreak } from './styleds'
+// import QuestionHelper from '../QuestionHelper'
+// import { RowBetween, RowFixed } from '../Row'
+// import { SectionBreak } from './styleds'
 import { Text } from 'rebass'
 import { Field } from '../../state/swap/actions'
 
-function OrderBookSummary({ orderBook }: { orderBook: OrderBook }) {
+/*function OrderBookSummary({ orderBook }: { orderBook: OrderBook }) {
   const theme = useContext(ThemeContext)
 
   return (
@@ -56,7 +56,7 @@ function OrderBookSummary({ orderBook }: { orderBook: OrderBook }) {
       </AutoColumn>
     </>
   )
-}
+}*/
 
 export interface OrderBookDetailsProps {
   orderBook?: OrderBook
@@ -64,10 +64,7 @@ export interface OrderBookDetailsProps {
 }
 
 export function OrderBookDetails({ orderBook, wrappedCurrencies }: OrderBookDetailsProps) {
-  const theme = useContext(ThemeContext)
-
-  const showPrice = Boolean(orderBook && orderBook.curPrice)
-
+  console.log('orderBook', orderBook)
   return (
     <AutoColumn gap="md">
       {orderBook && (
@@ -85,23 +82,6 @@ export function OrderBookDetails({ orderBook, wrappedCurrencies }: OrderBookDeta
               </StyledInternalLink>
             </Text>
           </div>
-          <OrderBookSummary orderBook={orderBook} />
-          {showPrice && (
-            <>
-              <SectionBreak />
-              <AutoColumn style={{ padding: '0 24px' }}>
-                <RowFixed>
-                  <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-                    Reserves
-                  </TYPE.black>
-                  <QuestionHelper text="Routing through these tokens resulted in the best price for your trade." />
-                </RowFixed>
-                <TYPE.black fontSize={14} color={theme.text1}>
-                  {orderBook.baseToken.toExact()}-{orderBook.quoteToken.toExact()}
-                </TYPE.black>
-              </AutoColumn>
-            </>
-          )}
         </>
       )}
       {!orderBook && wrappedCurrencies[Field.INPUT]?.address !== wrappedCurrencies[Field.OUTPUT]?.address && (
