@@ -119,7 +119,7 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
         </RowFixed>
         <RowFixed>
           <TYPE.black color={theme.text1} fontSize={14}>
-            {orderBook?.curPrice.toExact() + ' ' + quoteSymbol}
+            {'1 ' + baseSymbol + ' = ' + orderBook?.curPrice.toExact() + ' ' + quoteSymbol}
           </TYPE.black>
         </RowFixed>
       </RowBetween>
