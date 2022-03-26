@@ -73,7 +73,6 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
   const show = Boolean(orderBook)
   const buyData = orderBook?.buyOrders ?? []
   const sellData = orderBook?.sellOrders ?? []
-  console.log(buyData, sellData)
   const buyOrdersLength = buyData.length
   const sellOrdersLength = sellData.length
   const quoteSymbol = orderBook?.quoteToken.currency.symbol ?? ''
@@ -133,7 +132,7 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
         <RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
             {orderBook?.baseToken.toSignificant(4) + ' '}
-            {baseSymbol} / {orderBook?.quoteToken.toSignificant(4) + ' '}
+            {baseSymbol} + {orderBook?.quoteToken.toSignificant(4) + ' '}
             {quoteSymbol}
           </TYPE.black>
         </RowFixed>
@@ -142,22 +141,26 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
         <Left>Limit Buy</Left>
         <Right>Limit Sell</Right>
       </Title>
-      <Table>
-        <Tr>
-          {thData.map((v, i) => {
-            return <Th key={i}>{v}</Th>
-          })}
-        </Tr>
-        {tb.map((v: React.ReactNode[], i: string | number | undefined) => {
-          return (
-            <Tr key={i}>
-              {v.map((y: React.ReactNode, j: string | number | undefined) => {
-                return <Td key={j}>{y}</Td>
+      {tb.length > 0 && (
+        <Table>
+          <tbody>
+            <Tr>
+              {thData.map((v, i) => {
+                return <Th key={i}>{v}</Th>
               })}
             </Tr>
-          )
-        })}
-      </Table>
+            {tb.map((v: React.ReactNode[], i: string | number | undefined) => {
+              return (
+                <Tr key={i}>
+                  {v.map((y: React.ReactNode, j: string | number | undefined) => {
+                    return <Td key={j}>{y}</Td>
+                  })}
+                </Tr>
+              )
+            })}
+          </tbody>
+        </Table>
+      )}
     </Wrapper>
   )
 }

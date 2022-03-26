@@ -13,7 +13,6 @@ const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
 
 export default function OrderBookTip({ orderBook, wrappedCurrencies, ...rest }: OrderBookDetailsProps) {
   const lastOrderBook = useLastTruthy(orderBook)
-  console.log(wrappedCurrencies)
   const show =
     Boolean(orderBook) ||
     (wrappedCurrencies[Field.INPUT] !== undefined &&
