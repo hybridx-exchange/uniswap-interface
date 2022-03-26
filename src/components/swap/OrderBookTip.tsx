@@ -19,7 +19,6 @@ export default function OrderBookTip({ orderBook, wrappedCurrencies, ...rest }: 
     (wrappedCurrencies[Field.INPUT] !== undefined &&
       wrappedCurrencies[Field.OUTPUT] !== undefined &&
       wrappedCurrencies[Field.INPUT] !== wrappedCurrencies[Field.OUTPUT])
-  console.log('show', show)
   return (
     <OrderBookDetailsFooter show={show}>
       <OrderBookDetails
