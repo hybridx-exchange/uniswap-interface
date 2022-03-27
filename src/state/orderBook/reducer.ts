@@ -17,29 +17,20 @@ export default createReducer<OrderBookState>(initialState, builder =>
   builder
     .addCase(orderBookResetState, () => initialState)
     .addCase(orderBookTypeInput, (state, { payload: { field, typedValue, orderBookExist } }) => {
-      if (orderBookExist) {
-        // they're typing into the field they've last typed in
-        if (field === Field.CURRENCY_BASE) {
-          return {
-            ...state,
-            independentField: field,
-            minAmountValue: typedValue
-          }
-        }
-        // they're typing into a new field, store the other value
-        else {
-          return {
-            ...state,
-            independentField: field,
-            priceStepValue: typedValue
-          }
-        }
-      } else {
+      // they're typing into the field they've last typed in
+      if (field === Field.CURRENCY_BASE) {
         return {
           ...state,
           independentField: field,
-          priceStepValue: '',
-          minAmountValue: ''
+          minAmountValue: typedValue
+        }
+      }
+      // they're typing into a new field, store the other value
+      else {
+        return {
+          ...state,
+          independentField: field,
+          priceStepValue: typedValue
         }
       }
     })

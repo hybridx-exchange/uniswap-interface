@@ -23,7 +23,7 @@ import { useDerivedOrderBookInfo, useOrderBookActionHandlers, useOrderBookState 
 
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { StyledInternalLink, TYPE } from '../../theme'
-import { calculateGasMargin, getOrderBookFactoryContract } from '../../utils'
+import { calculateGasMargin, getOrderBook, getOrderBookFactoryContract } from '../../utils'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
@@ -32,6 +32,7 @@ import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
 import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
 import { Field as SwapField } from '../../state/swap/actions'
+import { parseUnits } from '@ethersproject/units'
 
 export default function CreateOrderBook({
   match: {
@@ -91,7 +92,9 @@ export default function CreateOrderBook({
       return
     }
     if (!chainId || !library || !account) return
+
     const orderBookFactory = getOrderBookFactoryContract(chainId, library, account)
+
     let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
     {
       estimate = orderBookFactory.estimateGas.createOrderBook
@@ -142,6 +145,118 @@ export default function CreateOrderBook({
       })
   }
 
+  async function onUpdate() {
+    if (!priceStepAmount || !minAmountAmount || !currencyBase || !currencyQuote) {
+      return
+    }
+    if (!chainId || !library || !account) return
+
+    const orderBookAddress = orderBook?.orderBookAddress ?? ''
+
+    const orderBook_ = getOrderBook(orderBookAddress?.toString() ?? '', library, account)
+
+    const priceStep = await orderBook_.priceStep()
+    const minAmount = await orderBook_.minAmount()
+
+    console.log(parseUnits(priceStep.toString(), currencyBase.decimals).toString())
+
+    console.log(priceStep.toString(), '  ', minAmount.toString(), ' ', priceStepAmount.toSignificant())
+
+    const priceStepAmount_ = parseUnits(priceStepAmount.toSignificant(), currencyBase.decimals).toString()
+
+    if (priceStepAmount_ != priceStep.toString()) {
+      let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
+      {
+        estimate = orderBook_.estimateGas.priceStepUpdate
+        method = orderBook_.priceStepUpdate
+        args = [priceStepAmount?.raw.toString() ?? '0']
+      }
+
+      setAttemptingTxn(true)
+      await estimate(...args, {})
+        .then(estimatedGasLimit =>
+          method(...args, {
+            gasLimit: calculateGasMargin(estimatedGasLimit)
+          }).then(response => {
+            setAttemptingTxn(false)
+
+            addTransaction(response, {
+              summary:
+                'Update ' +
+                currencies[Field.CURRENCY_BASE]?.symbol +
+                ' and ' +
+                currencies[Field.CURRENCY_QUOTE]?.symbol +
+                ' order book with price step ' +
+                priceStepAmount?.toSignificant(3)
+            })
+
+            setTxHash(response.hash)
+
+            ReactGA.event({
+              category: 'OrderBook',
+              action: 'Update',
+              label: [currencies[Field.CURRENCY_BASE]?.symbol, currencies[Field.CURRENCY_QUOTE]?.symbol].join('/')
+            })
+          })
+        )
+        .catch(error => {
+          setAttemptingTxn(false)
+          // we only care if the error is something _other_ than the user rejected the tx
+          if (error?.code !== 4001) {
+            console.error(error)
+          }
+        })
+    }
+
+    const minAmountAmount_ = parseUnits(minAmountAmount.toSignificant(), currencyBase.decimals).toString()
+
+    if (minAmountAmount_ != minAmount.toString()) {
+      let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
+      {
+        estimate = orderBook_.estimateGas.minAmountUpdate
+        method = orderBook_.minAmountUpdate
+        args = [minAmountAmount?.raw.toString() ?? '0']
+      }
+
+      setAttemptingTxn(true)
+      await estimate(...args, {})
+        .then(estimatedGasLimit =>
+          method(...args, {
+            gasLimit: calculateGasMargin(estimatedGasLimit)
+          }).then(response => {
+            setAttemptingTxn(false)
+
+            addTransaction(response, {
+              summary:
+                'Update ' +
+                currencies[Field.CURRENCY_BASE]?.symbol +
+                ' and ' +
+                currencies[Field.CURRENCY_QUOTE]?.symbol +
+                ' order book with min amount ' +
+                minAmountAmount?.toSignificant(3)
+            })
+
+            setTxHash(response.hash)
+
+            ReactGA.event({
+              category: 'OrderBook',
+              action: 'Update',
+              label: [currencies[Field.CURRENCY_BASE]?.symbol, currencies[Field.CURRENCY_QUOTE]?.symbol].join('/')
+            })
+          })
+        )
+        .catch(error => {
+          setAttemptingTxn(false)
+          // we only care if the error is something _other_ than the user rejected the tx
+          if (error?.code !== 4001) {
+            console.error(error)
+          }
+        })
+    }
+
+    setAttemptingTxn(true)
+  }
+
   const modalHeader = () => {
     return !orderBookExist ? (
       <AutoColumn gap="20px">
@@ -190,7 +305,8 @@ export default function CreateOrderBook({
         currencyBalances={currencyBalances}
         priceStepAmount={priceStepAmount}
         minAmountAmount={minAmountAmount}
-        onAdd={onAdd}
+        orderBookExist={orderBookExist}
+        onAdd={!orderBookExist ? onAdd : onUpdate}
       />
     )
   }

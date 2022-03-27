@@ -50,6 +50,27 @@ export function OrderBookDetails({ orderBook, wrappedCurrencies }: OrderBookDeta
           </div>
         </>
       )}
+      {orderBook &&
+        orderBook.buyOrders.length == 0 &&
+        orderBook.sellOrders.length == 0 &&
+        wrappedCurrencies[Field.INPUT]?.address !== wrappedCurrencies[Field.OUTPUT]?.address && (
+          <div>
+            <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+              {'Want to use limit orders?'}{' '}
+              <StyledInternalLink
+                id="create-order-book"
+                to={
+                  '/orderbook/' +
+                  wrappedCurrencies[Field.INPUT]?.address +
+                  '/' +
+                  wrappedCurrencies[Field.OUTPUT]?.address
+                }
+              >
+                {'edit order book for this pair.'}
+              </StyledInternalLink>
+            </Text>
+          </div>
+        )}
     </AutoColumn>
   )
 }
