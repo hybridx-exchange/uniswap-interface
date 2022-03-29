@@ -1,16 +1,16 @@
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, Token } from '@hybridx-exchange/uniswap-sdk'
-import React, { useCallback, useContext, useState } from 'react'
-import { Plus } from 'react-feather'
+import React, { useCallback, useState } from 'react'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { ButtonError, ButtonLight } from '../../components/Button'
 import { BlueCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { CreateEditTabs } from '../../components/NavigationTabs'
 import Row, { RowFlat } from '../../components/Row'
@@ -34,6 +34,11 @@ import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDrop
 import { Field as SwapField } from '../../state/swap/actions'
 import { parseUnits } from '@ethersproject/units'
 
+const CurrencyInputDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 export default function CreateOrderBook({
   match: {
     params: { currencyIdBase, currencyIdQuote }
@@ -41,7 +46,6 @@ export default function CreateOrderBook({
   history
 }: RouteComponentProps<{ currencyIdBase?: string; currencyIdQuote?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
-  const theme = useContext(ThemeContext)
 
   const currencyBase = useCurrency(currencyIdBase)
   const currencyQuote = useCurrency(currencyIdQuote)
@@ -311,9 +315,11 @@ export default function CreateOrderBook({
     )
   }
 
-  const pendingText = `Creating order book with minimum amount ${minAmountAmount?.toSignificant(6)} ${
-    currencies[Field.CURRENCY_BASE]?.symbol
-  } and price step ${priceStepAmount?.toSignificant(6)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
+  const pendingText =
+    (!orderBookExist ? 'Create' : 'Update') +
+    ` order book with minimum amount ${minAmountAmount?.toSignificant(6)} ${
+      currencies[Field.CURRENCY_BASE]?.symbol
+    } and price step ${priceStepAmount?.toSignificant(6)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
 
   const handleCurrencyBaseSelect = useCallback(
     (currencyBase: Currency) => {
@@ -400,32 +406,55 @@ export default function CreateOrderBook({
                 </BlueCard>
               </ColumnCenter>
             )}
+
+            <CurrencyInputDiv>
+              <CurrencySelectPanel
+                label={'Choose base token'}
+                value={formattedAmounts[Field.CURRENCY_BASE]}
+                showMaxButton={false}
+                hideBalance={true}
+                onUserInput={onFieldBaseInput}
+                onCurrencySelect={handleCurrencyBaseSelect}
+                currency={currencies[Field.CURRENCY_BASE]}
+                id="create-order-book-base-token"
+                showCommonBases
+              />
+              <CurrencySelectPanel
+                label={'Choose quote token'}
+                value={formattedAmounts[Field.CURRENCY_QUOTE]}
+                showMaxButton={false}
+                hideBalance={true}
+                onUserInput={onFieldQuoteInput}
+                onCurrencySelect={handleCurrencyQuoteSelect}
+                currency={currencies[Field.CURRENCY_QUOTE]}
+                id="create-order-book-quote-token"
+                showCommonBases
+              />
+            </CurrencyInputDiv>
             <CurrencyInputPanel
-              label={'Choose base token and input minimum amount'}
+              label={'input minimum amount'}
               value={formattedAmounts[Field.CURRENCY_BASE]}
               showMaxButton={false}
               hideBalance={true}
               onUserInput={onFieldBaseInput}
               onCurrencySelect={handleCurrencyBaseSelect}
               currency={currencies[Field.CURRENCY_BASE]}
-              id="create-order-book-base-token-input-min-amount"
+              isOrderBook={true}
+              id="create-order-book-base-token"
               showCommonBases
             />
-            <ColumnCenter>
-              <Plus size="16" color={theme.text2} />
-            </ColumnCenter>
             <CurrencyInputPanel
-              label={'Choose quote token and input price step'}
+              label={'input price step'}
               value={formattedAmounts[Field.CURRENCY_QUOTE]}
               showMaxButton={false}
               hideBalance={true}
               onUserInput={onFieldQuoteInput}
               onCurrencySelect={handleCurrencyQuoteSelect}
               currency={currencies[Field.CURRENCY_QUOTE]}
-              id="create-order-book-quote-token-price-step"
+              isOrderBook={true}
+              id="create-order-book-quote-token"
               showCommonBases
             />
-
             {!account ? (
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
             ) : (
