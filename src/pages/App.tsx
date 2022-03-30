@@ -17,11 +17,11 @@ import {
   RedirectDuplicateTokenIdsForCreateOrderBook,
   RedirectOldCreateOrderBookPathStructure
 } from './CreateOrderBook/redirects'
-import Pool from './Pool'
+import DoPool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
-import Swap from './Swap'
+import DoSwap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 
 const AppWrapper = styled.div`
@@ -73,11 +73,11 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/swap" component={Swap} />
+                <Route exact strict path="/swap" component={DoSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                 <Route exact strict path="/find" component={PoolFinder} />
-                <Route exact strict path="/pool" component={Pool} />
+                <Route exact strict path="/pool" component={DoPool} />
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />
                 <Route exact path="/orderbook" component={CreateOrderBook} />

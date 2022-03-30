@@ -1,13 +1,15 @@
 import {
-  Route,
   Currency,
   CurrencyAmount,
-  Pair,
-  Token,
-  Trade,
-  TradeType,
+  Order,
   OrderBook,
-  TokenAmount
+  Pair,
+  Route,
+  Token,
+  TokenAmount,
+  Swap,
+  TradeRet,
+  SwapType
 } from '@hybridx-exchange/uniswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
@@ -15,9 +17,9 @@ import { useMemo } from 'react'
 import {
   BASES_TO_CHECK_TRADES_AGAINST,
   CUSTOM_BASES,
-  ROUTER_ADDRESS,
-  HYBRIDX_ROUTER_ADDRESS,
   DEFAULT_LIMIT_SIZE,
+  HYBRIDX_ROUTER_ADDRESS,
+  ROUTER_ADDRESS,
   ZERO_ADDRESS
 } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
@@ -29,7 +31,9 @@ import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/bui
 import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
 import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
 import { Interface } from '@ethersproject/abi'
-import { Order } from '@hybridx-exchange/uniswap-sdk'
+import { Type } from '../state/trade/actions'
+import { ZERO } from '@hybridx-exchange/uniswap-sdk/dist/constants'
+
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
 
@@ -107,15 +111,15 @@ export function useGetBestOutputAmount(
   currencyAmountIn?: CurrencyAmount,
   currencyOut?: Currency,
   allPairs?: Pair[],
-  allTrades?: Trade[] | null
-): { loading: boolean; bestTrade: Trade | null } {
-  const paths = allTrades?.map(trade => {
+  allSwaps?: Swap[] | null
+): { loading: boolean; bestSwap: Swap | null } {
+  const paths = allSwaps?.map(trade => {
     return trade.route.path.map(token => {
       return token.address
     })
   })
 
-  const lens = allTrades?.map(trade => {
+  const lens = allSwaps?.map(trade => {
     return trade.route.path.length
   })
 
@@ -138,7 +142,7 @@ export function useGetBestOutputAmount(
     })
 
     if (!returns || returns.length === 0 || returns[0].loading) {
-      return { loading: true, bestTrade: null }
+      return { loading: true, bestSwap: null }
     }
 
     const data = returns[0].data
@@ -157,19 +161,19 @@ export function useGetBestOutputAmount(
       }
     }
 
-    if (!currencyAmountIn || !currencyOut || !allPairs || !allTrades) {
-      return { loading: true, bestTrade: null }
+    if (!currencyAmountIn || !currencyOut || !allPairs || !allSwaps) {
+      return { loading: true, bestSwap: null }
     } else {
       return {
         loading: false,
-        bestTrade: new Trade(
+        bestSwap: new Swap(
           new Route(pairs, amounts, nextReserves, currencyAmountIn.currency, currencyOut),
           currencyAmountIn,
-          TradeType.EXACT_INPUT
+          SwapType.EXACT_INPUT
         )
       }
     }
-  }, [allPairs, allTrades, currencyAmountIn, currencyOut, results])
+  }, [allPairs, allSwaps, currencyAmountIn, currencyOut, results])
 }
 
 /**
@@ -179,15 +183,15 @@ export function useGetBestInputAmount(
   currencyIn?: Currency,
   currencyAmountOut?: CurrencyAmount,
   allPairs?: Pair[],
-  allTrades?: Trade[] | null
-): { loading: boolean; bestTrade: Trade | null } {
-  const paths = allTrades?.map(trade => {
+  allSwaps?: Swap[] | null
+): { loading: boolean; bestSwap: Swap | null } {
+  const paths = allSwaps?.map(trade => {
     return trade.route.path.map(token => {
       return token.address
     })
   })
 
-  const lens = allTrades?.map(trade => {
+  const lens = allSwaps?.map(trade => {
     return trade.route.path.length
   })
 
@@ -210,7 +214,7 @@ export function useGetBestInputAmount(
     })
 
     if (!returns || returns.length === 0 || returns[0].loading) {
-      return { loading: true, bestTrade: null }
+      return { loading: true, bestSwap: null }
     }
 
     const data = returns[0].data
@@ -229,48 +233,48 @@ export function useGetBestInputAmount(
       }
     }
 
-    if (!currencyAmountOut || !currencyIn || !allPairs || !allTrades) {
-      return { loading: true, bestTrade: null }
+    if (!currencyAmountOut || !currencyIn || !allPairs || !allSwaps) {
+      return { loading: true, bestSwap: null }
     } else {
       return {
         loading: false,
-        bestTrade: new Trade(
+        bestSwap: new Swap(
           new Route(pairs, amounts, nextReserves, currencyIn, currencyAmountOut.currency),
           currencyAmountOut,
-          TradeType.EXACT_OUTPUT
+          SwapType.EXACT_OUTPUT
         )
       }
     }
-  }, [allPairs, allTrades, currencyAmountOut, currencyIn, results])
+  }, [allPairs, allSwaps, currencyAmountOut, currencyIn, results])
 }
 
 /**
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
+export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Swap | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
-  const allTrade = useMemo(() => {
+  const allSwap = useMemo(() => {
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
-      return Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })
+      return Swap.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })
     }
     return null
   }, [allowedPairs, currencyAmountIn, currencyOut])
 
-  return useGetBestOutputAmount(currencyAmountIn, currencyOut, allowedPairs, allTrade).bestTrade
+  return useGetBestOutputAmount(currencyAmountIn, currencyOut, allowedPairs, allSwap).bestSwap
 }
 
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
-export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
+export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Swap | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
-  const allTrade = useMemo(() => {
+  const allSwap = useMemo(() => {
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
-      return Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })
+      return Swap.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })
     }
     return null
   }, [allowedPairs, currencyIn, currencyAmountOut])
-  return useGetBestInputAmount(currencyIn, currencyAmountOut, allowedPairs, allTrade).bestTrade
+  return useGetBestInputAmount(currencyIn, currencyAmountOut, allowedPairs, allSwap).bestSwap
 }
 
 /**
@@ -368,4 +372,98 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
 
     return null
   }, [tokenIn, tokenOut, results])
+}
+
+export function useTradeRet(
+  orderBook: OrderBook | null,
+  type: Type,
+  amount: CurrencyAmount | undefined,
+  price: CurrencyAmount | undefined
+): TradeRet | null {
+  const tokenIn = type === Type.BUY ? orderBook?.quoteToken : orderBook?.baseToken
+  const tokenOut = type === Type.BUY ? orderBook?.baseToken : orderBook?.quoteToken
+  const results = useMultipleContractMultipleData(
+    [orderBook ? HYBRIDX_ROUTER_ADDRESS : ''],
+    [new Interface(IHybridRouterABI)],
+    [type === Type.BUY ? 'getAmountsForBuy' : 'getAmountsForSell'],
+    [
+      amount && price
+        ? [
+            amount.raw.toString(),
+            price.raw.toString(),
+            orderBook?.baseToken.token?.address,
+            orderBook?.quoteToken.token?.address
+          ]
+        : [ZERO.toString(), ZERO.toString(), ZERO_ADDRESS, ZERO_ADDRESS]
+    ]
+  )
+
+  return useMemo(() => {
+    const returns = results?.map(result => {
+      if (!result || result.loading) return { data: null, loading: result.loading }
+      const { result: data, loading } = result
+      return { data, loading }
+    })
+
+    if (!returns || returns.length === 0 || returns[0].loading || returns.length !== 1 || !returns[0].data) {
+      return null
+    }
+
+    const {
+      data: [
+        ammAmountInRaw,
+        ammAmountOutRaw,
+        orderAmountInRaw,
+        orderAmountOutRaw,
+        orderFeeRaw,
+        amountLeftRaw,
+        priceToRaw
+      ]
+    } = returns[0]
+
+    const ammAmountIn = tokenIn
+      ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, ammAmountInRaw), tokenIn?.token.chainId)
+      : undefined
+    const ammAmountOut = tokenOut
+      ? wrappedCurrencyAmount(new TokenAmount(tokenOut?.token, ammAmountOutRaw), tokenOut?.token.chainId)
+      : undefined
+    const orderAmountIn = tokenIn
+      ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, orderAmountInRaw), tokenIn?.token.chainId)
+      : undefined
+    const orderAmountOut = tokenOut
+      ? wrappedCurrencyAmount(new TokenAmount(tokenOut?.token, orderAmountOutRaw), tokenOut?.token.chainId)
+      : undefined
+    const orderFee = tokenIn
+      ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, orderFeeRaw), tokenIn?.token.chainId)
+      : undefined
+    const amountLeft = tokenIn
+      ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, amountLeftRaw), tokenIn?.token.chainId)
+      : undefined
+    const priceTo = orderBook?.quoteToken
+      ? wrappedCurrencyAmount(new TokenAmount(orderBook?.quoteToken.token, priceToRaw), tokenOut?.token.chainId)
+      : undefined
+    if (
+      orderBook &&
+      ammAmountIn &&
+      ammAmountOut &&
+      orderAmountIn &&
+      orderAmountOut &&
+      orderFee &&
+      amountLeft &&
+      priceTo
+    ) {
+      return new TradeRet(
+        orderBook,
+        ammAmountIn,
+        ammAmountOut,
+        orderAmountIn,
+        orderAmountOut,
+        orderFee,
+        amountLeft,
+        priceTo
+      )
+    }
+
+    return null
+  }, [orderBook, type, amount, price])
 }

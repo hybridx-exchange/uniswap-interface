@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Swap } from '@hybridx-exchange/uniswap-sdk'
+import { CurrencyAmount, JSBI, Token, TokenAmount, TradeRet } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -19,45 +19,45 @@ import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
 
-import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
+import { HYBRIDX_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
-import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
+import { ApprovalState, useApproveCallback, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
-import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { Version } from '../../hooks/useToggledVersion'
-import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
+import { WrapType } from '../../hooks/useWrapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
-import { Field } from '../../state/swap/actions'
+import { Field, Input } from '../../state/trade/actions'
 import {
   useDefaultsFromURLSearch,
-  useDerivedSwapInfo,
-  useSwapActionHandlers,
-  useSwapState
-} from '../../state/swap/hooks'
-import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from '../../state/user/hooks'
+  useDerivedTradeInfo,
+  useTradeActionHandlers,
+  useTradeState
+} from '../../state/trade/hooks'
+import { useExpertModeManager, useUserDeadline } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
-import { wrappedCurrency } from '../../utils/wrappedCurrency'
+import { wrappedCurrency, wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
 import OrderBookTip from '../../components/swap/OrderBookTip'
+import { useTradeCallback } from '../../hooks/useTradeCallback'
 
-export default function DoSwap() {
+export default function doTrade() {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
-  const [loadedInputCurrency, loadedOutputCurrency] = [
-    useCurrency(loadedUrlParams?.inputCurrencyId),
-    useCurrency(loadedUrlParams?.outputCurrencyId)
+  const [loadedCurrencyA, loadedCurrencyB] = [
+    useCurrency(loadedUrlParams?.currencyAId),
+    useCurrency(loadedUrlParams?.currencyBId)
   ]
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const urlLoadedTokens: Token[] = useMemo(
-    () => [loadedInputCurrency, loadedOutputCurrency]?.filter((c): c is Token => c instanceof Token) ?? [],
-    [loadedInputCurrency, loadedOutputCurrency]
+    () => [loadedCurrencyA, loadedCurrencyB]?.filter((c): c is Token => c instanceof Token) ?? [],
+    [loadedCurrencyA, loadedCurrencyB]
   )
   const handleConfirmTokenWarning = useCallback(() => {
     setDismissTokenWarning(true)
@@ -72,92 +72,71 @@ export default function DoSwap() {
   // for expert mode
   const toggleSettings = useToggleSettingsMenu()
   const [isExpertMode] = useExpertModeManager()
-
-  // get custom setting values for user
   const [deadline] = useUserDeadline()
-  const [allowedSlippage] = useUserSlippageTolerance()
 
   // swap state
-  const { independentField, typedValue, recipient } = useSwapState()
+  const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
   const {
-    v2Swap,
     orderBook,
+    tradeRet,
     currencyBalances,
-    parsedAmount,
+    parsedAmountAmount,
+    parsedPriceAmount,
     currencies,
-    inputError: swapInputError
-  } = useDerivedSwapInfo()
-  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
-    currencies[Field.INPUT],
-    currencies[Field.OUTPUT],
-    typedValue
-  )
+    inputError: tradeInputError
+  } = useDerivedTradeInfo()
   const { chainId } = useActiveWeb3React()
   const wrappedCurrencies: { [field in Field]?: Token | undefined } = {
-    [Field.INPUT]: wrappedCurrency(currencies[Field.INPUT], chainId),
-    [Field.OUTPUT]: wrappedCurrency(currencies[Field.OUTPUT], chainId)
+    [Field.CURRENCY_A]: wrappedCurrency(currencies[Field.CURRENCY_A], chainId),
+    [Field.CURRENCY_B]: wrappedCurrency(currencies[Field.CURRENCY_B], chainId)
   }
-  const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
-  const swap = showWrap ? undefined : v2Swap
 
-  const parsedAmounts = showWrap
-    ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount
-      }
-    : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : swap?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : swap?.outputAmount
-      }
+  const parsedAmounts = {
+    [Input.AMOUNT]: parsedAmountAmount,
+    [Input.PRICE]: parsedPriceAmount
+  }
 
-  const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
-  const isValid = !swapInputError
-  const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
+  const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useTradeActionHandlers()
+  const isValid = !tradeInputError
 
   const handleTypeInput = useCallback(
     (value: string) => {
-      onUserInput(Field.INPUT, value)
+      onUserInput(Field.CURRENCY_A, value, '0')
     },
     [onUserInput]
   )
   const handleTypeOutput = useCallback(
     (value: string) => {
-      onUserInput(Field.OUTPUT, value)
+      onUserInput(Field.CURRENCY_B, value, '0')
     },
     [onUserInput]
   )
 
   // modal and loading
-  const [{ showConfirm, swapToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
+  const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
     showConfirm: boolean
-    swapToConfirm: Swap | undefined
+    tradeToConfirm: TradeRet | undefined
     attemptingTxn: boolean
     swapErrorMessage: string | undefined
     txHash: string | undefined
   }>({
     showConfirm: false,
-    swapToConfirm: undefined,
+    tradeToConfirm: undefined,
     attemptingTxn: false,
     swapErrorMessage: undefined,
     txHash: undefined
   })
 
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: showWrap
-      ? parsedAmounts[independentField]?.toExact() ?? ''
-      : parsedAmounts[dependentField]?.toSignificant(6) ?? ''
-  }
-
-  const route = swap?.route
-  const userHasSpecifiedInputOutput = Boolean(
-    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
+  const userHasSpecifiedInputPrice = Boolean(
+    currencies[Field.CURRENCY_A] &&
+      currencies[Field.CURRENCY_B] &&
+      parsedAmounts[Input.AMOUNT]?.greaterThan(JSBI.BigInt(0)) &&
+      parsedAmounts[Input.PRICE]?.greaterThan(JSBI.BigInt(0))
   )
-  const noRoute = !route
 
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromTrade(swap, allowedSlippage)
+  const [approval, approveCallback] = useApproveCallback(parsedAmountAmount, HYBRIDX_ROUTER_ADDRESS)
 
   // check if user has gone through approval process, used to show two step buttons, reset on token change
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
@@ -169,52 +148,42 @@ export default function DoSwap() {
     }
   }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.CURRENCY_A])
+  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
 
-  // the callback to execute the swap
-  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
-    swap,
-    allowedSlippage,
-    deadline,
-    recipient
-  )
+  // the callback to execute the trade
+  const { callback: swapCallback, error: swapCallbackError } = useTradeCallback(trade, deadline, recipient)
 
-  const { priceImpactWithoutFee } = computeTradePriceBreakdown(swap)
-
-  const handleSwap = useCallback(() => {
-    if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
-      return
-    }
+  const handleTrade = useCallback(() => {
     if (!swapCallback) {
       return
     }
-    setSwapState({ attemptingTxn: true, swapToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined })
+    setTradeState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined })
     swapCallback()
       .then(hash => {
-        setSwapState({ attemptingTxn: false, swapToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
+        setTradeState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
 
         ReactGA.event({
-          category: 'Swap',
+          category: 'Trade',
           action:
             recipient === null
               ? 'Swap w/o Send'
               : (recipientAddress ?? recipient) === account
               ? 'Swap w/o Send + recipient'
               : 'Swap w/ Send',
-          label: [swap?.inputAmount?.currency?.symbol, swap?.outputAmount?.currency?.symbol, Version.v2].join('/')
+          label: [trade?.inputAmount?.currency?.symbol, trade?.outputAmount?.currency?.symbol, Version.v2].join('/')
         })
       })
       .catch(error => {
         setSwapState({
           attemptingTxn: false,
-          swapToConfirm,
+          tradeToConfirm,
           showConfirm,
           swapErrorMessage: error.message,
           txHash: undefined
         })
       })
-  }, [swapToConfirm, account, priceImpactWithoutFee, recipient, recipientAddress, showConfirm, swapCallback, swap])
+  }, [tradeToConfirm, account, priceImpactWithoutFee, recipient, recipientAddress, showConfirm, swapCallback, trade])
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
@@ -225,23 +194,23 @@ export default function DoSwap() {
   // show approve flow when: no error on inputs, not approved or pending, or approved in current session
   // never show if price impact is above threshold in non expert mode
   const showApproveFlow =
-    !swapInputError &&
+    !tradeInputError &&
     (approval === ApprovalState.NOT_APPROVED ||
       approval === ApprovalState.PENDING ||
       (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
     !(priceImpactSeverity > 3 && !isExpertMode)
 
   const handleConfirmDismiss = useCallback(() => {
-    setSwapState({ showConfirm: false, swapToConfirm, attemptingTxn, swapErrorMessage, txHash })
+    setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onUserInput(Field.INPUT, '')
     }
-  }, [attemptingTxn, onUserInput, swapErrorMessage, swapToConfirm, txHash])
+  }, [attemptingTxn, onUserInput, swapErrorMessage, tradeToConfirm, txHash])
 
   const handleAcceptChanges = useCallback(() => {
-    setSwapState({ swapToConfirm: swap, swapErrorMessage, txHash, attemptingTxn, showConfirm })
-  }, [attemptingTxn, showConfirm, swapErrorMessage, swap, txHash])
+    setSwapState({ tradeToConfirm: trade, swapErrorMessage, txHash, attemptingTxn, showConfirm })
+  }, [attemptingTxn, showConfirm, swapErrorMessage, trade, txHash])
 
   const handleInputSelect = useCallback(
     inputCurrency => {
@@ -271,8 +240,8 @@ export default function DoSwap() {
         <Wrapper id="swap-page">
           <ConfirmSwapModal
             isOpen={showConfirm}
-            swap={swap}
-            originalSwap={swapToConfirm}
+            swap={trade}
+            originalSwap={tradeToConfirm}
             onAcceptChanges={handleAcceptChanges}
             attemptingTxn={attemptingTxn}
             txHash={txHash}
@@ -285,7 +254,7 @@ export default function DoSwap() {
 
           <AutoColumn gap={'md'}>
             <CurrencyInputPanel
-              label={independentField === Field.OUTPUT && !showWrap && swap ? 'From (estimated)' : 'From'}
+              label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}
               currency={currencies[Field.INPUT]}
@@ -317,7 +286,7 @@ export default function DoSwap() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
-              label={independentField === Field.INPUT && !showWrap && swap ? 'To (estimated)' : 'To'}
+              label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
               showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
               onCurrencySelect={handleOutputSelect}
@@ -342,13 +311,13 @@ export default function DoSwap() {
             {showWrap ? null : (
               <Card padding={'.25rem .75rem 0 .75rem'} borderRadius={'20px'}>
                 <AutoColumn gap="4px">
-                  {Boolean(swap) && (
+                  {Boolean(trade) && (
                     <RowBetween align="center">
                       <Text fontWeight={500} fontSize={14} color={theme.text2}>
                         Price
                       </Text>
                       <TradePrice
-                        price={swap?.executionPrice}
+                        price={trade?.executionPrice}
                         showInverted={showInverted}
                         setShowInverted={setShowInverted}
                       />
@@ -405,7 +374,7 @@ export default function DoSwap() {
                       handleSwap()
                     } else {
                       setSwapState({
-                        swapToConfirm: swap,
+                        tradeToConfirm: trade,
                         attemptingTxn: false,
                         swapErrorMessage: undefined,
                         showConfirm: true,
@@ -434,7 +403,7 @@ export default function DoSwap() {
                     handleSwap()
                   } else {
                     setSwapState({
-                      swapToConfirm: swap,
+                      tradeToConfirm: trade,
                       attemptingTxn: false,
                       swapErrorMessage: undefined,
                       showConfirm: true,
@@ -447,8 +416,8 @@ export default function DoSwap() {
                 error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
                 <Text fontSize={20} fontWeight={500}>
-                  {swapInputError
-                    ? swapInputError
+                  {tradeInputError
+                    ? tradeInputError
                     : priceImpactSeverity > 3 && !isExpertMode
                     ? `Price Impact Too High`
                     : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
@@ -461,7 +430,7 @@ export default function DoSwap() {
           <OrderBookTip orderBook={orderBook} wrappedCurrencies={wrappedCurrencies} />
         </Wrapper>
       </AppBody>
-      <AdvancedSwapDetailsDropdown swap={swap} />
+      <AdvancedSwapDetailsDropdown swap={trade} />
       <OrderBookTable thData={['amount', 'price', 'price', 'amount']} orderBook={orderBook} />
     </>
   )

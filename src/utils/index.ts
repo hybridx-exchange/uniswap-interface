@@ -5,7 +5,8 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/build/IUniswapV2Router02.json'
 import { abi as IOrderBookFactoryABI } from '@hybridx-exchange/orderbook-core/build/IOrderBookFactory.json'
-import { ROUTER_ADDRESS } from '../constants'
+import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
+import { HYBRIDX_ROUTER_ADDRESS, ROUTER_ADDRESS} from '../constants'
 import {
   ChainId,
   JSBI,
@@ -105,6 +106,11 @@ export function getRouterContract(_: number, library: Web3Provider, account?: st
 // account is optional
 export function getOrderBookFactoryContract(_: number, library: Web3Provider, account?: string): Contract {
   return getContract(ORDER_BOOK_FACTORY_ADDRESS, IOrderBookFactoryABI, library, account)
+}
+
+// account is optional
+export function getHybridRouterContract(_: number, library: Web3Provider, account?: string): Contract {
+  return getContract(HYBRIDX_ROUTER_ADDRESS, IHybridRouterABI, library, account)
 }
 
 export function escapeRegExp(string: string): string {

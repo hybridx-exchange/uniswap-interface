@@ -8,6 +8,7 @@ import transactions from './transactions/reducer'
 import swap from './swap/reducer'
 import mint from './mint/reducer'
 import orderBook from './orderBook/reducer'
+import trade from './trade/reducer'
 import lists from './lists/reducer'
 import burn from './burn/reducer'
 import multicall from './multicall/reducer'
@@ -24,7 +25,8 @@ const store = configureStore({
     burn,
     multicall,
     lists,
-    orderBook
+    orderBook,
+    trade
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS })

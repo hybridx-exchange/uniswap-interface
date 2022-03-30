@@ -1,4 +1,4 @@
-import { Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
+import { Swap, SwapType } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'
@@ -12,11 +12,11 @@ import FormattedPriceImpact from './FormattedPriceImpact'
 import { SectionBreak } from './styleds'
 import SwapRoute from './SwapRoute'
 
-function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
+function TradeSummary({ swap, allowedSlippage }: { swap: Swap; allowedSlippage: number }) {
   const theme = useContext(ThemeContext)
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
-  const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
-  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(swap)
+  const isExactIn = swap.swapType === SwapType.EXACT_INPUT
+  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(swap, allowedSlippage)
 
   return (
     <>
@@ -31,9 +31,9 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
               {isExactIn
-                ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
+                ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${swap.outputAmount.currency.symbol}` ??
                   '-'
-                : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ??
+                : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${swap.inputAmount.currency.symbol}` ??
                   '-'}
             </TYPE.black>
           </RowFixed>
@@ -56,7 +56,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
             <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
-            {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
+            {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${swap.inputAmount.currency.symbol}` : '-'}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>
@@ -65,21 +65,21 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
 }
 
 export interface AdvancedSwapDetailsProps {
-  trade?: Trade
+  swap?: Swap
 }
 
-export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
+export function AdvancedSwapDetails({ swap }: AdvancedSwapDetailsProps) {
   const theme = useContext(ThemeContext)
 
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const showRoute = Boolean(trade && trade.route.path.length > 2)
+  const showRoute = Boolean(swap && swap.route.path.length > 2)
 
   return (
     <AutoColumn gap="md">
-      {trade && (
+      {swap && (
         <>
-          <TradeSummary trade={trade} allowedSlippage={allowedSlippage} />
+          <TradeSummary swap={swap} allowedSlippage={allowedSlippage} />
           {showRoute && (
             <>
               <SectionBreak />
@@ -90,7 +90,7 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                   </TYPE.black>
                   <QuestionHelper text="Routing through these tokens resulted in the best price for your trade." />
                 </RowFixed>
-                <SwapRoute trade={trade} />
+                <SwapRoute swap={swap} />
               </AutoColumn>
             </>
           )}

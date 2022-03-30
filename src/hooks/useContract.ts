@@ -3,6 +3,7 @@ import { ChainId, WETH } from '@hybridx-exchange/uniswap-sdk'
 import { abi as IUniswapV2PairABI } from '@hybridx-exchange/v2-core/build/IUniswapV2Pair.json'
 import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
 import { abi as IOrderBookFactoryABI } from '@hybridx-exchange/orderbook-core/build/IOrderBookFactory.json'
+import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
 import { useMemo } from 'react'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
@@ -15,6 +16,7 @@ import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/bui
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { ORDER_BOOK_FACTORY_ADDRESS } from '@hybridx-exchange/uniswap-sdk'
+import { HYBRIDX_ROUTER_ADDRESS } from '../constants'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -76,6 +78,10 @@ export function useOrderBookContract(orderBookAddress: string, withSignerIfPossi
 
 export function useOrderBookFactoryContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(ORDER_BOOK_FACTORY_ADDRESS, IOrderBookFactoryABI, withSignerIfPossible)
+}
+
+export function useHybridxRouterContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(HYBRIDX_ROUTER_ADDRESS, IHybridRouterABI, withSignerIfPossible)
 }
 
 export function useMulticallContract(): Contract | null {
