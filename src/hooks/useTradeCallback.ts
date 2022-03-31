@@ -73,7 +73,6 @@ function useTradeCallArguments(
 // and the user has approved the slippage adjusted input amount for the trade
 export function useTradeCallback(
   trade: Trade | undefined, // trade to execute, required
-  allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   deadline: number = DEFAULT_DEADLINE_FROM_NOW, // in seconds from now
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: TradeCallbackState; callback: null | (() => Promise<string>); error: string | null } {

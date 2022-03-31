@@ -1,12 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
-import { NavLink, Link as HistoryLink } from 'react-router-dom'
+import {darken} from 'polished'
+import {useTranslation} from 'react-i18next'
+import {Link as HistoryLink, NavLink} from 'react-router-dom'
 
-import { ArrowLeft } from 'react-feather'
-import { RowBetween } from '../Row'
+import {ArrowLeft} from 'react-feather'
+import {RowBetween} from '../Row'
 import QuestionHelper from '../QuestionHelper'
+import {TradeType} from '@hybridx-exchange/uniswap-sdk'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -113,6 +114,26 @@ export function CreateEditTabs({ creating }: { creating: boolean }) {
             creating
               ? 'When a token pair exists, you can create an order book for that token pair to support limit orders.'
               : 'Order book parameters can only be modified if there is no order in the current order book.'
+          }
+        />
+      </RowBetween>
+    </Tabs>
+  )
+}
+
+export function CreateOrderTabs({ tradeType }: { tradeType: TradeType }) {
+  return (
+    <Tabs>
+      <RowBetween style={{ padding: '1rem' }}>
+        <HistoryLink to="/trade">
+          <StyledArrowLeft />
+        </HistoryLink>
+        <ActiveText>{tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}</ActiveText>
+        <QuestionHelper
+          text={
+            tradeType === TradeType.LIMIT_BUY
+              ? 'Place a buy limit order at the specified price.'
+              : 'Place a sell limit order at the specified price.'
           }
         />
       </RowBetween>

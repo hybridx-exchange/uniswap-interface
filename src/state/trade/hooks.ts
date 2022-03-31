@@ -8,7 +8,8 @@ import {
   OrderBook,
   Token,
   TokenAmount,
-  TradeRet
+  Trade,
+  TradeType
 } from '@hybridx-exchange/uniswap-sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
@@ -20,7 +21,7 @@ import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, replaceTradeState, selectCurrency, setRecipient, switchCurrencies, Type, typeInput } from './actions'
+import { Field, Input, replaceTradeState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { TradeState } from './reducer'
 
 export function useTradeState(): AppState['trade'] {
@@ -30,7 +31,7 @@ export function useTradeState(): AppState['trade'] {
 export function useTradeActionHandlers(): {
   onCurrencySelection: (field: Field, currency: Currency) => void
   onSwitchTokens: () => void
-  onUserInput: (field: Field, typedAmountValue: string, typedPriceValue: string) => void
+  onUserInput: (input: Input, typedValue: string) => void
   onChangeRecipient: (recipient: string | null) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
@@ -51,8 +52,8 @@ export function useTradeActionHandlers(): {
   }, [dispatch])
 
   const onUserInput = useCallback(
-    (field: Field, typedAmountValue: string, typedPriceValue: string) => {
-      dispatch(typeInput({ field, typedAmountValue, typedPriceValue }))
+    (input: Input, typedValue: string) => {
+      dispatch(typeInput({ input, typedValue }))
     },
     [dispatch]
   )
@@ -105,7 +106,7 @@ export function useDerivedTradeInfo(): {
   parsedAmountAmount: CurrencyAmount | undefined
   parsedPriceAmount: CurrencyAmount | undefined
   orderBook: OrderBook | undefined
-  tradeRet: TradeRet | undefined
+  trade: Trade
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
@@ -129,7 +130,7 @@ export function useDerivedTradeInfo(): {
   ])
 
   const orderBook = useOrderBook(currencyA ?? undefined, currencyB ?? undefined)
-  const type = orderBook?.baseToken.currency === currencyA ? Type.BUY : Type.SELL
+  const type = orderBook?.baseToken.currency === currencyA ? TradeType.LIMIT_BUY : TradeType.LIMIT_SELL
 
   const currencyBalances = {
     [Field.CURRENCY_A]: relevantTokenBalances[0],
@@ -143,12 +144,22 @@ export function useDerivedTradeInfo(): {
 
   const parsedAmountAmount = tryParseAmount(
     typedAmountValue,
-    type === Type.BUY ? orderBook?.quoteToken.currency : orderBook?.baseToken.currency
+    type === TradeType.LIMIT_BUY ? orderBook?.quoteToken.currency : orderBook?.baseToken.currency
   )
 
   const parsedPriceAmount = tryParseAmount(typedPriceValue, orderBook?.quoteToken.currency)
 
   const tradeRet = useTradeRet(orderBook, type, parsedAmountAmount, parsedPriceAmount)
+
+  const trade = {
+    orderBook: orderBook,
+    baseToken: currencyA,
+    quoteToken: currencyB,
+    tradeType: type,
+    amount: typedAmountValue,
+    price: typedPriceValue,
+    tradeRet: tradeRet
+  }
 
   let inputError: string | undefined
   if (!account) {
@@ -160,11 +171,11 @@ export function useDerivedTradeInfo(): {
   }
 
   if (!parsedAmountAmount) {
-    inputError = inputError ?? 'Enter the amount you want to ' + type === Type.BUY ? 'buy' : 'sell'
+    inputError = inputError ?? 'Enter the amount you want to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
   }
 
   if (!parsedPriceAmount) {
-    inputError = inputError ?? 'Enter the price you want to ' + type === Type.BUY ? 'buy' : 'sell'
+    inputError = inputError ?? 'Enter the price you want to ' + (type === TradeType.LIMIT_SELL ? 'buy' : 'sell')
   }
 
   const formattedTo = isAddress(to)
@@ -189,7 +200,7 @@ export function useDerivedTradeInfo(): {
     parsedAmountAmount,
     parsedPriceAmount,
     orderBook: orderBook ?? undefined,
-    tradeRet: tradeRet ?? undefined,
+    trade,
     inputError
   }
 }
