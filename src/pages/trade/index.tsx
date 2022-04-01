@@ -63,7 +63,6 @@ export default function DoTrade({
   // swap state
   const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
   const {
-    orderBook,
     trade,
     currencyBalances,
     parsedAmountAmount,
@@ -133,7 +132,11 @@ export default function DoTrade({
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
   console.log('trade:', trade)
   // the callback to execute the trade
-  const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(trade, deadline, recipient)
+  const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(
+    trade ?? undefined,
+    deadline,
+    recipient
+  )
 
   const handleTrade = useCallback(() => {
     if (!tradeCallback) {
@@ -153,7 +156,7 @@ export default function DoTrade({
               ? 'Trade w/o Send + recipient'
               : 'Trade w/ Send',
           label:
-            trade.tradeType.toString() +
+            trade?.tradeType.toString() +
             ' ' +
             [trade?.amount?.currency?.symbol, trade?.price?.currency?.symbol].join('/')
         })
@@ -188,7 +191,7 @@ export default function DoTrade({
 
   const handleAcceptChanges = useCallback(() => {
     setTradeState({
-      tradeToConfirm: trade,
+      tradeToConfirm: trade ?? undefined,
       tradeErrorMessage: tradeErrorMessage,
       txHash,
       attemptingTxn,
@@ -220,11 +223,11 @@ export default function DoTrade({
         onConfirm={handleConfirmTokenWarning}
       />
       <AppBody>
-        <CreateOrderTabs tradeType={trade.tradeType} />
+        <CreateOrderTabs tradeType={trade?.tradeType} />
         <Wrapper id="trade-page">
           <ConfirmTradeModal
             isOpen={showConfirm}
-            trade={trade}
+            trade={trade ?? undefined}
             originalTrade={tradeToConfirm}
             onAcceptChanges={handleAcceptChanges}
             attemptingTxn={attemptingTxn}
@@ -237,7 +240,7 @@ export default function DoTrade({
 
           <AutoColumn gap={'md'}>
             <CurrencyInputPanel
-              label={trade.tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}
+              label={trade?.tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}
               value={typedAmountValue}
               showMaxButton={!atMaxAmountInput}
               currency={currencies[Field.CURRENCY_A]}
@@ -269,7 +272,7 @@ export default function DoTrade({
             <CurrencyInputPanel
               value={typedPriceValue}
               onUserInput={handleTypePrice}
-              label={trade.tradeType === TradeType.LIMIT_BUY ? 'With' : 'At'}
+              label={trade?.tradeType === TradeType.LIMIT_BUY ? 'With' : 'At'}
               showMaxButton={false}
               currency={currencies[Field.CURRENCY_B]}
               onCurrencySelect={handleOutputSelect}
@@ -294,7 +297,7 @@ export default function DoTrade({
           <BottomGrouping>
             {!account ? (
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-            ) : !orderBook && userHasSpecifiedInputPrice ? (
+            ) : !trade?.orderBook && userHasSpecifiedInputPrice ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
               </GreyCard>
@@ -323,7 +326,7 @@ export default function DoTrade({
                       handleTrade()
                     } else {
                       setTradeState({
-                        tradeToConfirm: trade,
+                        tradeToConfirm: trade ?? undefined,
                         attemptingTxn: false,
                         tradeErrorMessage: undefined,
                         showConfirm: true,
@@ -348,7 +351,7 @@ export default function DoTrade({
                     handleTrade()
                   } else {
                     setTradeState({
-                      tradeToConfirm: trade,
+                      tradeToConfirm: trade ?? undefined,
                       attemptingTxn: false,
                       tradeErrorMessage: undefined,
                       showConfirm: true,
@@ -370,7 +373,7 @@ export default function DoTrade({
           </BottomGrouping>
         </Wrapper>
       </AppBody>
-      <OrderBookTable thData={['amount', 'price', 'price', 'amount']} orderBook={orderBook} />
+      <OrderBookTable thData={['amount', 'price', 'price', 'amount']} orderBook={trade?.orderBook} />
     </>
   )
 }

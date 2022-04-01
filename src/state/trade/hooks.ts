@@ -5,14 +5,13 @@ import {
   CurrencyAmount,
   ETHER,
   JSBI,
-  OrderBook,
   Token,
   TokenAmount,
   Trade,
   TradeType
 } from '@hybridx-exchange/uniswap-sdk'
 import { ParsedQs } from 'qs'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -105,8 +104,7 @@ export function useDerivedTradeInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmountAmount: CurrencyAmount | undefined
   parsedPriceAmount: CurrencyAmount | undefined
-  orderBook: OrderBook | undefined
-  trade: Trade
+  trade: Trade | null
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
@@ -151,15 +149,21 @@ export function useDerivedTradeInfo(): {
 
   const tradeRet = useTradeRet(orderBook, type, parsedAmountAmount, parsedPriceAmount)
 
-  const trade = {
-    orderBook: orderBook,
-    baseToken: currencyA,
-    quoteToken: currencyB,
-    tradeType: type,
-    amount: typedAmountValue,
-    price: typedPriceValue,
-    tradeRet: tradeRet
-  }
+  const trade = useMemo(() => {
+    if (orderBook && currencyA && currencyB && type && typedPriceValue && typedAmountValue && tradeRet) {
+      return {
+        orderBook: orderBook,
+        baseToken: currencyA,
+        quoteToken: currencyB,
+        tradeType: type,
+        amount: parsedAmountAmount,
+        price: parsedPriceAmount,
+        tradeRet: tradeRet
+      }
+    }
+
+    return null
+  }, [])
 
   let inputError: string | undefined
   if (!account) {
@@ -199,7 +203,6 @@ export function useDerivedTradeInfo(): {
     currencyBalances,
     parsedAmountAmount,
     parsedPriceAmount,
-    orderBook: orderBook ?? undefined,
     trade,
     inputError
   }
