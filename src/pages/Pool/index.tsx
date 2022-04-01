@@ -20,7 +20,7 @@ import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks
 import AppBody from '../AppBody'
 import { Dots } from '../../components/swap/styleds'
 
-export default function Pool() {
+export default function DoPool() {
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
 

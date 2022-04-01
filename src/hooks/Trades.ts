@@ -9,7 +9,9 @@ import {
   TokenAmount,
   Swap,
   TradeRet,
-  SwapType
+  SwapType,
+  TradeType,
+  ZERO
 } from '@hybridx-exchange/uniswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
@@ -31,8 +33,6 @@ import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/bui
 import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
 import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
 import { Interface } from '@ethersproject/abi'
-import { Type } from '../state/trade/actions'
-import { ZERO } from '@hybridx-exchange/uniswap-sdk/dist/constants'
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
@@ -293,14 +293,26 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
       orderBookAddress,
       orderBookAddress,
       orderBookAddress,
+      orderBookAddress,
+      orderBookAddress,
       orderBookAddress
     ],
-    [new Interface(IHybridRouterABI), orderBookInterface, orderBookInterface, orderBookInterface, orderBookInterface],
-    ['getOrderBook', 'getReserves', 'baseToken', 'protocolFeeRate', 'subsidyFeeRate'],
+    [
+      new Interface(IHybridRouterABI),
+      orderBookInterface,
+      orderBookInterface,
+      orderBookInterface,
+      orderBookInterface,
+      orderBookInterface,
+      orderBookInterface
+    ],
+    ['getOrderBook', 'getReserves', 'baseToken', 'protocolFeeRate', 'subsidyFeeRate', 'minAmount', 'priceStep'],
     [
       tokenIn && tokenOut
         ? [tokenIn.address, tokenOut.address, DEFAULT_LIMIT_SIZE]
         : [ZERO_ADDRESS, ZERO_ADDRESS, DEFAULT_LIMIT_SIZE],
+      [],
+      [],
       [],
       [],
       [],
@@ -320,12 +332,14 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
       !returns ||
       returns.length === 0 ||
       returns[0].loading ||
-      returns.length !== 5 ||
+      returns.length !== 7 ||
       !returns[0].data ||
       !returns[1].data ||
       !returns[2].data ||
       !returns[3].data ||
-      !returns[4].data
+      !returns[4].data ||
+      !returns[5].data ||
+      !returns[6].data
     ) {
       return null
     }
@@ -345,9 +359,15 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
     const {
       data: [subsidyFeeRate]
     } = returns[4]
+    const {
+      data: [minAmount]
+    } = returns[5]
+    const {
+      data: [priceStep]
+    } = returns[6]
     const baseToken = baseTokenAddress === tokenIn?.address ? tokenIn : tokenOut
     const quoteToken = baseTokenAddress === tokenIn?.address ? tokenOut : tokenIn
-    if (baseToken && quoteToken && buyPrices && buyAmounts && sellPrices && sellAmounts) {
+    if (baseToken && quoteToken && buyPrices && buyAmounts && sellPrices && sellAmounts && minAmount && priceStep) {
       const baseAmount = wrappedCurrencyAmount(new TokenAmount(baseToken, baseReserve), baseToken.chainId)
       const quoteAmount = wrappedCurrencyAmount(new TokenAmount(quoteToken, quoteReserve), quoteToken.chainId)
       const curPrice = wrappedCurrencyAmount(new TokenAmount(quoteToken, price), quoteToken.chainId)
@@ -366,7 +386,17 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
       }
 
       return baseAmount && quoteAmount && curPrice
-        ? new OrderBook(baseAmount, quoteAmount, protocolFeeRate, subsidyFeeRate, curPrice, buyOrders, sellOrders)
+        ? new OrderBook(
+            baseAmount,
+            quoteAmount,
+            minAmount,
+            priceStep,
+            protocolFeeRate,
+            subsidyFeeRate,
+            curPrice,
+            buyOrders,
+            sellOrders
+          )
         : null
     }
 
@@ -376,16 +406,16 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
 
 export function useTradeRet(
   orderBook: OrderBook | null,
-  type: Type,
+  type: TradeType,
   amount: CurrencyAmount | undefined,
   price: CurrencyAmount | undefined
 ): TradeRet | null {
-  const tokenIn = type === Type.BUY ? orderBook?.quoteToken : orderBook?.baseToken
-  const tokenOut = type === Type.BUY ? orderBook?.baseToken : orderBook?.quoteToken
+  const tokenIn = type === TradeType.LIMIT_BUY ? orderBook?.quoteToken : orderBook?.baseToken
+  const tokenOut = type === TradeType.LIMIT_BUY ? orderBook?.baseToken : orderBook?.quoteToken
   const results = useMultipleContractMultipleData(
     [orderBook ? HYBRIDX_ROUTER_ADDRESS : ''],
     [new Interface(IHybridRouterABI)],
-    [type === Type.BUY ? 'getAmountsForBuy' : 'getAmountsForSell'],
+    [type === TradeType.LIMIT_BUY ? 'getAmountsForBuy' : 'getAmountsForSell'],
     [
       amount && price
         ? [

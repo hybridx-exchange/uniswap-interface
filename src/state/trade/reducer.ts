@@ -68,11 +68,11 @@ export default createReducer<TradeState>(initialState, builder =>
         [Field.CURRENCY_B]: { currencyId: state[Field.CURRENCY_A].currencyId }
       }
     })
-    .addCase(typeInput, (state, { payload: { field, typedAmountValue, typedPriceValue } }) => {
+    .addCase(typeInput, (state, { payload: { input, typedValue } }) => {
       return {
         ...state,
-        typedAmountValue,
-        typedPriceValue
+        input,
+        typedValue
       }
     })
     .addCase(setRecipient, (state, { payload: { recipient } }) => {

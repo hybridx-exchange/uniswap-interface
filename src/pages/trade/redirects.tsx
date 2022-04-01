@@ -1,30 +1,34 @@
 import React from 'react'
 import { Redirect, RouteComponentProps } from 'react-router-dom'
+import DoTrade from './index'
 
-// Redirects to swap but only replace the pathname
-export function RedirectPathToTradeOnly({ location }: RouteComponentProps) {
-  return <Redirect to={{ ...location, pathname: '/trade' }} />
-}
-
-// Redirects from the /swap/:outputCurrency path to the /swap?outputCurrency=:outputCurrency format
-export function RedirectToTrade(props: RouteComponentProps<{ outputCurrency: string }>) {
+const OLD_PATH_STRUCTURE = /^(0x[a-fA-F0-9]{40})-(0x[a-fA-F0-9]{40})$/
+export function RedirectOldTradePathStructure(props: RouteComponentProps<{ currencyIdA: string }>) {
   const {
-    location: { search },
     match: {
-      params: { outputCurrency }
+      params: { currencyIdA }
     }
   } = props
+  console.log(props)
+  const match = currencyIdA.match(OLD_PATH_STRUCTURE)
+  if (match?.length) {
+    return <Redirect to={`/trade/${match[1]}/${match[2]}`} />
+  }
 
-  return (
-    <Redirect
-      to={{
-        ...props.location,
-        pathname: '/trade',
-        search:
-          search && search.length > 1
-            ? `${search}&outputCurrency=${outputCurrency}`
-            : `?outputCurrency=${outputCurrency}`
-      }}
-    />
-  )
+  return <DoTrade {...props} />
+}
+
+export function RedirectDuplicateTokenIdsForTrade(
+  props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>
+) {
+  const {
+    match: {
+      params: { currencyIdA, currencyIdB }
+    }
+  } = props
+  console.log(props)
+  if (currencyIdA.toLowerCase() === currencyIdB.toLowerCase()) {
+    return <Redirect to={`/trade/${currencyIdA}/ROSE`} />
+  }
+  return <DoTrade {...props} />
 }

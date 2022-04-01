@@ -1,14 +1,13 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { TradeParameters, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
+import { TradeParameters, Trade, TradeType, Trader } from '@hybridx-exchange/uniswap-sdk'
 import { useMemo } from 'react'
-import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { DEFAULT_DEADLINE_FROM_NOW } from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getHybridRouterContract, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
-import { Trader } from '@hybridx-exchange/uniswap-sdk/dist/trader'
 
 export enum TradeCallbackState {
   INVALID,

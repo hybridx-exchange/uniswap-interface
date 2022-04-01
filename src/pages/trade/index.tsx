@@ -23,12 +23,7 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import useENSAddress from '../../hooks/useENSAddress'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field, Input } from '../../state/trade/actions'
-import {
-  useDefaultsFromURLSearch,
-  useDerivedTradeInfo,
-  useTradeActionHandlers,
-  useTradeState
-} from '../../state/trade/hooks'
+import { useDerivedTradeInfo, useTradeActionHandlers, useTradeState } from '../../state/trade/hooks'
 import { useExpertModeManager, useUserDeadline } from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -36,15 +31,16 @@ import AppBody from '../AppBody'
 import Loader from '../../components/Loader'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
 import { useTradeCallback } from '../../hooks/useTradeCallback'
+import { RouteComponentProps } from 'react-router'
 
-export default function DoTrade() {
-  const loadedUrlParams = useDefaultsFromURLSearch()
-
+export default function DoTrade({
+  match: {
+    params: { currencyIdA, currencyIdB }
+  },
+  history
+}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
   // token warning stuff
-  const [loadedCurrencyA, loadedCurrencyB] = [
-    useCurrency(loadedUrlParams?.currencyAId),
-    useCurrency(loadedUrlParams?.currencyBId)
-  ]
+  const [loadedCurrencyA, loadedCurrencyB] = [useCurrency(currencyIdA), useCurrency(currencyIdB)]
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const urlLoadedTokens: Token[] = useMemo(
     () => [loadedCurrencyA, loadedCurrencyB]?.filter((c): c is Token => c instanceof Token) ?? [],
@@ -135,7 +131,7 @@ export default function DoTrade() {
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.CURRENCY_A])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
-
+  console.log('trade:', trade)
   // the callback to execute the trade
   const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(trade, deadline, recipient)
 

@@ -23,6 +23,8 @@ import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import DoSwap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import DoTrade from './trade'
+import { RedirectDuplicateTokenIdsForTrade, RedirectOldTradePathStructure } from './trade/redirects'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -78,6 +80,9 @@ export default function App() {
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                 <Route exact strict path="/find" component={PoolFinder} />
                 <Route exact strict path="/pool" component={DoPool} />
+                <Route exact strict path="/trade" component={DoTrade} />
+                <Route exact path="/trade/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIdsForTrade} />
+                <Route exact path="/trade/:currencyIdA" component={RedirectOldTradePathStructure} />
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />
                 <Route exact path="/orderbook" component={CreateOrderBook} />
