@@ -84,6 +84,7 @@ export default function DoTrade({
 
   const handleTypeAmount = useCallback(
     (value: string) => {
+      console.log('handleTypeAmount', value)
       onUserInput(Input.AMOUNT, value)
     },
     [onUserInput]
@@ -185,6 +186,7 @@ export default function DoTrade({
   const handleConfirmDismiss = useCallback(() => {
     setTradeState({ showConfirm: false, tradeToConfirm, attemptingTxn, tradeErrorMessage: tradeErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
+    console.log(txHash)
     if (txHash) {
       onUserInput(Input.AMOUNT, '')
       onUserInput(Input.PRICE, '')

@@ -10,7 +10,7 @@ import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, Input, replaceTradeState, setRecipient, switchCurrencies, typeInput } from './actions'
+import { Field, Input, replaceTradeState, setRecipient, switchCurrencies, tradeTypeInput } from './actions'
 import { TradeState } from './reducer'
 
 export function useTradeState(): AppState['trade'] {
@@ -30,7 +30,8 @@ export function useTradeActionHandlers(): {
 
   const onUserInput = useCallback(
     (input: Input, typedValue: string) => {
-      dispatch(typeInput({ input, typedValue }))
+      console.log('onUserInput', input, typedValue)
+      dispatch(tradeTypeInput({ input, typedValue }))
     },
     [dispatch]
   )

@@ -12,7 +12,7 @@ export enum Input {
 
 export const selectCurrency = createAction<{ field: Field; currencyId: string }>('trade/selectCurrency')
 export const switchCurrencies = createAction<void>('trade/switchCurrencies')
-export const typeInput = createAction<{ input: Input; typedValue: string }>('trade/typeInput')
+export const tradeTypeInput = createAction<{ input: Input; typedValue: string }>('trade/typeInput')
 export const replaceTradeState = createAction<{
   typedAmountValue: string
   typedPriceValue: string

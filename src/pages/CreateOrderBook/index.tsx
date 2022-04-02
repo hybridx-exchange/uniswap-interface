@@ -353,9 +353,10 @@ export default function CreateOrderBook({
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onFieldBaseInput('')
+      onFieldQuoteInput('')
     }
     setTxHash('')
-  }, [onFieldBaseInput, txHash])
+  }, [onFieldBaseInput, onFieldQuoteInput, txHash])
 
   return (
     <>

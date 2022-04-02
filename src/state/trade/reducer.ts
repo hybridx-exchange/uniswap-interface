@@ -1,5 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Field, replaceTradeState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
+import {
+  Field,
+  Input,
+  replaceTradeState,
+  selectCurrency,
+  setRecipient,
+  switchCurrencies,
+  tradeTypeInput
+} from './actions'
 
 export interface TradeState {
   readonly typedAmountValue: string
@@ -68,11 +76,19 @@ export default createReducer<TradeState>(initialState, builder =>
         [Field.CURRENCY_B]: { currencyId: state[Field.CURRENCY_A].currencyId }
       }
     })
-    .addCase(typeInput, (state, { payload: { input, typedValue } }) => {
-      return {
-        ...state,
-        input,
-        typedValue
+    .addCase(tradeTypeInput, (state, { payload: { input, typedValue } }) => {
+      if (input === Input.AMOUNT) {
+        return {
+          ...state,
+          input,
+          typedAmountValue: typedValue
+        }
+      } else {
+        return {
+          ...state,
+          input,
+          typedPriceValue: typedValue
+        }
       }
     })
     .addCase(setRecipient, (state, { payload: { recipient } }) => {
