@@ -1,26 +1,16 @@
 import useENS from '../../hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import {
-  Currency,
-  CurrencyAmount,
-  ETHER,
-  JSBI,
-  Token,
-  TokenAmount,
-  Trade,
-  TradeType
-} from '@hybridx-exchange/uniswap-sdk'
+import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
-import { useCurrency } from '../../hooks/Tokens'
 import { useOrderBook, useTradeRet } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, Input, replaceTradeState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
+import { Field, Input, replaceTradeState, setRecipient, switchCurrencies, typeInput } from './actions'
 import { TradeState } from './reducer'
 
 export function useTradeState(): AppState['trade'] {
@@ -28,23 +18,11 @@ export function useTradeState(): AppState['trade'] {
 }
 
 export function useTradeActionHandlers(): {
-  onCurrencySelection: (field: Field, currency: Currency) => void
   onSwitchTokens: () => void
   onUserInput: (input: Input, typedValue: string) => void
   onChangeRecipient: (recipient: string | null) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
-  const onCurrencySelection = useCallback(
-    (field: Field, currency: Currency) => {
-      dispatch(
-        selectCurrency({
-          field,
-          currencyId: currency instanceof Token ? currency.address : currency === ETHER ? 'ROSE' : ''
-        })
-      )
-    },
-    [dispatch]
-  )
 
   const onSwitchTokens = useCallback(() => {
     dispatch(switchCurrencies())
@@ -66,7 +44,6 @@ export function useTradeActionHandlers(): {
 
   return {
     onSwitchTokens,
-    onCurrencySelection,
     onUserInput,
     onChangeRecipient
   }
@@ -99,7 +76,10 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 ]
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedTradeInfo(): {
+export function useDerivedTradeInfo(
+  currencyA: Currency | undefined,
+  currencyB: Currency | undefined
+): {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmountAmount: CurrencyAmount | undefined
@@ -109,22 +89,23 @@ export function useDerivedTradeInfo(): {
 } {
   const { account } = useActiveWeb3React()
 
-  const {
-    typedAmountValue,
-    typedPriceValue,
-    [Field.CURRENCY_A]: { currencyId: currencyAId },
-    [Field.CURRENCY_B]: { currencyId: currencyBId },
-    recipient
-  } = useTradeState()
+  const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
 
-  const currencyA = useCurrency(currencyAId)
-  const currencyB = useCurrency(currencyBId)
+  // tokens
+  const currencies: { [field in Field]?: Currency } = useMemo(
+    () => ({
+      [Field.CURRENCY_A]: currencyA ?? undefined,
+      [Field.CURRENCY_B]: currencyB ?? undefined
+    }),
+    [currencyA, currencyB]
+  )
+
   const recipientLookup = useENS(recipient ?? undefined)
   const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
 
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
-    currencyA ?? undefined,
-    currencyB ?? undefined
+    currencies[Field.CURRENCY_A] ?? undefined,
+    currencies[Field.CURRENCY_B] ?? undefined
   ])
 
   const orderBook = useOrderBook(currencyA ?? undefined, currencyB ?? undefined)
@@ -133,11 +114,6 @@ export function useDerivedTradeInfo(): {
   const currencyBalances = {
     [Field.CURRENCY_A]: relevantTokenBalances[0],
     [Field.CURRENCY_B]: relevantTokenBalances[1]
-  }
-
-  const currencies: { [field in Field]?: Currency } = {
-    [Field.CURRENCY_A]: currencyA ?? undefined,
-    [Field.CURRENCY_B]: currencyB ?? undefined
   }
 
   const parsedAmountAmount = tryParseAmount(

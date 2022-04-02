@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -32,6 +32,7 @@ import Loader from '../../components/Loader'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
 import { useTradeCallback } from '../../hooks/useTradeCallback'
 import { RouteComponentProps } from 'react-router'
+import { currencyId } from '../../utils/currencyId'
 
 export default function DoTrade({
   match: {
@@ -60,8 +61,9 @@ export default function DoTrade({
   const [isExpertMode] = useExpertModeManager()
   const [deadline] = useUserDeadline()
 
-  // swap state
+  // trade state
   const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
+
   const {
     trade,
     currencyBalances,
@@ -69,7 +71,7 @@ export default function DoTrade({
     parsedPriceAmount,
     currencies,
     inputError: tradeInputError
-  } = useDerivedTradeInfo()
+  } = useDerivedTradeInfo(loadedCurrencyA ?? undefined, loadedCurrencyB ?? undefined)
   const { address: recipientAddress } = useENSAddress(recipient)
 
   const parsedAmounts = {
@@ -77,7 +79,7 @@ export default function DoTrade({
     [Input.PRICE]: parsedPriceAmount
   }
 
-  const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useTradeActionHandlers()
+  const { onSwitchTokens, onUserInput, onChangeRecipient } = useTradeActionHandlers()
   const isValid = !tradeInputError
 
   const handleTypeAmount = useCallback(
@@ -130,7 +132,7 @@ export default function DoTrade({
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.CURRENCY_A])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
-  console.log('trade:', trade)
+  console.log('currencies:', currencies)
   // the callback to execute the trade
   const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(
     trade ?? undefined,
@@ -199,21 +201,36 @@ export default function DoTrade({
     })
   }, [attemptingTxn, showConfirm, tradeErrorMessage, trade, txHash])
 
-  const handleInputSelect = useCallback(
-    inputCurrency => {
-      setApprovalSubmitted(false) // reset 2 step UI for approvals
-      onCurrencySelection(Field.CURRENCY_A, inputCurrency)
+  const handleCurrencyASelect = useCallback(
+    (currencyA: Currency) => {
+      const newCurrencyIdA = currencyId(currencyA)
+      if (newCurrencyIdA === currencyIdB) {
+        history.push(`/trade/${currencyIdB}/${currencyIdA}`)
+      } else {
+        history.push(`/trade/${newCurrencyIdA}/${currencyIdB}`)
+      }
     },
-    [onCurrencySelection]
+    [currencyIdB, history, currencyIdA]
+  )
+  const handleCurrencyBSelect = useCallback(
+    (currencyB: Currency) => {
+      const newCurrencyIdB = currencyId(currencyB)
+      if (currencyIdA === newCurrencyIdB) {
+        if (currencyIdB) {
+          history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
+        } else {
+          history.push(`/trade/${newCurrencyIdB}`)
+        }
+      } else {
+        history.push(`/trade/${currencyIdA ? currencyIdA : 'ROSE'}/${newCurrencyIdB}`)
+      }
+    },
+    [currencyIdA, history, currencyIdB]
   )
 
   const handleMaxInput = useCallback(() => {
     maxAmountInput && onUserInput(Input.AMOUNT, maxAmountInput.toExact())
   }, [maxAmountInput, onUserInput])
-
-  const handleOutputSelect = useCallback(outputCurrency => onCurrencySelection(Field.CURRENCY_B, outputCurrency), [
-    onCurrencySelection
-  ])
 
   return (
     <>
@@ -246,7 +263,7 @@ export default function DoTrade({
               currency={currencies[Field.CURRENCY_A]}
               onUserInput={handleTypeAmount}
               onMax={handleMaxInput}
-              onCurrencySelect={handleInputSelect}
+              onCurrencySelect={handleCurrencyASelect}
               otherCurrency={currencies[Field.CURRENCY_B]}
               id="trade-currency-input"
             />
@@ -275,7 +292,7 @@ export default function DoTrade({
               label={trade?.tradeType === TradeType.LIMIT_BUY ? 'With' : 'At'}
               showMaxButton={false}
               currency={currencies[Field.CURRENCY_B]}
-              onCurrencySelect={handleOutputSelect}
+              onCurrencySelect={handleCurrencyBSelect}
               otherCurrency={currencies[Field.CURRENCY_A]}
               id="trade-currency-output"
             />

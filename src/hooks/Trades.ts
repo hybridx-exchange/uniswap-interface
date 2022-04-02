@@ -251,7 +251,7 @@ export function useGetBestInputAmount(
 /**
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Swap | null {
+export function useSwapExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Swap | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
   const allSwap = useMemo(() => {
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
@@ -266,7 +266,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
-export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Swap | null {
+export function useSwapExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Swap | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
   const allSwap = useMemo(() => {
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
@@ -311,7 +311,6 @@ export function useOrderBook(currencyIn?: Currency | undefined, currencyOut?: Cu
       tokenIn && tokenOut
         ? [tokenIn.address, tokenOut.address, DEFAULT_LIMIT_SIZE]
         : [ZERO_ADDRESS, ZERO_ADDRESS, DEFAULT_LIMIT_SIZE],
-      [],
       [],
       [],
       [],

@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
-import { useOrderBook, useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
+import { useOrderBook, useSwapExactIn, useSwapExactOut } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
@@ -144,8 +144,8 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  const bestTradeExactIn = useSwapExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
+  const bestTradeExactOut = useSwapExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
   const orderBook = useOrderBook(inputCurrency ?? undefined, outputCurrency ?? undefined)
 
   const v2Swap = isExactIn ? bestTradeExactIn : bestTradeExactOut
