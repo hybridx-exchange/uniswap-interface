@@ -80,7 +80,7 @@ export default function DoTrade({
   }
 
   const { onSwitchTokens, onUserInput, onChangeRecipient } = useTradeActionHandlers()
-  const isValid = !tradeInputError
+  const isValid = !tradeInputError && trade && trade.orderBook && trade.orderBook !== null
 
   const handleTypeAmount = useCallback(
     (value: string) => {
@@ -352,9 +352,9 @@ export default function DoTrade({
                     }
                   }}
                   width="48%"
-                  id="swap-button"
+                  id="trade-button"
                   disabled={!isValid || approval !== ApprovalState.APPROVED}
-                  error={isValid}
+                  error={!isValid}
                 >
                   <Text fontSize={16} fontWeight={500}>
                     {`Trade`}
@@ -378,7 +378,7 @@ export default function DoTrade({
                 }}
                 id="trade-button"
                 disabled={!isValid || !!tradeCallbackError}
-                error={isValid && !tradeCallbackError}
+                error={!isValid}
               >
                 <Text fontSize={20} fontWeight={500}>
                   {tradeInputError ? tradeInputError : `Trade`}
