@@ -13,6 +13,7 @@ import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useTranslation } from 'react-i18next'
+import { Text } from 'rebass'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -68,6 +69,21 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     stroke-width: 1.5px;
   }
+`
+const BaseWrapper = styled.div<{ disable?: boolean }>`
+  border: 1px solid ${({ theme, disable }) => (disable ? 'transparent' : theme.bg3)};
+  border-radius: 10px;
+  display: flex;
+  padding: 6px;
+
+  align-items: center;
+  :hover {
+    cursor: ${({ disable }) => !disable && 'pointer'};
+    background-color: ${({ theme, disable }) => !disable && theme.bg2};
+  }
+
+  background-color: ${({ theme, disable }) => disable && theme.bg3};
+  opacity: ${({ disable }) => disable && '0.4'};
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
@@ -129,6 +145,7 @@ interface CurrencyInputPanelProps {
   otherCurrency?: Currency | null
   id: string
   showCommonBases?: boolean
+  isOrderBook?: boolean
 }
 
 export default function CurrencyInputPanel({
@@ -145,7 +162,8 @@ export default function CurrencyInputPanel({
   hideInput = false,
   otherCurrency,
   id,
-  showCommonBases
+  showCommonBases,
+  isOrderBook
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -167,7 +185,7 @@ export default function CurrencyInputPanel({
               <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
                 {label}
               </TYPE.body>
-              {account && (
+              {!isOrderBook && account && (
                 <TYPE.body
                   onClick={onMax}
                   color={theme.text2}
@@ -198,37 +216,51 @@ export default function CurrencyInputPanel({
               )}
             </>
           )}
-          <CurrencySelect
-            selected={!!currency}
-            className="open-currency-select-button"
-            onClick={() => {
-              if (!disableCurrencySelect) {
-                setModalOpen(true)
-              }
-            }}
-          >
-            <Aligner>
-              {pair ? (
-                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
-              ) : currency ? (
-                <CurrencyLogo currency={currency} size={'24px'} />
-              ) : null}
-              {pair ? (
-                <StyledTokenName className="pair-name-container">
-                  {pair?.token0.symbol}:{pair?.token1.symbol}
-                </StyledTokenName>
-              ) : (
-                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? currency.symbol.slice(0, 4) +
-                      '...' +
-                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                    : currency?.symbol) || t('selectToken')}
-                </StyledTokenName>
-              )}
-              {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
-            </Aligner>
-          </CurrencySelect>
+          {!isOrderBook && (
+            <>
+              <CurrencySelect
+                selected={!!currency}
+                className="open-currency-select-button"
+                onClick={() => {
+                  if (!disableCurrencySelect) {
+                    setModalOpen(true)
+                  }
+                }}
+              >
+                <Aligner>
+                  {pair ? (
+                    <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+                  ) : currency ? (
+                    <CurrencyLogo currency={currency} size={'24px'} />
+                  ) : null}
+                  {pair ? (
+                    <StyledTokenName className="pair-name-container">
+                      {pair?.token0.symbol}:{pair?.token1.symbol}
+                    </StyledTokenName>
+                  ) : (
+                    <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                      {(currency && currency.symbol && currency.symbol.length > 20
+                        ? currency.symbol.slice(0, 4) +
+                          '...' +
+                          currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                        : currency?.symbol) || t('selectToken')}
+                    </StyledTokenName>
+                  )}
+                  {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
+                </Aligner>
+              </CurrencySelect>
+            </>
+          )}
+          {isOrderBook && (
+            <>
+              <BaseWrapper>
+                <CurrencyLogo currency={currency ?? undefined} style={{ marginRight: 8 }} />
+                <Text fontWeight={500} fontSize={16}>
+                  {currency?.symbol ?? ''}
+                </Text>
+              </BaseWrapper>
+            </>
+          )}
         </InputRow>
       </Container>
       {!disableCurrencySelect && onCurrencySelect && (

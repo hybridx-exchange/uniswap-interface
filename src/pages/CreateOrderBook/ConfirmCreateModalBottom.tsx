@@ -12,12 +12,14 @@ export function ConfirmCreateModalBottom({
   currencyBalances,
   priceStepAmount,
   minAmountAmount,
+  orderBookExist,
   onAdd
 }: {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount }
   priceStepAmount: CurrencyAmount | undefined
   minAmountAmount: CurrencyAmount | undefined
+  orderBookExist: boolean
   onAdd: () => void
 }) {
   const LPPrice =
@@ -78,7 +80,7 @@ export function ConfirmCreateModalBottom({
       </RowBetween>
       <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onAdd}>
         <Text fontWeight={500} fontSize={20}>
-          {'Confirm Create'}
+          {!orderBookExist ? 'Confirm Create' : 'Confirm Update'}
         </Text>
       </ButtonPrimary>
     </>

@@ -7,6 +7,8 @@ import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/bui
 import { abi as IOrderBookFactoryABI } from '@hybridx-exchange/orderbook-core/build/IOrderBookFactory.json'
 import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
 import { HYBRIDX_ROUTER_ADDRESS, ROUTER_ADDRESS} from '../constants'
+import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
+import { ROUTER_ADDRESS } from '../constants'
 import {
   ChainId,
   JSBI,
@@ -120,4 +122,8 @@ export function escapeRegExp(string: string): string {
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
+}
+
+export function getOrderBook(orderBookAddress: string, library: Web3Provider, account?: string): Contract {
+  return getContract(orderBookAddress, IOrderBookABI, library, account)
 }
