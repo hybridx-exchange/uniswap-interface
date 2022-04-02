@@ -125,7 +125,7 @@ export function CreateOrderTabs({ tradeType }: { tradeType: TradeType | undefine
   return (
     <Tabs>
       <RowBetween style={{ padding: '1rem' }}>
-        <HistoryLink to="/trade">
+        <HistoryLink to="/swap">
           <StyledArrowLeft />
         </HistoryLink>
         <ActiveText>{tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}</ActiveText>
