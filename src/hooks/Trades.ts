@@ -412,7 +412,7 @@ export function useTradeRet(
   const tokenIn = type === TradeType.LIMIT_BUY ? orderBook?.quoteToken : orderBook?.baseToken
   const tokenOut = type === TradeType.LIMIT_BUY ? orderBook?.baseToken : orderBook?.quoteToken
   const results = useMultipleContractMultipleData(
-    [orderBook ? HYBRIDX_ROUTER_ADDRESS : ''],
+    [orderBook && amount && price ? HYBRIDX_ROUTER_ADDRESS : ''],
     [new Interface(IHybridRouterABI)],
     [type === TradeType.LIMIT_BUY ? 'getAmountsForBuy' : 'getAmountsForSell'],
     [
@@ -494,5 +494,5 @@ export function useTradeRet(
     }
 
     return null
-  }, [orderBook, type, amount, price])
+  }, [orderBook, results, tokenIn, tokenOut])
 }

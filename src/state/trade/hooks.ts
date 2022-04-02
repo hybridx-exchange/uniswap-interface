@@ -139,7 +139,17 @@ export function useDerivedTradeInfo(
     }
 
     return null
-  }, [])
+  }, [
+    orderBook,
+    currencyA,
+    currencyB,
+    type,
+    typedAmountValue,
+    typedPriceValue,
+    tradeRet,
+    parsedPriceAmount,
+    parsedAmountAmount
+  ])
 
   let inputError: string | undefined
   if (!account) {

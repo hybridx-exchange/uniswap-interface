@@ -132,7 +132,7 @@ export default function DoTrade({
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.CURRENCY_A])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
-  console.log('currencies:', currencies)
+
   // the callback to execute the trade
   const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(
     trade ?? undefined,

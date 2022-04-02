@@ -98,7 +98,7 @@ export function useTradeCallback(
 
     return {
       state: TradeCallbackState.VALID,
-      callback: async function onSwap(): Promise<string> {
+      callback: async function onTrade(): Promise<string> {
         const estimatedCalls: EstimatedTradeCall[] = await Promise.all(
           tradeCalls.map(call => {
             const {
