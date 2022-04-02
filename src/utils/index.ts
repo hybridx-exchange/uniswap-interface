@@ -6,9 +6,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/build/IUniswapV2Router02.json'
 import { abi as IOrderBookFactoryABI } from '@hybridx-exchange/orderbook-core/build/IOrderBookFactory.json'
 import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
-import { HYBRIDX_ROUTER_ADDRESS, ROUTER_ADDRESS} from '../constants'
+import { HYBRIDX_ROUTER_ADDRESS, ROUTER_ADDRESS } from '../constants'
 import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
-import { ROUTER_ADDRESS } from '../constants'
 import {
   ChainId,
   JSBI,

@@ -378,7 +378,7 @@ export default function DoTrade({
                 }}
                 id="trade-button"
                 disabled={!isValid || !!tradeCallbackError}
-                error={!isValid}
+                error={!isValid && !!typedAmountValue && !!typedPriceValue}
               >
                 <Text fontSize={20} fontWeight={500}>
                   {tradeInputError ? tradeInputError : `Trade`}
