@@ -84,7 +84,6 @@ export default function DoTrade({
 
   const handleTypeAmount = useCallback(
     (value: string) => {
-      console.log('handleTypeAmount', value)
       onUserInput(Input.AMOUNT, value)
     },
     [onUserInput]

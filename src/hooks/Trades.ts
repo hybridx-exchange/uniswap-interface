@@ -439,7 +439,7 @@ export function useTradeRet(
     }
 
     const {
-      data: [
+      amounts: [
         ammAmountInRaw,
         ammAmountOutRaw,
         orderAmountInRaw,
@@ -448,7 +448,7 @@ export function useTradeRet(
         amountLeftRaw,
         priceToRaw
       ]
-    } = returns[0]
+    } = returns[0].data
 
     const ammAmountIn = tokenIn
       ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, ammAmountInRaw), tokenIn?.token.chainId)

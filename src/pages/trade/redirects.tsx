@@ -9,7 +9,6 @@ export function RedirectOldTradePathStructure(props: RouteComponentProps<{ curre
       params: { currencyIdA }
     }
   } = props
-  console.log(props)
   const match = currencyIdA.match(OLD_PATH_STRUCTURE)
   if (match?.length) {
     return <Redirect to={`/trade/${match[1]}/${match[2]}`} />
@@ -26,7 +25,6 @@ export function RedirectDuplicateTokenIdsForTrade(
       params: { currencyIdA, currencyIdB }
     }
   } = props
-  console.log(props)
   if (currencyIdA.toLowerCase() === currencyIdB.toLowerCase()) {
     return <Redirect to={`/trade/${currencyIdA}/ROSE`} />
   }
