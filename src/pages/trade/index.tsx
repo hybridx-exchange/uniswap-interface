@@ -144,10 +144,22 @@ export default function DoTrade({
     if (!tradeCallback) {
       return
     }
-    setTradeState({ attemptingTxn: true, tradeToConfirm, showConfirm, tradeErrorMessage: undefined, txHash: undefined })
+    setTradeState({
+      attemptingTxn: true,
+      tradeToConfirm,
+      showConfirm,
+      tradeErrorMessage: undefined,
+      txHash: undefined
+    })
     tradeCallback()
       .then(hash => {
-        setTradeState({ attemptingTxn: false, tradeToConfirm, showConfirm, tradeErrorMessage: undefined, txHash: hash })
+        setTradeState({
+          attemptingTxn: false,
+          tradeToConfirm,
+          showConfirm,
+          tradeErrorMessage: undefined,
+          txHash: hash
+        })
 
         ReactGA.event({
           category: 'Trade',
@@ -185,7 +197,6 @@ export default function DoTrade({
   const handleConfirmDismiss = useCallback(() => {
     setTradeState({ showConfirm: false, tradeToConfirm, attemptingTxn, tradeErrorMessage: tradeErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
-    console.log(txHash)
     if (txHash) {
       onUserInput(Input.AMOUNT, '')
       onUserInput(Input.PRICE, '')
