@@ -110,7 +110,7 @@ export default function DoTrade({
     txHash: undefined
   })
 
-  const userHasSpecifiedInputPrice = Boolean(
+  const userHasSpecifiedAmountAndPrice = Boolean(
     currencies[Field.CURRENCY_A] &&
       currencies[Field.CURRENCY_B] &&
       parsedAmounts[Input.AMOUNT]?.greaterThan(JSBI.BigInt(0)) &&
@@ -135,7 +135,7 @@ export default function DoTrade({
 
   // the callback to execute the trade
   const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(
-    trade ?? undefined,
+    userHasSpecifiedAmountAndPrice && trade ? trade : undefined,
     deadline,
     recipient
   )
@@ -326,7 +326,7 @@ export default function DoTrade({
           <BottomGrouping>
             {!account ? (
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-            ) : !trade?.orderBook && userHasSpecifiedInputPrice ? (
+            ) : !trade?.orderBook && userHasSpecifiedAmountAndPrice ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
               </GreyCard>

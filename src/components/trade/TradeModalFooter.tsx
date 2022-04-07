@@ -60,9 +60,7 @@ export default function TradeModalFooter({
           <RowFixed>
             <TYPE.black fontSize={14}>{trade.tradeType === TradeType.LIMIT_BUY ? 'buy' : 'sell'}</TYPE.black>
             <TYPE.black fontSize={14} marginLeft={'4px'}>
-              {trade.tradeType === TradeType.LIMIT_BUY
-                ? trade.quoteToken.currency.symbol
-                : trade.baseToken.currency.symbol}
+              {trade.tradeType === TradeType.LIMIT_BUY ? trade.quoteToken.symbol : trade.baseToken?.symbol}
             </TYPE.black>
           </RowFixed>
         </RowBetween>
