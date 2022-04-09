@@ -51,8 +51,8 @@ export function OrderBookDetails({ orderBook, wrappedCurrencies }: OrderBookDeta
         </>
       )}
       {orderBook &&
-        orderBook.buyOrders.length == 0 &&
-        orderBook.sellOrders.length == 0 &&
+        orderBook.buyOrders.length === 0 &&
+        orderBook.sellOrders.length === 0 &&
         wrappedCurrencies[Field.INPUT]?.address !== wrappedCurrencies[Field.OUTPUT]?.address && (
           <div>
             <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>

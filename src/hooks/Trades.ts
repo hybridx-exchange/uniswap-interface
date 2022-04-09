@@ -5,12 +5,13 @@ import {
   OrderBook,
   Pair,
   Route,
+  Swap,
+  SwapType,
   Token,
   TokenAmount,
-  Swap,
   TradeRet,
-  SwapType,
   TradeType,
+  UserOrder,
   ZERO
 } from '@hybridx-exchange/uniswap-sdk'
 import flatMap from 'lodash.flatmap'
@@ -497,4 +498,100 @@ export function useTradeRet(
 
     return null
   }, [orderBook, results, tokenIn, tokenOut])
+}
+
+export function useUserOrderIds(
+  account: string | undefined,
+  trackedTokensAndOrderBookAddresses: (Token | string)[][]
+): { selectOrderBooks: (Token | string)[][]; userOrderIds: string[] } {
+  const orderBookInterface = new Interface(IOrderBookABI)
+  const orderBookAddresses = trackedTokensAndOrderBookAddresses.map(e => e[2].toString())
+  const results = useMultipleContractSingleData(orderBookAddresses, orderBookInterface, 'getUserOrders', [account])
+  return useMemo(() => {
+    const allOrderIds: string[] = []
+    const selectOrderBooks: (Token | string)[][] = []
+    for (let i = 0; i < results.length; i++) {
+      const { result, loading } = results[i]
+      if (loading || !result || result.length === 0) continue
+      const orderIds = result[0]
+      const length = orderIds ? orderIds.length : 0
+      for (let j = 0; j < length; j++) {
+        const orderId = orderIds ? orderIds[j].toString() : undefined
+        if (orderId) {
+          allOrderIds.push(orderId)
+          selectOrderBooks.push(trackedTokensAndOrderBookAddresses[i])
+        }
+      }
+    }
+    return { selectOrderBooks: selectOrderBooks, userOrderIds: allOrderIds }
+  }, [results, trackedTokensAndOrderBookAddresses])
+}
+
+export function useUserOrders(selectOrderBooks: (Token | string)[][], userOrderIds: string[]): UserOrder[] {
+  const orderBookInterface = new Interface(IOrderBookABI)
+  const orderBookAddresses = selectOrderBooks
+    .map(e => e[2].toString())
+    .concat(selectOrderBooks.map(e => e[2].toString()))
+  //console.log('address:', orderBookAddresses)
+  const orderBookInterfaces = userOrderIds
+    .map(e => orderBookInterface)
+    .concat(userOrderIds.map(e => orderBookInterface))
+  //console.log('interfaces:', orderBookInterfaces)
+  const methodNames = userOrderIds.map(e => 'marketOrder').concat(userOrderIds.map(e => 'quoteToken'))
+  //console.log('methods:', methodNames)
+  const callInputs = userOrderIds.map(e => [e]).concat(userOrderIds.map(e => []))
+  //console.log('inputs:', callInputs)
+  const results = useMultipleContractMultipleData(orderBookAddresses, orderBookInterfaces, methodNames, callInputs)
+  return useMemo(() => {
+    const returns = results?.map(result => {
+      if (!result || result.loading) return { data: null, loading: result.loading }
+      const { result: data, loading } = result
+      return { data, loading }
+    })
+
+    //console.log('returns:', returns)
+    if (!returns || returns.length === 0 || returns[0].loading || returns.length !== userOrderIds.length * 2) {
+      return []
+    }
+
+    const userOrders: UserOrder[] = []
+    for (let i = 0; i < userOrderIds.length; i++) {
+      const order = returns[i].data ?? []
+      const [owner, to, orderId, price, amountOffer, amountRemain, orderType, orderIndex] = order[0]
+      //console.log('order:', owner, to, orderId, price, amountOffer, amountRemain, orderType, orderIndex)
+      const quoteAddress = returns[userOrderIds.length + i].data?.toString()
+      //console.log('quote:', quoteAddress)
+      const quoteToken =
+        quoteAddress?.toLowerCase() === (selectOrderBooks[i][0] as Token).address.toLowerCase()
+          ? (selectOrderBooks[i][0] as Token)
+          : (selectOrderBooks[i][1] as Token)
+      const baseToken =
+        quoteToken === (selectOrderBooks[i][0] as Token)
+          ? (selectOrderBooks[i][1] as Token)
+          : (selectOrderBooks[i][0] as Token)
+      const type = orderType === TradeType.LIMIT_BUY.toString() ? TradeType.LIMIT_BUY : TradeType.LIMIT_SELL
+      const amountRemainAmount =
+        type === TradeType.LIMIT_BUY
+          ? new TokenAmount(quoteToken, amountRemain)
+          : new TokenAmount(baseToken, amountRemain)
+      const amountOfferAmount =
+        type === TradeType.LIMIT_BUY
+          ? new TokenAmount(quoteToken, amountOffer)
+          : new TokenAmount(baseToken, amountOffer)
+      const priceAmount = new TokenAmount(quoteToken, price)
+      userOrders.push({
+        amountLeft: amountRemainAmount,
+        amountOffer: amountOfferAmount,
+        orderId: orderId,
+        orderIndex: orderIndex,
+        orderType: type,
+        owner: owner,
+        price: priceAmount,
+        to: to,
+        orderBook: orderBookAddresses[i]
+      })
+    }
+
+    return userOrders
+  }, [selectOrderBooks, orderBookAddresses, userOrderIds, results])
 }

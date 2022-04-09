@@ -145,8 +145,6 @@ export function useDerivedTradeInfo(
     currencyA,
     currencyB,
     type,
-    typedAmountValue,
-    typedPriceValue,
     tradeRet,
     parsedPriceAmount,
     parsedAmountAmount

@@ -168,7 +168,7 @@ export default function CreateOrderBook({
 
     const priceStepAmount_ = parseUnits(priceStepAmount.toSignificant(), currencyBase.decimals).toString()
 
-    if (priceStepAmount_ != priceStep.toString()) {
+    if (priceStepAmount_ !== priceStep.toString()) {
       let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
       {
         estimate = orderBook_.estimateGas.priceStepUpdate
@@ -214,7 +214,7 @@ export default function CreateOrderBook({
 
     const minAmountAmount_ = parseUnits(minAmountAmount.toSignificant(), currencyBase.decimals).toString()
 
-    if (minAmountAmount_ != minAmount.toString()) {
+    if (minAmountAmount_ !== minAmount.toString()) {
       let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
       {
         estimate = orderBook_.estimateGas.minAmountUpdate
