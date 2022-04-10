@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@hybridx-exchange/uniswap-sdk'
+import {Currency, CurrencyAmount, JSBI, Token, Trade, TradeType} from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -259,7 +259,11 @@ export default function DoTrade({
       />
       <AppBody>
         <CreateOrderTabs
-          tradeType={trade?.orderBook.baseToken.currency.symbol === currencies[Field.CURRENCY_A]?.symbol ? 0 : 1}
+          tradeType={
+            trade?.orderBook.baseToken.currency.symbol === currencies[Field.CURRENCY_A]?.symbol
+              ? TradeType.LIMIT_BUY
+              : TradeType.LIMIT_SELL
+          }
         />
         <Wrapper id="trade-page">
           <ConfirmTradeModal
