@@ -16,6 +16,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useTrackedTokenPairs } from '../../state/user/hooks'
 import AppBody from '../AppBody'
 import { useUserOrderIds, useUserOrders } from '../../hooks/Trades'
+import FullOrderCard from '../../components/OrderCard'
 
 export default function DoUserOrder() {
   const theme = useContext(ThemeContext)
@@ -41,37 +42,43 @@ export default function DoUserOrder() {
       <AppBody>
         <SwapPoolTabs active={'pool'} />
         <AutoColumn gap="lg" justify="center">
-          <ButtonPrimary id="join-pool-button" as={Link} style={{ padding: 16 }} to="/add/ROSE">
+          <ButtonPrimary id="create-order-button" as={Link} style={{ padding: 16 }} to="/trade/ROSE">
             <Text fontWeight={500} fontSize={20}>
-              Add Liquidity
+              New Order
             </Text>
           </ButtonPrimary>
 
           <AutoColumn gap="12px" style={{ width: '100%' }}>
             <RowBetween padding={'0 8px'}>
               <Text color={theme.text1} fontWeight={500}>
-                Your Liquidity
+                Your Orders
               </Text>
-              <Question text="When you add liquidity, you are given pool tokens that represent your share. If you don’t see a pool you joined in this list, try importing a pool below." />
+              <Question text="Orders related to tokens in your watchlist will be displayed here. If you don’t see your orders in this list, try importing a token pair below." />
             </RowBetween>
 
             {!account ? (
               <LightCard padding="40px">
                 <TYPE.body color={theme.text3} textAlign="center">
-                  Connect to a wallet to view your liquidity.
+                  Connect to a wallet to view your orders.
                 </TYPE.body>
               </LightCard>
+            ) : userOrders.length > 0 ? (
+              <>
+                {userOrders.map(order => (
+                  <FullOrderCard key={order.orderId.toString()} order={order} />
+                ))}
+              </>
             ) : (
               <LightCard padding="40px">
                 <TYPE.body color={theme.text3} textAlign="center">
-                  No liquidity found.
+                  No orders found.
                 </TYPE.body>
               </LightCard>
             )}
 
             <div>
               <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-                {"Don't see a pool you joined?"}{' '}
+                {"Don't see your orders?"}{' '}
                 <StyledInternalLink id="import-pool-link" to={'/find'}>
                   {'Import it.'}
                 </StyledInternalLink>

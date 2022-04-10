@@ -588,7 +588,9 @@ export function useUserOrders(selectOrderBooks: (Token | string)[][], userOrderI
         owner: owner,
         price: priceAmount,
         to: to,
-        orderBook: orderBookAddresses[i]
+        orderBook: orderBookAddresses[i],
+        baseToken: baseToken,
+        quoteToken: quoteToken
       })
     }
 
