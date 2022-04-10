@@ -146,6 +146,7 @@ interface CurrencyInputPanelProps {
   id: string
   showCommonBases?: boolean
   isOrderBook?: boolean
+  hideCurrency?: boolean
 }
 
 export default function CurrencyInputPanel({
@@ -163,7 +164,8 @@ export default function CurrencyInputPanel({
   otherCurrency,
   id,
   showCommonBases,
-  isOrderBook
+  isOrderBook,
+  hideCurrency
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -185,7 +187,7 @@ export default function CurrencyInputPanel({
               <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
                 {label}
               </TYPE.body>
-              {!isOrderBook && account && (
+              {account && (
                 <TYPE.body
                   onClick={onMax}
                   color={theme.text2}
@@ -251,7 +253,7 @@ export default function CurrencyInputPanel({
               </CurrencySelect>
             </>
           )}
-          {isOrderBook && (
+          {isOrderBook && !hideCurrency && (
             <>
               <BaseWrapper>
                 <CurrencyLogo currency={currency ?? undefined} style={{ marginRight: 8 }} />

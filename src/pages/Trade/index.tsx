@@ -1,9 +1,9 @@
-import { Currency, CurrencyAmount, JSBI, Token, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonConfirmed, ButtonError, ButtonLight } from '../../components/Button'
 import { GreyCard } from '../../components/Card'
@@ -25,7 +25,7 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field, Input } from '../../state/trade/actions'
 import { useDerivedTradeInfo, useTradeActionHandlers, useTradeState } from '../../state/trade/hooks'
 import { useExpertModeManager, useUserDeadline } from '../../state/user/hooks'
-import { LinkStyledButton, TYPE } from '../../theme'
+import { LinkStyledButton, StyledInternalLink, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import AppBody from '../AppBody'
 import Loader from '../../components/Loader'
@@ -33,6 +33,12 @@ import { OrderBookTable } from '../../components/swap/OrderBookTable'
 import { useTradeCallback } from '../../hooks/useTradeCallback'
 import { RouteComponentProps } from 'react-router'
 import { currencyId } from '../../utils/currencyId'
+import CurrencySelectPanel from '../../components/CurrencySelectPanel'
+
+const CurrencyInputDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
 
 export default function DoTrade({
   match: {
@@ -79,7 +85,7 @@ export default function DoTrade({
     [Input.PRICE]: parsedPriceAmount
   }
 
-  const { onSwitchTokens, onUserInput, onChangeRecipient } = useTradeActionHandlers()
+  const { onUserInput, onChangeRecipient } = useTradeActionHandlers()
   const isValid = !tradeInputError && trade && trade.orderBook && trade.orderBook !== null
 
   const handleTypeAmount = useCallback(
@@ -110,7 +116,7 @@ export default function DoTrade({
     txHash: undefined
   })
 
-  const userHasSpecifiedAmountAndPrice = Boolean(
+  const userHasSpecifiedInputPrice = Boolean(
     currencies[Field.CURRENCY_A] &&
       currencies[Field.CURRENCY_B] &&
       parsedAmounts[Input.AMOUNT]?.greaterThan(JSBI.BigInt(0)) &&
@@ -135,7 +141,7 @@ export default function DoTrade({
 
   // the callback to execute the trade
   const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(
-    userHasSpecifiedAmountAndPrice && trade ? trade : undefined,
+    trade?.amount && trade?.price && trade?.tradeRet ? trade : undefined,
     deadline,
     recipient
   )
@@ -252,7 +258,9 @@ export default function DoTrade({
         onConfirm={handleConfirmTokenWarning}
       />
       <AppBody>
-        <CreateOrderTabs tradeType={trade?.tradeType} />
+        <CreateOrderTabs
+          tradeType={trade?.orderBook.baseToken.currency.symbol == currencies[Field.CURRENCY_A]?.symbol ? 0 : 1}
+        />
         <Wrapper id="trade-page">
           <ConfirmTradeModal
             isOpen={showConfirm}
@@ -268,8 +276,42 @@ export default function DoTrade({
           />
 
           <AutoColumn gap={'md'}>
+            <CurrencyInputDiv>
+              <CurrencySelectPanel
+                label={'base token'}
+                value={typedAmountValue}
+                showMaxButton={false}
+                onUserInput={handleTypeAmount}
+                onCurrencySelect={handleCurrencyASelect}
+                currency={currencies[Field.CURRENCY_A]}
+                otherCurrency={currencies[Field.CURRENCY_B]}
+                id="create-order-book-base-token"
+                showCommonBases
+              />
+              <AutoColumn justify="space-between">
+                <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+                  <ArrowWrapper clickable>
+                    <StyledInternalLink id="change-create-order" to={'/trade/' + currencyIdB + '/' + currencyIdA}>
+                      {'→'}
+                    </StyledInternalLink>
+                  </ArrowWrapper>
+                </AutoRow>
+              </AutoColumn>
+              <CurrencySelectPanel
+                label={'quote token'}
+                value={typedPriceValue}
+                showMaxButton={false}
+                onUserInput={handleTypePrice}
+                onCurrencySelect={handleCurrencyBSelect}
+                currency={currencies[Field.CURRENCY_B]}
+                otherCurrency={currencies[Field.CURRENCY_A]}
+                id="create-order-book-base-token"
+                showCommonBases
+              />
+            </CurrencyInputDiv>
+
             <CurrencyInputPanel
-              label={trade?.tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}
+              label={'Amount'}
               value={typedAmountValue}
               showMaxButton={!atMaxAmountInput}
               currency={currencies[Field.CURRENCY_A]}
@@ -277,20 +319,11 @@ export default function DoTrade({
               onMax={handleMaxInput}
               onCurrencySelect={handleCurrencyASelect}
               otherCurrency={currencies[Field.CURRENCY_B]}
+              isOrderBook={true}
               id="trade-currency-input"
             />
             <AutoColumn justify="space-between">
               <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                <ArrowWrapper clickable>
-                  <ArrowDown
-                    size="16"
-                    onClick={() => {
-                      setApprovalSubmitted(false) // reset 2 step UI for approvals
-                      onSwitchTokens()
-                    }}
-                    color={currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] ? theme.primary1 : theme.text2}
-                  />
-                </ArrowWrapper>
                 {recipient === null && isExpertMode ? (
                   <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                     + Add a send (optional)
@@ -301,11 +334,12 @@ export default function DoTrade({
             <CurrencyInputPanel
               value={typedPriceValue}
               onUserInput={handleTypePrice}
-              label={trade?.tradeType === TradeType.LIMIT_BUY ? 'With' : 'At'}
+              label={'Price'}
               showMaxButton={false}
               currency={currencies[Field.CURRENCY_B]}
               onCurrencySelect={handleCurrencyBSelect}
               otherCurrency={currencies[Field.CURRENCY_A]}
+              isOrderBook={true}
               id="trade-currency-output"
             />
 
@@ -326,7 +360,7 @@ export default function DoTrade({
           <BottomGrouping>
             {!account ? (
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-            ) : !trade?.orderBook && userHasSpecifiedAmountAndPrice ? (
+            ) : !trade?.orderBook && userHasSpecifiedInputPrice ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
               </GreyCard>

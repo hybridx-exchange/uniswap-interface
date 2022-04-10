@@ -127,11 +127,11 @@ export function useDerivedTradeInfo(
   const tradeRet = useTradeRet(orderBook, type, parsedAmountAmount, parsedPriceAmount)
 
   const trade = useMemo(() => {
-    if (orderBook && currencyA && currencyB && type) {
+    if (orderBook && currencyA && currencyB) {
       return {
         orderBook: orderBook,
-        baseToken: currencyA,
-        quoteToken: currencyB,
+        baseToken: type === TradeType.LIMIT_SELL ? currencyA : currencyB,
+        quoteToken: type === TradeType.LIMIT_SELL ? currencyB : currencyA,
         tradeType: type,
         amount: parsedAmountAmount,
         price: parsedPriceAmount,
