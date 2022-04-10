@@ -121,7 +121,7 @@ export function CreateEditTabs({ creating }: { creating: boolean }) {
   )
 }
 
-export function CreateOrderTabs({ tradeType }: { tradeType: TradeType | undefined }) {
+export function CreateOrderTabs({ tradeType }: { tradeType: number | undefined }) {
   return (
     <Tabs>
       <RowBetween style={{ padding: '1rem' }}>
