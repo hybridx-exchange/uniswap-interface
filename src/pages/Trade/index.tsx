@@ -259,7 +259,7 @@ export default function DoTrade({
       />
       <AppBody>
         <CreateOrderTabs
-          tradeType={trade?.orderBook.baseToken.currency.symbol == currencies[Field.CURRENCY_A]?.symbol ? 0 : 1}
+          tradeType={trade?.orderBook.baseToken.currency.symbol === currencies[Field.CURRENCY_A]?.symbol ? 0 : 1}
         />
         <Wrapper id="trade-page">
           <ConfirmTradeModal
