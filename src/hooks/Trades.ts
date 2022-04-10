@@ -1,6 +1,6 @@
 import {
   Currency,
-  CurrencyAmount,
+  CurrencyAmount, JSBI,
   Order,
   OrderBook,
   Pair,
@@ -585,9 +585,9 @@ export function useUserOrders(selectOrderBooks: (Token | string)[][], userOrderI
         orderId: orderId,
         orderIndex: orderIndex,
         orderType: type,
-        owner: owner,
+        owner: '0x' + JSBI.BigInt(owner).toString(16),
         price: priceAmount,
-        to: to,
+        to: '0x' + JSBI.BigInt(to).toString(16),
         orderBook: orderBookAddresses[i],
         baseToken: baseToken,
         quoteToken: quoteToken
@@ -596,4 +596,14 @@ export function useUserOrders(selectOrderBooks: (Token | string)[][], userOrderI
 
     return userOrders
   }, [selectOrderBooks, orderBookAddresses, userOrderIds, results])
+}
+
+export function useUserOrder(
+  tokenA: Token | undefined,
+  tokenB: Token | undefined,
+  orderId: string | undefined
+): UserOrder | null {
+  const orderBookAddress = tokenA && tokenB ? OrderBook.getAddress(tokenA as Token, tokenB as Token) : ''
+  const userOrders = useUserOrders([[tokenA as Token, tokenB as Token, orderBookAddress]], [orderId ?? ''])
+  return userOrders.length > 0 ? userOrders[0] : null
 }

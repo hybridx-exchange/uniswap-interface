@@ -31,7 +31,7 @@ interface OrderCardProps {
   border?: string
 }
 
-export function MinimalPositionCard({ order, border }: OrderCardProps) {
+export function MinimalOrderCard({ order, border }: OrderCardProps) {
   const currencyBase = order.baseToken
   const currencyQuote = order.quoteToken
 

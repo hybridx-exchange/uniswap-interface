@@ -72,7 +72,7 @@ export function useRouterContract(routerAddress?: string, withSignerIfPossible?:
   return useContract(routerAddress, IUniswapV2Router02ABI, withSignerIfPossible)
 }
 
-export function useOrderBookContract(orderBookAddress: string, withSignerIfPossible?: boolean): Contract | null {
+export function useOrderBookContract(orderBookAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(orderBookAddress, IOrderBookABI, withSignerIfPossible)
 }
 

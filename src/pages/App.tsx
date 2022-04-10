@@ -26,6 +26,7 @@ import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import DoTrade from './Trade'
 import { RedirectDuplicateTokenIdsForTrade, RedirectOldTradePathStructure } from './Trade/redirects'
 import DoUserOrder from './UserOrder'
+import RemoveOrder from './RemoveOrder'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -98,6 +99,7 @@ export default function App() {
                 <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
                 <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
                 <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                <Route exact strict path="/remove/:currencyIdA/:currencyIdB/:orderId" component={RemoveOrder} />
                 <Route component={RedirectPathToSwapOnly} />
               </Switch>
             </Web3ReactManager>
