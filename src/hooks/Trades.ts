@@ -1,6 +1,7 @@
 import {
   Currency,
-  CurrencyAmount, JSBI,
+  CurrencyAmount,
+  JSBI,
   Order,
   OrderBook,
   Pair,
@@ -449,6 +450,7 @@ export function useTradeRet(
         orderAmountOutRaw,
         orderFeeRaw,
         amountLeftRaw,
+        amountExpertRaw,
         priceToRaw
       ]
     } = returns[0].data
@@ -471,6 +473,9 @@ export function useTradeRet(
     const amountLeft = tokenIn
       ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, amountLeftRaw), tokenIn?.token.chainId)
       : undefined
+    const amountExpert = tokenOut
+      ? wrappedCurrencyAmount(new TokenAmount(tokenOut?.token, amountExpertRaw), tokenOut?.token.chainId)
+      : undefined
     const priceTo = orderBook?.quoteToken
       ? wrappedCurrencyAmount(new TokenAmount(orderBook?.quoteToken.token, priceToRaw), tokenOut?.token.chainId)
       : undefined
@@ -482,6 +487,7 @@ export function useTradeRet(
       orderAmountOut &&
       orderFee &&
       amountLeft &&
+      amountExpert &&
       priceTo
     ) {
       return new TradeRet(
@@ -492,6 +498,7 @@ export function useTradeRet(
         orderAmountOut,
         orderFee,
         amountLeft,
+        amountExpert,
         priceTo
       )
     }
