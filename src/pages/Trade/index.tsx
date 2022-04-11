@@ -1,5 +1,5 @@
-import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@hybridx-exchange/uniswap-sdk'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { Currency, CurrencyAmount, JSBI, Trade } from '@hybridx-exchange/uniswap-sdk'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
@@ -10,10 +10,9 @@ import { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 import ConfirmTradeModal from '../../components/trade/ConfirmTradeModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import { SwapPoolTabs} from '../../components/NavigationTabs'
+import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { AutoRow, RowBetween } from '../../components/Row'
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
-import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
 
 import { HYBRIDX_ROUTER_ADDRESS } from '../../constants'
@@ -43,20 +42,8 @@ const CurrencyInputDiv = styled.div`
 export default function DoTrade({
   match: {
     params: { currencyIdA, currencyIdB }
-  },
-  history
+  }
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
-  // token warning stuff
-  const [loadedCurrencyA, loadedCurrencyB] = [useCurrency(currencyIdA), useCurrency(currencyIdB)]
-  const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
-  const urlLoadedTokens: Token[] = useMemo(
-    () => [loadedCurrencyA, loadedCurrencyB]?.filter((c): c is Token => c instanceof Token) ?? [],
-    [loadedCurrencyA, loadedCurrencyB]
-  )
-  const handleConfirmTokenWarning = useCallback(() => {
-    setDismissTokenWarning(true)
-  }, [])
-
   const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
@@ -69,7 +56,7 @@ export default function DoTrade({
 
   // trade state
   const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
-
+  const [loadedCurrencyA, loadedCurrencyB] = [useCurrency(currencyIdA), useCurrency(currencyIdB)]
   const {
     trade,
     currencyBalances,
@@ -85,7 +72,7 @@ export default function DoTrade({
     [Input.PRICE]: parsedPriceAmount
   }
 
-  const { onUserInput, onChangeRecipient } = useTradeActionHandlers()
+  const { onSelectCurrency, onUserInput, onChangeRecipient } = useTradeActionHandlers()
   const isValid = !tradeInputError && trade && trade.orderBook && trade.orderBook !== null
 
   const handleTypeAmount = useCallback(
@@ -222,28 +209,34 @@ export default function DoTrade({
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {
       const newCurrencyIdA = currencyId(currencyA)
-      if (newCurrencyIdA === currencyIdB) {
-        history.push(`/trade/${currencyIdB}/${currencyIdA}`)
-      } else {
-        history.push(`/trade/${newCurrencyIdA}/${currencyIdB}`)
+      onSelectCurrency(Field.CURRENCY_A, newCurrencyIdA)
+      const oldCurrencyIdB = currencies[Field.CURRENCY_B]
+        ? currencyId(currencies[Field.CURRENCY_B] as Currency)
+        : undefined
+
+      if (newCurrencyIdA === oldCurrencyIdB) {
+        newCurrencyIdA === currencyId(Currency.ETHER)
+          ? onSelectCurrency(Field.CURRENCY_B, currencyId(Currency.ETHER))
+          : onSelectCurrency(Field.CURRENCY_B, '')
       }
     },
-    [currencyIdB, history, currencyIdA]
+    [onSelectCurrency, currencies]
   )
   const handleCurrencyBSelect = useCallback(
     (currencyB: Currency) => {
       const newCurrencyIdB = currencyId(currencyB)
-      if (currencyIdA === newCurrencyIdB) {
-        if (currencyIdB) {
-          history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
-        } else {
-          history.push(`/trade/${newCurrencyIdB}`)
-        }
-      } else {
-        history.push(`/trade/${currencyIdA ? currencyIdA : 'ROSE'}/${newCurrencyIdB}`)
+      onSelectCurrency(Field.CURRENCY_B, newCurrencyIdB)
+      const oldCurrencyIdA = currencies[Field.CURRENCY_A]
+        ? currencyId(currencies[Field.CURRENCY_A] as Currency)
+        : undefined
+
+      if (newCurrencyIdB === oldCurrencyIdA) {
+        newCurrencyIdB === currencyId(Currency.ETHER)
+          ? onSelectCurrency(Field.CURRENCY_A, currencyId(Currency.ETHER))
+          : onSelectCurrency(Field.CURRENCY_A, '')
       }
     },
-    [currencyIdA, history, currencyIdB]
+    [onSelectCurrency, currencyIdA, currencyIdB]
   )
 
   const handleMaxInput = useCallback(() => {
@@ -252,11 +245,6 @@ export default function DoTrade({
 
   return (
     <>
-      <TokenWarningModal
-        isOpen={urlLoadedTokens.length > 0 && !dismissTokenWarning}
-        tokens={urlLoadedTokens}
-        onConfirm={handleConfirmTokenWarning}
-      />
       <AppBody>
         <SwapPoolTabs active={'trade'} />
         <Wrapper id="trade-page">
@@ -276,14 +264,11 @@ export default function DoTrade({
           <AutoColumn gap={'md'}>
             <CurrencyInputDiv>
               <CurrencySelectPanel
-                label={'base token'}
-                value={typedAmountValue}
-                showMaxButton={false}
-                onUserInput={handleTypeAmount}
+                label={'from'}
                 onCurrencySelect={handleCurrencyASelect}
                 currency={currencies[Field.CURRENCY_A]}
                 otherCurrency={currencies[Field.CURRENCY_B]}
-                id="create-order-book-base-token"
+                id="create-order-book-from-token"
                 showCommonBases
               />
               <AutoColumn justify="space-between">
@@ -296,14 +281,11 @@ export default function DoTrade({
                 </AutoRow>
               </AutoColumn>
               <CurrencySelectPanel
-                label={'quote token'}
-                value={typedPriceValue}
-                showMaxButton={false}
-                onUserInput={handleTypePrice}
+                label={'to'}
                 onCurrencySelect={handleCurrencyBSelect}
                 currency={currencies[Field.CURRENCY_B]}
                 otherCurrency={currencies[Field.CURRENCY_A]}
-                id="create-order-book-base-token"
+                id="create-order-book-to-token"
                 showCommonBases
               />
             </CurrencyInputDiv>
@@ -318,7 +300,7 @@ export default function DoTrade({
               onCurrencySelect={handleCurrencyASelect}
               otherCurrency={currencies[Field.CURRENCY_B]}
               isOrderBook={true}
-              id="trade-currency-input"
+              id="trade-currency-amount"
             />
             <AutoColumn justify="space-between">
               <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
@@ -338,7 +320,7 @@ export default function DoTrade({
               onCurrencySelect={handleCurrencyBSelect}
               otherCurrency={currencies[Field.CURRENCY_A]}
               isOrderBook={true}
-              id="trade-currency-output"
+              id="trade-currency-price"
             />
 
             {recipient !== null ? (

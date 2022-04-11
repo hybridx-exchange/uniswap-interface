@@ -411,10 +411,6 @@ export default function CreateOrderBook({
             <CurrencyInputDiv>
               <CurrencySelectPanel
                 label={'Choose base token'}
-                value={formattedAmounts[Field.CURRENCY_BASE]}
-                showMaxButton={false}
-                hideBalance={true}
-                onUserInput={onFieldBaseInput}
                 onCurrencySelect={handleCurrencyBaseSelect}
                 currency={currencies[Field.CURRENCY_BASE]}
                 id="create-order-book-base-token"
@@ -422,10 +418,6 @@ export default function CreateOrderBook({
               />
               <CurrencySelectPanel
                 label={'Choose quote token'}
-                value={formattedAmounts[Field.CURRENCY_QUOTE]}
-                showMaxButton={false}
-                hideBalance={true}
-                onUserInput={onFieldQuoteInput}
                 onCurrencySelect={handleCurrencyQuoteSelect}
                 currency={currencies[Field.CURRENCY_QUOTE]}
                 id="create-order-book-quote-token"

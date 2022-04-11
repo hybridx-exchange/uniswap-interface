@@ -1,10 +1,9 @@
-import { Currency, Pair } from '@hybridx-exchange/uniswap-sdk'
+import { Currency } from '@hybridx-exchange/uniswap-sdk'
 import React, { useState, useContext, useCallback } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { darken } from 'polished'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
-import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
 import { TYPE } from '../../theme'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
@@ -87,17 +86,10 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
 `
 
 interface CurrencySelectPanelProps {
-  value: string
-  onUserInput: (value: string) => void
-  onMax?: () => void
-  showMaxButton: boolean
   label?: string
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
   disableCurrencySelect?: boolean
-  hideBalance?: boolean
-  pair?: Pair | null
-  hideInput?: boolean
   otherCurrency?: Currency | null
   id: string
   showCommonBases?: boolean
@@ -108,8 +100,6 @@ export default function CurrencySelectPanel({
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
-  pair = null, // used for double token logo
-  hideInput = false,
   otherCurrency,
   id,
   showCommonBases
@@ -125,8 +115,8 @@ export default function CurrencySelectPanel({
 
   return (
     <SelectPanel id={id}>
-      <Container hideInput={hideInput}>
-        {!hideInput && (
+      <Container hideInput={false}>
+        {
           <LabelRow>
             <RowBetween>
               <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
@@ -134,8 +124,8 @@ export default function CurrencySelectPanel({
               </TYPE.body>
             </RowBetween>
           </LabelRow>
-        )}
-        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+        }
+        <InputRow selected={disableCurrencySelect}>
           <CurrencySelect
             selected={!!currency}
             className="open-currency-select-button"
@@ -146,16 +136,8 @@ export default function CurrencySelectPanel({
             }}
           >
             <Aligner>
-              {pair ? (
-                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
-              ) : currency ? (
-                <CurrencyLogo currency={currency} size={'24px'} />
-              ) : null}
-              {pair ? (
-                <StyledTokenName className="pair-name-container">
-                  {pair?.token0.symbol}:{pair?.token1.symbol}
-                </StyledTokenName>
-              ) : (
+              {currency ? <CurrencyLogo currency={currency} size={'24px'} /> : null}
+              {
                 <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                   {(currency && currency.symbol && currency.symbol.length > 20
                     ? currency.symbol.slice(0, 4) +
@@ -163,7 +145,7 @@ export default function CurrencySelectPanel({
                       currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
                     : currency?.symbol) || t('selectToken')}
                 </StyledTokenName>
-              )}
+              }
               {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
             </Aligner>
           </CurrencySelect>

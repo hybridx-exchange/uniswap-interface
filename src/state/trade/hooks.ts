@@ -10,8 +10,17 @@ import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, Input, replaceTradeState, setRecipient, switchCurrencies, tradeTypeInput } from './actions'
+import {
+  Field,
+  Input,
+  replaceTradeState,
+  selectCurrency,
+  setRecipient,
+  switchCurrencies,
+  tradeTypeInput
+} from './actions'
 import { TradeState } from './reducer'
+import {useCurrency} from "../../hooks/Tokens";
 
 export function useTradeState(): AppState['trade'] {
   return useSelector<AppState, AppState['trade']>(state => state.trade)
@@ -19,10 +28,19 @@ export function useTradeState(): AppState['trade'] {
 
 export function useTradeActionHandlers(): {
   onSwitchTokens: () => void
+  onSelectCurrency: (field: Field, currencyId: string) => void
   onUserInput: (input: Input, typedValue: string) => void
   onChangeRecipient: (recipient: string | null) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
+
+  const onSelectCurrency = useCallback(
+    (field: Field, currencyId: string) => {
+      console.log('onSelectCurrency', field, currencyId)
+      dispatch(selectCurrency({ field, currencyId }))
+    },
+    [dispatch]
+  )
 
   const onSwitchTokens = useCallback(() => {
     dispatch(switchCurrencies())
@@ -44,6 +62,7 @@ export function useTradeActionHandlers(): {
   )
 
   return {
+    onSelectCurrency,
     onSwitchTokens,
     onUserInput,
     onChangeRecipient
@@ -78,8 +97,8 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedTradeInfo(
-  currencyA: Currency | undefined,
-  currencyB: Currency | undefined
+  loadedCurrencyA: Currency | undefined,
+  loadedCurrencyB: Currency | undefined
 ): {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount }
@@ -90,7 +109,17 @@ export function useDerivedTradeInfo(
 } {
   const { account } = useActiveWeb3React()
 
-  const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
+  // trade state
+  const {
+    [Field.CURRENCY_A]: { currencyId: currencyAId },
+    [Field.CURRENCY_B]: { currencyId: currencyBId },
+    typedAmountValue,
+    typedPriceValue,
+    recipient
+  } = useTradeState()
+
+  const currencyA = useCurrency(currencyAId) ?? loadedCurrencyA
+  const currencyB = useCurrency(currencyBId) ?? loadedCurrencyB
 
   // tokens
   const currencies: { [field in Field]?: Currency } = useMemo(
@@ -152,11 +181,11 @@ export function useDerivedTradeInfo(
   }
 
   if (!parsedAmountAmount) {
-    inputError = inputError ?? 'Enter the amount you want to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
+    inputError = inputError ?? 'Enter amount to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
   }
 
   if (!parsedPriceAmount) {
-    inputError = inputError ?? 'Enter the price you want to ' + (type === TradeType.LIMIT_SELL ? 'buy' : 'sell')
+    inputError = inputError ?? 'Enter price to ' + (type === TradeType.LIMIT_SELL ? 'buy' : 'sell')
   }
 
   const formattedTo = isAddress(to)
