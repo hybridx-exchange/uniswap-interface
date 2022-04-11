@@ -42,7 +42,8 @@ const CurrencyInputDiv = styled.div`
 export default function DoTrade({
   match: {
     params: { currencyIdA, currencyIdB }
-  }
+  },
+  history
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
   const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
@@ -72,7 +73,7 @@ export default function DoTrade({
     [Input.PRICE]: parsedPriceAmount
   }
 
-  const { onSelectCurrency, onUserInput, onChangeRecipient } = useTradeActionHandlers()
+  const { onUserInput, onChangeRecipient } = useTradeActionHandlers()
   const isValid = !tradeInputError && trade && trade.orderBook && trade.orderBook !== null
 
   const handleTypeAmount = useCallback(
@@ -209,34 +210,28 @@ export default function DoTrade({
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {
       const newCurrencyIdA = currencyId(currencyA)
-      onSelectCurrency(Field.CURRENCY_A, newCurrencyIdA)
-      const oldCurrencyIdB = currencies[Field.CURRENCY_B]
-        ? currencyId(currencies[Field.CURRENCY_B] as Currency)
-        : undefined
-
-      if (newCurrencyIdA === oldCurrencyIdB) {
-        newCurrencyIdA === currencyId(Currency.ETHER)
-          ? onSelectCurrency(Field.CURRENCY_B, currencyId(Currency.ETHER))
-          : onSelectCurrency(Field.CURRENCY_B, '')
+      if (newCurrencyIdA === currencyIdB) {
+        history.push(`/trade/${currencyIdB}/${currencyIdA}`)
+      } else {
+        history.push(`/trade/${newCurrencyIdA}/${currencyIdB}`)
       }
     },
-    [onSelectCurrency, currencies]
+    [currencyIdB, history, currencyIdA]
   )
   const handleCurrencyBSelect = useCallback(
     (currencyB: Currency) => {
       const newCurrencyIdB = currencyId(currencyB)
-      onSelectCurrency(Field.CURRENCY_B, newCurrencyIdB)
-      const oldCurrencyIdA = currencies[Field.CURRENCY_A]
-        ? currencyId(currencies[Field.CURRENCY_A] as Currency)
-        : undefined
-
-      if (newCurrencyIdB === oldCurrencyIdA) {
-        newCurrencyIdB === currencyId(Currency.ETHER)
-          ? onSelectCurrency(Field.CURRENCY_A, currencyId(Currency.ETHER))
-          : onSelectCurrency(Field.CURRENCY_A, '')
+      if (currencyIdA === newCurrencyIdB) {
+        if (currencyIdB) {
+          history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
+        } else {
+          history.push(`/trade/${newCurrencyIdB}`)
+        }
+      } else {
+        history.push(`/trade/${currencyIdA ? currencyIdA : 'ROSE'}/${newCurrencyIdB}`)
       }
     },
-    [onSelectCurrency, currencyIdA, currencyIdB]
+    [currencyIdA, history, currencyIdB]
   )
 
   const handleMaxInput = useCallback(() => {

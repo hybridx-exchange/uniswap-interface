@@ -10,41 +10,18 @@ import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
-import {
-  Field,
-  Input,
-  replaceTradeState,
-  selectCurrency,
-  setRecipient,
-  switchCurrencies,
-  tradeTypeInput
-} from './actions'
+import { Field, Input, replaceTradeState, setRecipient, tradeTypeInput } from './actions'
 import { TradeState } from './reducer'
-import {useCurrency} from "../../hooks/Tokens";
 
 export function useTradeState(): AppState['trade'] {
   return useSelector<AppState, AppState['trade']>(state => state.trade)
 }
 
 export function useTradeActionHandlers(): {
-  onSwitchTokens: () => void
-  onSelectCurrency: (field: Field, currencyId: string) => void
   onUserInput: (input: Input, typedValue: string) => void
   onChangeRecipient: (recipient: string | null) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
-
-  const onSelectCurrency = useCallback(
-    (field: Field, currencyId: string) => {
-      console.log('onSelectCurrency', field, currencyId)
-      dispatch(selectCurrency({ field, currencyId }))
-    },
-    [dispatch]
-  )
-
-  const onSwitchTokens = useCallback(() => {
-    dispatch(switchCurrencies())
-  }, [dispatch])
 
   const onUserInput = useCallback(
     (input: Input, typedValue: string) => {
@@ -62,8 +39,6 @@ export function useTradeActionHandlers(): {
   )
 
   return {
-    onSelectCurrency,
-    onSwitchTokens,
     onUserInput,
     onChangeRecipient
   }
@@ -97,8 +72,8 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedTradeInfo(
-  loadedCurrencyA: Currency | undefined,
-  loadedCurrencyB: Currency | undefined
+  currencyA: Currency | undefined,
+  currencyB: Currency | undefined
 ): {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount }
@@ -110,16 +85,7 @@ export function useDerivedTradeInfo(
   const { account } = useActiveWeb3React()
 
   // trade state
-  const {
-    [Field.CURRENCY_A]: { currencyId: currencyAId },
-    [Field.CURRENCY_B]: { currencyId: currencyBId },
-    typedAmountValue,
-    typedPriceValue,
-    recipient
-  } = useTradeState()
-
-  const currencyA = useCurrency(currencyAId) ?? loadedCurrencyA
-  const currencyB = useCurrency(currencyBId) ?? loadedCurrencyB
+  const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
 
   // tokens
   const currencies: { [field in Field]?: Currency } = useMemo(
@@ -239,7 +205,9 @@ function validatedRecipient(recipient: any): string | null {
   return null
 }
 
-export function queryParametersToTradeState(parsedQs: ParsedQs): TradeState {
+export function queryParametersToTradeState(
+  parsedQs: ParsedQs
+): { currencyIdA: string; currencyIdB: string; tradeState: TradeState } {
   let currencyA = parseCurrencyFromURLParameter(parsedQs.currencyA)
   let currencyB = parseCurrencyFromURLParameter(parsedQs.currencyB)
   if (currencyA === currencyB) {
@@ -253,15 +221,13 @@ export function queryParametersToTradeState(parsedQs: ParsedQs): TradeState {
   const recipient = validatedRecipient(parsedQs.recipient)
 
   return {
-    [Field.CURRENCY_A]: {
-      currencyId: currencyA
-    },
-    [Field.CURRENCY_B]: {
-      currencyId: currencyB
-    },
-    typedAmountValue: parseTokenAmountURLParameter(parsedQs.exactAmountAmount),
-    typedPriceValue: parseTokenAmountURLParameter(parsedQs.exactPriceAmount),
-    recipient
+    currencyIdA: currencyA,
+    currencyIdB: currencyB,
+    tradeState: {
+      typedAmountValue: parseTokenAmountURLParameter(parsedQs.exactAmountAmount),
+      typedPriceValue: parseTokenAmountURLParameter(parsedQs.exactPriceAmount),
+      recipient
+    }
   }
 }
 
@@ -282,15 +248,13 @@ export function useDefaultsFromURLSearch():
 
     dispatch(
       replaceTradeState({
-        typedAmountValue: parsed.typedAmountValue,
-        typedPriceValue: parsed.typedPriceValue,
-        currencyAId: parsed[Field.CURRENCY_A].currencyId,
-        currencyBId: parsed[Field.CURRENCY_B].currencyId,
-        recipient: parsed.recipient
+        typedAmountValue: parsed.tradeState.typedAmountValue,
+        typedPriceValue: parsed.tradeState.typedPriceValue,
+        recipient: parsed.tradeState.recipient
       })
     )
 
-    setResult({ currencyAId: parsed[Field.CURRENCY_A].currencyId, currencyBId: parsed[Field.CURRENCY_B].currencyId })
+    setResult({ currencyAId: parsed.currencyIdA, currencyBId: parsed.currencyIdB })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, chainId])
 
