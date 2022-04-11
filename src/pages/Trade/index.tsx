@@ -394,7 +394,7 @@ export default function DoTrade({
                   error={!isValid}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {`Trade`}
+                    {trade?.tradeType === TradeType.LIMIT_BUY ? `Buy` : `Sell`}
                   </Text>
                 </ButtonError>
               </RowBetween>
