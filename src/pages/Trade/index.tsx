@@ -33,6 +33,7 @@ import { useTradeCallback } from '../../hooks/useTradeCallback'
 import { RouteComponentProps } from 'react-router'
 import { currencyId } from '../../utils/currencyId'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
+import { wrappedCurrency } from '../../utils/wrappedCurrency'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -45,7 +46,7 @@ export default function DoTrade({
   },
   history
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
@@ -210,28 +211,42 @@ export default function DoTrade({
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {
       const newCurrencyIdA = currencyId(currencyA)
+      const roseId = currencyId(Currency.ETHER)
+      const wRoseId = currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
       if (newCurrencyIdA === currencyIdB) {
         history.push(`/trade/${currencyIdB}/${currencyIdA}`)
+      } else if (
+        (newCurrencyIdA === roseId && currencyIdB === wRoseId) ||
+        (newCurrencyIdA === wRoseId && currencyIdB === roseId)
+      ) {
+        history.push(`/trade/${newCurrencyIdA}`)
       } else {
         history.push(`/trade/${newCurrencyIdA}/${currencyIdB}`)
       }
     },
-    [currencyIdB, history, currencyIdA]
+    [currencyIdB, history, currencyIdA, chainId]
   )
   const handleCurrencyBSelect = useCallback(
     (currencyB: Currency) => {
       const newCurrencyIdB = currencyId(currencyB)
+      const roseId = currencyId(Currency.ETHER)
+      const wRoseId = currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
       if (currencyIdA === newCurrencyIdB) {
         if (currencyIdB) {
           history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
         } else {
           history.push(`/trade/${newCurrencyIdB}`)
         }
+      } else if (
+        (newCurrencyIdB === roseId && currencyIdA === wRoseId) ||
+        (newCurrencyIdB === wRoseId && currencyIdA === roseId)
+      ) {
+        history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
       } else {
         history.push(`/trade/${currencyIdA ? currencyIdA : 'ROSE'}/${newCurrencyIdB}`)
       }
     },
-    [currencyIdA, history, currencyIdB]
+    [currencyIdA, history, currencyIdB, chainId]
   )
 
   const handleMaxInput = useCallback(() => {
