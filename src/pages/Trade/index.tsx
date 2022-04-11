@@ -326,6 +326,7 @@ export default function DoTrade({
               onUserInput={handleTypePrice}
               label={'Price'}
               showMaxButton={false}
+              hideBalance={true}
               currency={currencies[Field.CURRENCY_B]}
               onCurrencySelect={handleCurrencyBSelect}
               otherCurrency={currencies[Field.CURRENCY_A]}
