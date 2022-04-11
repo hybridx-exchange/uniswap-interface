@@ -1,4 +1,4 @@
-import {Currency, CurrencyAmount, JSBI, Token, Trade, TradeType} from '@hybridx-exchange/uniswap-sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -10,7 +10,7 @@ import { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 import ConfirmTradeModal from '../../components/trade/ConfirmTradeModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import { CreateOrderTabs } from '../../components/NavigationTabs'
+import { SwapPoolTabs} from '../../components/NavigationTabs'
 import { AutoRow, RowBetween } from '../../components/Row'
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
 import TokenWarningModal from '../../components/TokenWarningModal'
@@ -258,13 +258,7 @@ export default function DoTrade({
         onConfirm={handleConfirmTokenWarning}
       />
       <AppBody>
-        <CreateOrderTabs
-          tradeType={
-            trade?.orderBook.baseToken.currency.symbol === currencies[Field.CURRENCY_A]?.symbol
-              ? TradeType.LIMIT_BUY
-              : TradeType.LIMIT_SELL
-          }
-        />
+        <SwapPoolTabs active={'trade'} />
         <Wrapper id="trade-page">
           <ConfirmTradeModal
             isOpen={showConfirm}

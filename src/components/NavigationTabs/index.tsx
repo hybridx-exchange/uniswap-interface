@@ -1,19 +1,25 @@
 import React from 'react'
 import styled from 'styled-components'
-import {darken} from 'polished'
-import {useTranslation} from 'react-i18next'
-import {Link as HistoryLink, NavLink} from 'react-router-dom'
+import { darken } from 'polished'
+import { useTranslation } from 'react-i18next'
+import { Link as HistoryLink, NavLink } from 'react-router-dom'
 
-import {ArrowLeft} from 'react-feather'
-import {RowBetween} from '../Row'
+import { ArrowLeft } from 'react-feather'
+import { RowBetween } from '../Row'
 import QuestionHelper from '../QuestionHelper'
-import {TradeType} from '@hybridx-exchange/uniswap-sdk'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   border-radius: 3rem;
   justify-content: space-evenly;
+`
+
+const SubTabs = styled.div`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: center;
+  border-radius: 3rem;
+  justify-content: space-between;
 `
 
 const activeClassName = 'ACTIVE'
@@ -53,16 +59,26 @@ const StyledArrowLeft = styled(ArrowLeft)`
   color: ${({ theme }) => theme.text1};
 `
 
-export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
+export function SwapPoolTabs({ active }: { active: 'swap' | 'trade' | 'pool' | 'order' }) {
   const { t } = useTranslation()
   return (
     <Tabs style={{ marginBottom: '20px' }}>
-      <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-        {t('swap')}
-      </StyledNavLink>
-      <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-        {t('pool')}
-      </StyledNavLink>
+      <SubTabs style={{ marginBottom: '20px' }}>
+        <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
+          {t('swap')}
+        </StyledNavLink>
+        <StyledNavLink id={`trade-nav-link`} to={'/trade'} isActive={() => active === 'trade'}>
+          {t('trade')}
+        </StyledNavLink>
+      </SubTabs>
+      <SubTabs style={{ marginBottom: '20px' }}>
+        <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
+          {t('pool')}
+        </StyledNavLink>
+        <StyledNavLink id={`order-nav-link`} to={'/order'} isActive={() => active === 'order'}>
+          {t('order')}
+        </StyledNavLink>
+      </SubTabs>
     </Tabs>
   )
 }
@@ -114,26 +130,6 @@ export function CreateEditTabs({ creating }: { creating: boolean }) {
             creating
               ? 'When a token pair exists, you can create an order book for that token pair to support limit orders.'
               : 'Order book parameters can only be modified if there is no order in the current order book.'
-          }
-        />
-      </RowBetween>
-    </Tabs>
-  )
-}
-
-export function CreateOrderTabs({ tradeType }: { tradeType: number | undefined }) {
-  return (
-    <Tabs>
-      <RowBetween style={{ padding: '1rem' }}>
-        <HistoryLink to="/swap">
-          <StyledArrowLeft />
-        </HistoryLink>
-        <ActiveText>{tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}</ActiveText>
-        <QuestionHelper
-          text={
-            tradeType === TradeType.LIMIT_BUY
-              ? 'Place a buy limit order at the specified price.'
-              : 'Place a sell limit order at the specified price.'
           }
         />
       </RowBetween>

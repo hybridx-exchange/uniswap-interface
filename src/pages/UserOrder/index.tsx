@@ -40,7 +40,7 @@ export default function DoUserOrder() {
   return (
     <>
       <AppBody>
-        <SwapPoolTabs active={'pool'} />
+        <SwapPoolTabs active={'order'} />
         <AutoColumn gap="lg" justify="center">
           <ButtonPrimary id="create-order-button" as={Link} style={{ padding: 16 }} to="/trade/ROSE">
             <Text fontWeight={500} fontSize={20}>
