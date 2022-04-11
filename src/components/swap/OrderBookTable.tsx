@@ -138,8 +138,8 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
         </RowFixed>
       </RowBetween>
       <Title>
-        <Left>Limit Buy</Left>
-        <Right>Limit Sell</Right>
+        <Left>buy</Left>
+        <Right>sell</Right>
       </Title>
       {tb.length > 0 && (
         <Table>

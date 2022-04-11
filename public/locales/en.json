@@ -12,6 +12,8 @@
   "sendAnyway": "Send Anyway",
   "pool": "Pool",
   "order": "Order",
+  "buy": "Buy",
+  "sell": "Sell",
   "betaWarning": "This project is in beta. Use at your own risk.",
   "input": "Input",
   "output": "Output",

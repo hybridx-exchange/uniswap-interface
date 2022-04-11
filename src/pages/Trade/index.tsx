@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, JSBI, Trade } from '@hybridx-exchange/uniswap-sdk'
+import {Currency, CurrencyAmount, JSBI, Trade, TradeType} from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -417,7 +417,7 @@ export default function DoTrade({
                 error={!isValid && !!typedAmountValue && !!typedPriceValue}
               >
                 <Text fontSize={20} fontWeight={500}>
-                  {tradeInputError ? tradeInputError : `Trade`}
+                  {tradeInputError ? tradeInputError : trade?.tradeType === TradeType.LIMIT_BUY ? `Buy` : `Sell`}
                 </Text>
               </ButtonError>
             )}

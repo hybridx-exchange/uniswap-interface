@@ -113,11 +113,7 @@ export function useDerivedTradeInfo(
     [Field.CURRENCY_B]: relevantTokenBalances[1]
   }
 
-  const parsedAmountAmount = tryParseAmount(
-    typedAmountValue,
-    type === TradeType.LIMIT_BUY ? orderBook?.quoteToken.currency : orderBook?.baseToken.currency
-  )
-
+  const parsedAmountAmount = tryParseAmount(typedAmountValue, currencyA)
   const parsedPriceAmount = tryParseAmount(typedPriceValue, orderBook?.quoteToken.currency)
   const tradeRet = useTradeRet(orderBook, type, parsedAmountAmount, parsedPriceAmount)
 
