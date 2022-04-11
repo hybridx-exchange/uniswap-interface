@@ -12,6 +12,7 @@ import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
 import { Field, Input, replaceTradeState, setRecipient, tradeTypeInput } from './actions'
 import { TradeState } from './reducer'
+import {wrappedCurrency} from "../../utils/wrappedCurrency";
 
 export function useTradeState(): AppState['trade'] {
   return useSelector<AppState, AppState['trade']>(state => state.trade)
@@ -25,7 +26,6 @@ export function useTradeActionHandlers(): {
 
   const onUserInput = useCallback(
     (input: Input, typedValue: string) => {
-      console.log('onUserInput', input, typedValue)
       dispatch(tradeTypeInput({ input, typedValue }))
     },
     [dispatch]
@@ -82,7 +82,7 @@ export function useDerivedTradeInfo(
   trade: Trade | null
   inputError?: string
 } {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   // trade state
   const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
@@ -105,7 +105,8 @@ export function useDerivedTradeInfo(
   ])
 
   const orderBook = useOrderBook(currencyA ?? undefined, currencyB ?? undefined)
-  const type = orderBook?.baseToken.currency === currencyA ? TradeType.LIMIT_BUY : TradeType.LIMIT_SELL
+  const type =
+    orderBook?.baseToken.token === wrappedCurrency(currencyA, chainId) ? TradeType.LIMIT_SELL : TradeType.LIMIT_BUY
 
   const currencyBalances = {
     [Field.CURRENCY_A]: relevantTokenBalances[0],
@@ -118,7 +119,6 @@ export function useDerivedTradeInfo(
   )
 
   const parsedPriceAmount = tryParseAmount(typedPriceValue, orderBook?.quoteToken.currency)
-
   const tradeRet = useTradeRet(orderBook, type, parsedAmountAmount, parsedPriceAmount)
 
   const trade = useMemo(() => {
@@ -151,7 +151,7 @@ export function useDerivedTradeInfo(
   }
 
   if (!parsedPriceAmount) {
-    inputError = inputError ?? 'Enter price to ' + (type === TradeType.LIMIT_SELL ? 'buy' : 'sell')
+    inputError = inputError ?? 'Enter price to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
   }
 
   const formattedTo = isAddress(to)

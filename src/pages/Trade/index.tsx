@@ -241,7 +241,7 @@ export default function DoTrade({
         (newCurrencyIdB === roseId && currencyIdA === wRoseId) ||
         (newCurrencyIdB === wRoseId && currencyIdA === roseId)
       ) {
-        history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
+        history.push(`/trade/${newCurrencyIdB}`)
       } else {
         history.push(`/trade/${currencyIdA ? currencyIdA : 'ROSE'}/${newCurrencyIdB}`)
       }
@@ -274,7 +274,7 @@ export default function DoTrade({
           <AutoColumn gap={'md'}>
             <CurrencyInputDiv>
               <CurrencySelectPanel
-                label={'from'}
+                label={'From'}
                 onCurrencySelect={handleCurrencyASelect}
                 currency={currencies[Field.CURRENCY_A]}
                 otherCurrency={currencies[Field.CURRENCY_B]}
@@ -291,7 +291,7 @@ export default function DoTrade({
                 </AutoRow>
               </AutoColumn>
               <CurrencySelectPanel
-                label={'to'}
+                label={'To'}
                 onCurrencySelect={handleCurrencyBSelect}
                 currency={currencies[Field.CURRENCY_B]}
                 otherCurrency={currencies[Field.CURRENCY_A]}
