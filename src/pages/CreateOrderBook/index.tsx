@@ -162,10 +162,6 @@ export default function CreateOrderBook({
     const priceStep = await orderBook_.priceStep()
     const minAmount = await orderBook_.minAmount()
 
-    console.log(parseUnits(priceStep.toString(), currencyBase.decimals).toString())
-
-    console.log(priceStep.toString(), '  ', minAmount.toString(), ' ', priceStepAmount.toSignificant())
-
     const priceStepAmount_ = parseUnits(priceStepAmount.toSignificant(), currencyBase.decimals).toString()
 
     if (priceStepAmount_ !== priceStep.toString()) {

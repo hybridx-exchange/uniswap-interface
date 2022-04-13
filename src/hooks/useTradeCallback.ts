@@ -162,7 +162,6 @@ export function useTradeCallback(
           ...(value && !isZero(value) ? { value, from: account } : { from: account })
         })
           .then((response: any) => {
-            console.log(trade)
             const baseSymbol = trade.baseToken.symbol
             const quoteSymbol = trade.quoteToken.symbol
             const inputAmount = trade.amount.toSignificant(3)

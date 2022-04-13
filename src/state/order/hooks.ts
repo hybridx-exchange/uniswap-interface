@@ -27,7 +27,6 @@ export function useDerivedCancelOrderInfo(
     error = 'Invalid Order'
   }
 
-  console.log(userOrder, account)
   if (userOrder?.owner.toLowerCase() !== account?.toLowerCase()) {
     error = 'Change Wallet'
   }

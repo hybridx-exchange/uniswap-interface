@@ -187,8 +187,6 @@ export function useGetBestInputAmount(
   allPairs?: Pair[],
   allSwaps?: Swap[] | null
 ): { loading: boolean; bestSwap: Swap | null } {
-  console.log(currencyIn)
-  console.log(currencyAmountOut)
   const paths = allSwaps?.map(trade => {
     return trade.route.path.map(token => {
       return token.address
