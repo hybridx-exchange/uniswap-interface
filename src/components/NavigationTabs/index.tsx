@@ -12,14 +12,16 @@ const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   border-radius: 3rem;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  padding: 0 28px;
 `
 
 const SubTabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   border-radius: 3rem;
-  justify-content: space-between;
+  justify-content: space-around;
+  width: 38%;
 `
 
 const activeClassName = 'ACTIVE'
@@ -71,7 +73,7 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'trade' | 'pool' | '
           {t('trade')}
         </StyledNavLink>
       </SubTabs>
-      <SubTabs style={{ marginBottom: '20px' }}>
+      <SubTabs style={{ marginBottom: '20px', width: '43%' }}>
         <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
           {t('pool')}
         </StyledNavLink>

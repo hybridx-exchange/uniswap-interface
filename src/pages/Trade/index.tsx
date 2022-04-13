@@ -29,6 +29,7 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import AppBody from '../AppBody'
 import Loader from '../../components/Loader'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
+import { TradeTradeRet } from '../../components/swap/TradeTradeRet'
 import { useTradeCallback } from '../../hooks/useTradeCallback'
 import { RouteComponentProps } from 'react-router'
 import { currencyId } from '../../utils/currencyId'
@@ -427,6 +428,7 @@ export default function DoTrade({
           </BottomGrouping>
         </Wrapper>
       </AppBody>
+      <TradeTradeRet tradeRet={trade?.tradeRet} />
       <OrderBookTable thData={['amount', 'price', 'price', 'amount']} orderBook={trade?.orderBook} />
     </>
   )

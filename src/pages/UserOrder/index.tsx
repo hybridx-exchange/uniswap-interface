@@ -1,15 +1,13 @@
-import React, { useContext, useMemo } from 'react'
-import { ThemeContext } from 'styled-components'
-import { OrderBook } from '@hybridx-exchange/uniswap-sdk'
-import { Link } from 'react-router-dom'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
+import styled, { ThemeContext } from 'styled-components'
+import { Currency, ETHER, OrderBook } from '@hybridx-exchange/uniswap-sdk'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 
 import Question from '../../components/QuestionHelper'
-import { StyledInternalLink, TYPE } from '../../theme'
+import { LinkStyledButton, TYPE } from '../../theme'
 import { Text } from 'rebass'
 import { LightCard } from '../../components/Card'
 import { RowBetween } from '../../components/Row'
-import { ButtonPrimary } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 
 import { useActiveWeb3React } from '../../hooks'
@@ -17,10 +15,22 @@ import { useTrackedTokenPairs } from '../../state/user/hooks'
 import AppBody from '../AppBody'
 import { useUserOrderIds, useUserOrders } from '../../hooks/Trades'
 import FullOrderCard from '../../components/OrderCard'
+import CurrencySelectPanel from '../../components/CurrencySelectPanel'
+import { wrappedCurrency } from '../../utils/wrappedCurrency'
+
+const CurrencyInputDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
 
 export default function DoUserOrder() {
+  const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
+  const [onImport, setOnImport] = useState<boolean>(false)
+
+  const [currencyA, setCurrencyA] = useState<Currency | null>(ETHER)
+  const [currencyB, setCurrencyB] = useState<Currency | null>(null)
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
@@ -35,19 +45,42 @@ export default function DoUserOrder() {
   )
   //console.log('selectOrderBooks:', selectOrderBooks, 'userOrderIds:', userOrderIds)
   const userOrders = useUserOrders(selectOrderBooks, userOrderIds)
-  console.log('userOrders:', userOrders)
+
+  const handleTokenASelect = useCallback((currencyA: Currency) => {
+    setCurrencyA(currencyA)
+  }, [])
+
+  const handleTokenBSelect = useCallback((currencyB: Currency) => {
+    setCurrencyB(currencyB)
+  }, [])
+
+  if (currencyA && currencyB) {
+    const tokenA = wrappedCurrency(currencyA, chainId)
+    const tokenB = wrappedCurrency(currencyB, chainId)
+    if (tokenA && tokenB) {
+      let has = false
+
+      trackedTokenPairs.forEach(base => {
+        if (
+          (tokenA.address === base[0].address && tokenB.address === base[1].address) ||
+          (tokenB.address === base[0].address && tokenA.address === base[1].address)
+        ) {
+          has = true
+          return
+        }
+      })
+
+      if (!has) {
+        trackedTokenPairs.push([tokenA, tokenB])
+      }
+    }
+  }
 
   return (
     <>
       <AppBody>
         <SwapPoolTabs active={'order'} />
         <AutoColumn gap="lg" justify="center">
-          <ButtonPrimary id="create-order-button" as={Link} style={{ padding: 16 }} to="/trade/ROSE">
-            <Text fontWeight={500} fontSize={20}>
-              New Order
-            </Text>
-          </ButtonPrimary>
-
           <AutoColumn gap="12px" style={{ width: '100%' }}>
             <RowBetween padding={'0 8px'}>
               <Text color={theme.text1} fontWeight={500}>
@@ -79,11 +112,35 @@ export default function DoUserOrder() {
             <div>
               <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
                 {"Don't see your orders?"}{' '}
-                <StyledInternalLink id="import-pool-link" to={'/find'}>
+                <LinkStyledButton
+                  id="import-pool-link"
+                  onClick={() => {
+                    setOnImport(!onImport)
+                  }}
+                >
                   {'Import it.'}
-                </StyledInternalLink>
+                </LinkStyledButton>
               </Text>
             </div>
+
+            {onImport && (
+              <CurrencyInputDiv>
+                <CurrencySelectPanel
+                  label={'tokenA'}
+                  currency={currencyA}
+                  onCurrencySelect={handleTokenASelect}
+                  id="order-pair-from-token"
+                  showCommonBases
+                />
+                <CurrencySelectPanel
+                  label={'tokenB'}
+                  currency={currencyB}
+                  onCurrencySelect={handleTokenBSelect}
+                  id="order-pair-to-token"
+                  showCommonBases
+                />
+              </CurrencyInputDiv>
+            )}
           </AutoColumn>
         </AutoColumn>
       </AppBody>
