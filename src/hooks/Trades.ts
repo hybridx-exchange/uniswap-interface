@@ -135,7 +135,7 @@ export function useGetBestOutputAmount(
 
   return useMemo(() => {
     const returns = results?.map(result => {
-      if (!result || result.loading) return { data: null, loading: result.loading }
+      if (!result || !result.result || result.loading) return { data: null, loading: result.loading }
       const {
         result: [path, amounts, nextReserves],
         loading
@@ -163,7 +163,7 @@ export function useGetBestOutputAmount(
       }
     }
 
-    if (!currencyAmountIn || !currencyOut || !allPairs || !allSwaps) {
+    if (!currencyAmountIn || !currencyOut || !allPairs || !allSwaps || !pairs.length) {
       return { loading: true, bestSwap: null }
     } else {
       return {
@@ -209,7 +209,7 @@ export function useGetBestInputAmount(
 
   return useMemo(() => {
     const returns = results?.map(result => {
-      if (!result || result.loading || !result.result) return { data: null, loading: result.loading }
+      if (!result || !result.result || result.loading || !result.result) return { data: null, loading: result.loading }
       const {
         result: [path, amounts, nextReserves],
         loading
@@ -237,7 +237,7 @@ export function useGetBestInputAmount(
       }
     }
 
-    if (!currencyAmountOut || !currencyIn || !allPairs || !allSwaps) {
+    if (!currencyAmountOut || !currencyIn || !allPairs || !allSwaps || !pairs.length) {
       return { loading: true, bestSwap: null }
     } else {
       return {

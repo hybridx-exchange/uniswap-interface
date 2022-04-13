@@ -13,23 +13,6 @@ export interface OrderBookDetailsProps {
 export function OrderBookDetails({ orderBook, wrappedCurrencies }: OrderBookDetailsProps) {
   return (
     <AutoColumn gap="md">
-      {orderBook && (
-        <>
-          <div>
-            <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-              {'Want to use limit orders?'}{' '}
-              <StyledInternalLink
-                id="create-limit-order"
-                to={
-                  '/trade/' + wrappedCurrencies[Field.INPUT]?.address + '/' + wrappedCurrencies[Field.OUTPUT]?.address
-                }
-              >
-                {'New Limit Order'}
-              </StyledInternalLink>
-            </Text>
-          </div>
-        </>
-      )}
       {!orderBook && wrappedCurrencies[Field.INPUT]?.address !== wrappedCurrencies[Field.OUTPUT]?.address && (
         <>
           <div>

@@ -1445,6 +1445,15 @@
     "@ethersproject/logger" "^5.5.0"
     bn.js "^4.11.9"
 
+"@ethersproject/bignumber@^5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.6.0.tgz#116c81b075c57fa765a8f3822648cf718a8a0e26"
+  integrity sha512-VziMaXIUHQlHJmkv1dlcd6GY2PmT0khtAqaMctCIDogxkrarMzA9L94KN1NeXqqOfFD6r0sJT3vCTOFSmZ07DA==
+  dependencies:
+    "@ethersproject/bytes" "^5.6.0"
+    "@ethersproject/logger" "^5.6.0"
+    bn.js "^4.11.9"
+
 "@ethersproject/bytes@^5.0.0":
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/@ethersproject/bytes/-/bytes-5.0.3.tgz#b3769963ae0188a35713d343890a903bda20af9c"
@@ -1459,6 +1468,13 @@
   dependencies:
     "@ethersproject/logger" "^5.5.0"
 
+"@ethersproject/bytes@^5.6.0":
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/@ethersproject/bytes/-/bytes-5.6.1.tgz#24f916e411f82a8a60412344bf4a813b917eefe7"
+  integrity sha512-NwQt7cKn5+ZE4uDn+X5RAXLp46E1chXoaMmrxAyA0rblpxz8t58lVkrHXoRIn0lz1joQElQ8410GqhTqMOwc6g==
+  dependencies:
+    "@ethersproject/logger" "^5.6.0"
+
 "@ethersproject/constants@^5.0.0":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/constants/-/constants-5.0.2.tgz#f7ac0b320e2bbec1a5950da075015f8bc4e8fed1"
@@ -1472,6 +1488,13 @@
   integrity sha512-2MsRRVChkvMWR+GyMGY4N1sAX9Mt3J9KykCsgUFd/1mwS0UH1qw+Bv9k1UJb3X3YJYFco9H20pjSlOIfCG5HYQ==
   dependencies:
     "@ethersproject/bignumber" "^5.5.0"
+
+"@ethersproject/constants@^5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/constants/-/constants-5.6.0.tgz#55e3eb0918584d3acc0688e9958b0cedef297088"
+  integrity sha512-SrdaJx2bK0WQl23nSpV/b1aq293Lh0sUaZT/yYKPDKn4tlAbkH96SPJwIhwSwTsoQQZxuh1jnqsKwyymoiBdWA==
+  dependencies:
+    "@ethersproject/bignumber" "^5.6.0"
 
 "@ethersproject/contracts@^5.0.0":
   version "5.0.2"
@@ -1600,6 +1623,11 @@
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.5.0.tgz#0c2caebeff98e10aefa5aef27d7441c7fd18cf5d"
   integrity sha512-rIY/6WPm7T8n3qS2vuHTUBPdXHl+rGxWxW5okDfo9J4Z0+gRRZT0msvUdIJkE4/HS29GUMziwGaaKO2bWONBrg==
+
+"@ethersproject/logger@^5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.6.0.tgz#d7db1bfcc22fd2e4ab574cba0bb6ad779a9a3e7a"
+  integrity sha512-BiBWllUROH9w+P21RzoxJKzqoqpkyM1pRnEKG69bulE9TSQD8SAIvTQqIMZmmCO8pUNkgLP1wndX1gKghSpBmg==
 
 "@ethersproject/networks@^5.0.0":
   version "5.0.2"
@@ -1836,6 +1864,15 @@
     "@ethersproject/constants" "^5.0.0"
     "@ethersproject/logger" "^5.0.0"
 
+"@ethersproject/units@^5.0.0-beta.131":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/units/-/units-5.6.0.tgz#e5cbb1906988f5740254a21b9ded6bd51e826d9c"
+  integrity sha512-tig9x0Qmh8qbo1w8/6tmtyrm/QQRviBh389EQ+d8fP4wDsBrJBf08oZfoiz1/uenKK9M78yAP4PoR7SsVoTjsw==
+  dependencies:
+    "@ethersproject/bignumber" "^5.6.0"
+    "@ethersproject/constants" "^5.6.0"
+    "@ethersproject/logger" "^5.6.0"
+
 "@ethersproject/wallet@^5.0.0":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/wallet/-/wallet-5.0.2.tgz#714ca8324c1b3b66e51b9b4e0358c882e88caf1d"
@@ -1978,16 +2015,17 @@
   resolved "https://registry.yarnpkg.com/@hybridx-exchange/token-list/-/token-list-0.1.0.tgz#9646fe2b3c4eed9be3c0e7750ce4434c1a8ddd70"
   integrity sha512-hLZ7+CxlJ0BIXUtS9PKW2qM2gYYVCTR3olqnj6ifgDilUSXN/YPNOmO7lS9nSF8dIH3SYM7tVh3m3KZHSH7g4w==
 
-"@hybridx-exchange/uniswap-sdk@0.2.27":
-  version "0.2.27"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.2.27.tgz#0406e28fdda1da571e7aeef3c0a9aa46c9ee29a1"
-  integrity sha512-vNN0WHePLYIfoVoehP+Bf9kGDFrtAhcBmFMjh8/Lv/1XItt/rXUKpDUCMsaIt+A0VXvp7c62Olo0L3TP7R/6kA==
+"@hybridx-exchange/uniswap-sdk@0.2.28":
+  version "0.2.28"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.2.28.tgz#55d40069665281d2edc9ac40da123a2a2641b928"
+  integrity sha512-ORWNq7tqDVTDR7J6N2C0qZ17yNsFai0XNGh4kP9qh6u+EBfzZDxNv3VFCORPvS1AWlh8XXeoJ8crzefmW1Mkhw==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
     "@ethersproject/networks" "^5.0.0-beta.135"
     "@ethersproject/providers" "^5.0.0-beta.153"
     "@ethersproject/solidity" "^5.0.0-beta.131"
+    "@ethersproject/units" "^5.0.0-beta.131"
     "@hybridx-exchange/v2-core" "0.1.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
