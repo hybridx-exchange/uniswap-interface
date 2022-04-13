@@ -1,18 +1,29 @@
 import useENS from '../../hooks/useENS'
-import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
-import { ParsedQs } from 'qs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useActiveWeb3React } from '../../hooks'
-import { useOrderBook, useTradeRet } from '../../hooks/Trades'
+import {parseUnits} from '@ethersproject/units'
+import {
+  BigintIsh,
+  Currency,
+  CurrencyAmount,
+  JSBI,
+  parseBigintIsh,
+  Token,
+  TokenAmount,
+  Trade,
+  TradeType,
+  ZERO
+} from '@hybridx-exchange/uniswap-sdk'
+import {ParsedQs} from 'qs'
+import {useCallback, useEffect, useMemo, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {useActiveWeb3React} from '../../hooks'
+import {useOrderBook, useTradeRet} from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
-import { isAddress } from '../../utils'
-import { AppDispatch, AppState } from '../index'
-import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, Input, replaceTradeState, setRecipient, tradeTypeInput } from './actions'
-import { TradeState } from './reducer'
-import {wrappedCurrency} from "../../utils/wrappedCurrency";
+import {isAddress} from '../../utils'
+import {AppDispatch, AppState} from '../index'
+import {useCurrencyBalances} from '../wallet/hooks'
+import {Field, Input, replaceTradeState, setRecipient, tradeTypeInput} from './actions'
+import {TradeState} from './reducer'
+import {wrappedCurrency} from '../../utils/wrappedCurrency'
 
 export function useTradeState(): AppState['trade'] {
   return useSelector<AppState, AppState['trade']>(state => state.trade)
@@ -118,7 +129,7 @@ export function useDerivedTradeInfo(
   const tradeRet = useTradeRet(orderBook, type, parsedAmountAmount, parsedPriceAmount)
 
   const trade = useMemo(() => {
-    if (orderBook && currencyA && currencyB) {
+    if (orderBook && currencyA && currencyB && type) {
       return {
         orderBook: orderBook,
         baseToken: type === TradeType.LIMIT_SELL ? currencyA : currencyB,
@@ -146,8 +157,31 @@ export function useDerivedTradeInfo(
     inputError = inputError ?? 'Enter amount to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
   }
 
+  if (orderBook?.minAmount) {
+    if (
+      type === TradeType.LIMIT_BUY &&
+      JSBI.LT(parsedAmountAmount, parseBigintIsh(orderBook?.minAmount as BigintIsh))
+    ) {
+      inputError = inputError ?? 'Invalid amount'
+    } else if (
+      type === TradeType.LIMIT_SELL &&
+      parsedPriceAmount &&
+      JSBI.LT(parsedAmountAmount, orderBook.getMinBaseAmount(parsedPriceAmount.raw))
+    ) {
+      inputError = inputError ?? 'Invalid amount'
+    }
+  }
+
   if (!parsedPriceAmount) {
     inputError = inputError ?? 'Enter price to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
+  }
+
+  if (
+    orderBook?.priceStep &&
+    parsedPriceAmount &&
+    JSBI.remainder(parsedPriceAmount?.raw as JSBI, parseBigintIsh(orderBook?.priceStep as BigintIsh)) !== ZERO
+  ) {
+    inputError = inputError ?? 'Invalid price'
   }
 
   const formattedTo = isAddress(to)
