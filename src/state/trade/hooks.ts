@@ -116,9 +116,15 @@ export function useDerivedTradeInfo(
   ])
 
   const orderBook = useOrderBook(currencyA ?? undefined, currencyB ?? undefined)
-  const type =
-    orderBook?.baseToken.token === wrappedCurrency(currencyA, chainId) ? TradeType.LIMIT_SELL : TradeType.LIMIT_BUY
+  const tokenA = wrappedCurrency(currencyA, chainId)
+  const baseToken = orderBook?.baseToken?.token
+  const type = !(tokenA && baseToken)
+    ? undefined
+    : baseToken.equals(tokenA as Token)
+    ? TradeType.LIMIT_SELL
+    : TradeType.LIMIT_BUY
 
+  console.log('type=', type)
   const currencyBalances = {
     [Field.CURRENCY_A]: relevantTokenBalances[0],
     [Field.CURRENCY_B]: relevantTokenBalances[1]
@@ -133,7 +139,7 @@ export function useDerivedTradeInfo(
       return {
         orderBook: orderBook,
         baseToken: type === TradeType.LIMIT_SELL ? currencyA : currencyB,
-        quoteToken: type === TradeType.LIMIT_SELL ? currencyB : currencyA,
+        quoteToken: type !== TradeType.LIMIT_SELL ? currencyA : currencyB,
         tradeType: type,
         amount: parsedAmountAmount,
         price: parsedPriceAmount,

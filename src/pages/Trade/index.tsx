@@ -92,7 +92,7 @@ export default function DoTrade({
       const minAmount = trade?.orderBook?.minAmount
       const tradeType = trade?.tradeType
       if (tradeType && trade?.baseToken && trade?.quoteToken && minAmount) {
-        if (tradeType === TradeType.LIMIT_BUY) {
+        if (tradeType !== TradeType.LIMIT_SELL) {
           const amountAmount = tryParseAmount(value, trade?.quoteToken.currency)
           if (JSBI.LT(amountAmount?.raw, parseBigintIsh(minAmount as BigintIsh))) {
             onUserInput(Input.AMOUNT, new TokenAmount(trade.quoteToken, minAmount).toSignificant())
@@ -110,7 +110,7 @@ export default function DoTrade({
         onUserInput(Input.AMOUNT, value)
       }
     },
-    [onUserInput]
+    [onUserInput, parsedPriceAmount, trade]
   )
   const handleTypePrice = useCallback(
     (value: string) => {
@@ -126,39 +126,8 @@ export default function DoTrade({
         onUserInput(Input.PRICE, value)
       }
     },
-    [onUserInput]
+    [onUserInput, trade]
   )
-
-  useEffect(() => {
-    if (
-      trade?.orderBook &&
-      parsedPriceAmount &&
-      JSBI.remainder(parsedPriceAmount?.raw, parseBigintIsh(trade?.orderBook?.priceStep as BigintIsh)) !== ZERO
-    ) {
-      const priceStep = parseBigintIsh(trade?.orderBook?.priceStep as BigintIsh)
-      const priceValue = priceStep
-        ? JSBI.multiply(JSBI.divide(parsedPriceAmount?.raw, priceStep), priceStep).toString()
-        : parsedPriceAmount?.raw
-      onUserInput(Input.PRICE, new TokenAmount(trade.quoteToken, priceValue).toSignificant())
-      console.log('onUserInput', new TokenAmount(trade.quoteToken, priceValue).toSignificant())
-      return
-    }
-
-    if (trade?.orderBook && parsedAmountAmount) {
-      if (trade?.tradeType === TradeType.LIMIT_BUY) {
-        if (JSBI.LT(parsedAmountAmount.raw, parseBigintIsh(trade?.orderBook?.minAmount as BigintIsh))) {
-          onUserInput(Input.AMOUNT, new TokenAmount(trade.quoteToken, trade?.orderBook?.minAmount).toSignificant())
-          console.log('onUserInput', new TokenAmount(trade.quoteToken, trade?.orderBook?.minAmount).toSignificant())
-        }
-      } else if (parsedPriceAmount && trade?.tradeType === TradeType.LIMIT_SELL) {
-        const minBaseAmount = trade?.orderBook.getMinBaseAmount(parsedPriceAmount?.raw)
-        if (JSBI.LT(parsedAmountAmount.raw, minBaseAmount)) {
-          onUserInput(Input.AMOUNT, new TokenAmount(trade.quoteToken, minBaseAmount).toSignificant())
-          console.log('onUserInput', new TokenAmount(trade.quoteToken, minBaseAmount).toSignificant())
-        }
-      }
-    }
-  }, [parsedAmountAmount, parsedPriceAmount, trade, onUserInput])
 
   // modal and loading
   const [{ showConfirm, tradeToConfirm, tradeErrorMessage, attemptingTxn, txHash }, setTradeState] = useState<{
