@@ -98,7 +98,10 @@ export default function DoUserOrder() {
             ) : userOrders.length > 0 ? (
               <>
                 {userOrders.map(order => (
-                  <FullOrderCard key={order.orderId.toString()} order={order} />
+                  <FullOrderCard
+                    key={order.baseToken.address + '-' + order.quoteToken.address + '-' + order.orderId.toString()}
+                    order={order}
+                  />
                 ))}
               </>
             ) : (
