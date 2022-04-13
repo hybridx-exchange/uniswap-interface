@@ -576,7 +576,7 @@ export function useUserOrders(selectOrderBooks: (Token | string)[][], userOrderI
         quoteToken === (selectOrderBooks[i][0] as Token)
           ? (selectOrderBooks[i][1] as Token)
           : (selectOrderBooks[i][0] as Token)
-      const type = orderType === TradeType.LIMIT_BUY.toString() ? TradeType.LIMIT_BUY : TradeType.LIMIT_SELL
+      const type = orderType.toString() === TradeType.LIMIT_BUY.toString() ? TradeType.LIMIT_BUY : TradeType.LIMIT_SELL
       const amountRemainAmount =
         type === TradeType.LIMIT_BUY
           ? new TokenAmount(quoteToken, amountRemain)
