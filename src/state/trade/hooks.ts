@@ -1,5 +1,5 @@
 import useENS from '../../hooks/useENS'
-import {parseUnits} from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units'
 import {
   BigintIsh,
   Currency,
@@ -12,18 +12,18 @@ import {
   TradeType,
   ZERO
 } from '@hybridx-exchange/uniswap-sdk'
-import {ParsedQs} from 'qs'
-import {useCallback, useEffect, useMemo, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
-import {useActiveWeb3React} from '../../hooks'
-import {useOrderBook, useTradeRet} from '../../hooks/Trades'
+import { ParsedQs } from 'qs'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useActiveWeb3React } from '../../hooks'
+import { useOrderBook, useTradeRet } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
-import {isAddress} from '../../utils'
-import {AppDispatch, AppState} from '../index'
-import {useCurrencyBalances} from '../wallet/hooks'
-import {Field, Input, replaceTradeState, setRecipient, tradeTypeInput} from './actions'
-import {TradeState} from './reducer'
-import {wrappedCurrency} from '../../utils/wrappedCurrency'
+import { isAddress } from '../../utils'
+import { AppDispatch, AppState } from '../index'
+import { useCurrencyBalances } from '../wallet/hooks'
+import { Field, Input, replaceTradeState, setRecipient, tradeTypeInput } from './actions'
+import { TradeState } from './reducer'
+import { wrappedCurrency } from '../../utils/wrappedCurrency'
 
 export function useTradeState(): AppState['trade'] {
   return useSelector<AppState, AppState['trade']>(state => state.trade)
@@ -123,8 +123,6 @@ export function useDerivedTradeInfo(
     : baseToken.equals(tokenA as Token)
     ? TradeType.LIMIT_SELL
     : TradeType.LIMIT_BUY
-
-  console.log('type=', type)
   const currencyBalances = {
     [Field.CURRENCY_A]: relevantTokenBalances[0],
     [Field.CURRENCY_B]: relevantTokenBalances[1]
@@ -185,7 +183,7 @@ export function useDerivedTradeInfo(
   if (
     orderBook?.priceStep &&
     parsedPriceAmount &&
-    JSBI.remainder(parsedPriceAmount?.raw as JSBI, parseBigintIsh(orderBook?.priceStep as BigintIsh)) !== ZERO
+    !JSBI.equal(JSBI.remainder(parsedPriceAmount?.raw as JSBI, parseBigintIsh(orderBook?.priceStep as BigintIsh)), ZERO)
   ) {
     inputError = inputError ?? 'Invalid price'
   }

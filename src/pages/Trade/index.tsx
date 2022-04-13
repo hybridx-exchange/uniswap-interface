@@ -32,7 +32,7 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import useENSAddress from '../../hooks/useENSAddress'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field, Input } from '../../state/trade/actions'
-import {tryParseAmount, useDerivedTradeInfo, useTradeActionHandlers, useTradeState} from '../../state/trade/hooks'
+import { tryParseAmount, useDerivedTradeInfo, useTradeActionHandlers, useTradeState } from '../../state/trade/hooks'
 import { useExpertModeManager, useUserDeadline } from '../../state/user/hooks'
 import { LinkStyledButton, StyledInternalLink, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -44,6 +44,7 @@ import { RouteComponentProps } from 'react-router'
 import { currencyId } from '../../utils/currencyId'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
+import { formatUnits, parseUnits } from "@ethersproject/units";
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -87,46 +88,49 @@ export default function DoTrade({
   const { onUserInput, onChangeRecipient } = useTradeActionHandlers()
   const isValid = !tradeInputError && trade && trade.orderBook
 
-  const handleTypeAmount = useCallback(
+  const handleInputAmount = useCallback(
     (value: string) => {
       const minAmount = trade?.orderBook?.minAmount
       const tradeType = trade?.tradeType
       if (tradeType && trade?.baseToken && trade?.quoteToken && minAmount) {
-        if (tradeType !== TradeType.LIMIT_SELL) {
-          const amountAmount = tryParseAmount(value, trade?.quoteToken.currency)
+        if (tradeType === TradeType.LIMIT_BUY) {
+          const amountAmount = tryParseAmount(value, trade?.quoteToken)
           if (JSBI.LT(amountAmount?.raw, parseBigintIsh(minAmount as BigintIsh))) {
-            onUserInput(Input.AMOUNT, new TokenAmount(trade.quoteToken, minAmount).toSignificant())
-            console.log('onUserInput', new TokenAmount(trade.quoteToken, minAmount).toSignificant())
+            value = new TokenAmount(trade.quoteToken, minAmount).toSignificant()
           }
         } else if (tradeType === TradeType.LIMIT_SELL) {
-          const amountAmount = tryParseAmount(value, trade?.baseToken.currency)
-          const minBaseAmount = trade?.orderBook.getMinBaseAmount(parsedPriceAmount?.raw)
+          const amountAmount = tryParseAmount(value, trade?.baseToken)
+          console.log(amountAmount)
+          const minBaseAmount = parsedPriceAmount ? trade?.orderBook.getMinBaseAmount(parsedPriceAmount?.raw) : ZERO
           if (JSBI.LT(amountAmount?.raw, minBaseAmount)) {
-            onUserInput(Input.AMOUNT, new TokenAmount(trade.quoteToken, minBaseAmount).toSignificant())
-            console.log('onUserInput', new TokenAmount(trade.quoteToken, minBaseAmount).toSignificant())
+            value = new TokenAmount(trade.quoteToken, minBaseAmount).toSignificant()
           }
         }
-      } else {
-        onUserInput(Input.AMOUNT, value)
       }
+
+      onUserInput(Input.AMOUNT, value)
     },
     [onUserInput, parsedPriceAmount, trade]
   )
-  const handleTypePrice = useCallback(
+  const handleInputPrice = useCallback(
     (value: string) => {
-      if (trade?.quoteToken) {
-        const priceAmount = tryParseAmount(value, trade?.quoteToken.currency)
+      if (trade?.quoteToken && value) {
+        const priceAmount = parseBigintIsh(parseUnits(value, trade.quoteToken.decimals).toString())
         const priceStep = parseBigintIsh(trade?.orderBook?.priceStep as BigintIsh)
-        if (priceAmount && priceStep && JSBI.remainder(priceAmount?.raw, priceStep) !== ZERO) {
-          const newValue = JSBI.multiply(JSBI.divide(priceAmount?.raw, priceStep), priceStep).toString()
-          onUserInput(Input.PRICE, newValue)
-          console.log('onUserInput', newValue)
+        if (priceAmount && priceStep && !JSBI.equal(JSBI.remainder(priceAmount, priceStep), ZERO)) {
+          value = formatUnits(
+            JSBI.multiply(JSBI.divide(priceAmount, priceStep), priceStep).toString(),
+            trade.quoteToken.decimals
+          )
         }
-      } else {
-        onUserInput(Input.PRICE, value)
+        if (typedAmountValue) {
+          handleInputAmount(typedAmountValue)
+        }
       }
+
+      onUserInput(Input.PRICE, value)
     },
-    [onUserInput, trade]
+    [onUserInput, trade, handleInputAmount, typedAmountValue]
   )
 
   // modal and loading
@@ -344,7 +348,7 @@ export default function DoTrade({
               value={typedAmountValue}
               showMaxButton={!atMaxAmountInput}
               currency={currencies[Field.CURRENCY_A]}
-              onUserInput={handleTypeAmount}
+              onUserInput={handleInputAmount}
               onMax={handleMaxInput}
               onCurrencySelect={handleCurrencyASelect}
               otherCurrency={currencies[Field.CURRENCY_B]}
@@ -362,7 +366,7 @@ export default function DoTrade({
             </AutoColumn>
             <CurrencyInputPanel
               value={typedPriceValue}
-              onUserInput={handleTypePrice}
+              onUserInput={handleInputPrice}
               label={'Price'}
               showMaxButton={false}
               hideBalance={true}
