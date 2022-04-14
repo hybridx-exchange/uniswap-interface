@@ -256,7 +256,9 @@ export default function DoTrade({
     (currencyA: Currency) => {
       const newCurrencyIdA = currencyId(currencyA)
       const roseId = currencyId(Currency.ETHER)
-      const wRoseId = currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
+      const wRoseId = wrappedCurrency(Currency.ETHER, chainId)
+        ? currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
+        : undefined
       if (newCurrencyIdA === currencyIdB) {
         history.push(`/trade/${currencyIdB}/${currencyIdA}`)
       } else if (
@@ -274,7 +276,9 @@ export default function DoTrade({
     (currencyB: Currency) => {
       const newCurrencyIdB = currencyId(currencyB)
       const roseId = currencyId(Currency.ETHER)
-      const wRoseId = currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
+      const wRoseId = wrappedCurrency(Currency.ETHER, chainId)
+        ? currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
+        : undefined
       if (currencyIdA === newCurrencyIdB) {
         if (currencyIdB) {
           history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
