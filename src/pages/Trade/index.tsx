@@ -4,6 +4,7 @@ import {
   CurrencyAmount,
   JSBI,
   parseBigintIsh,
+  Token,
   TokenAmount,
   Trade,
   TradeType,
@@ -45,7 +46,7 @@ import { RouteComponentProps } from 'react-router'
 import { currencyId } from '../../utils/currencyId'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from '@ethersproject/units'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -84,6 +85,14 @@ export default function DoTrade({
   const parsedAmounts = {
     [Input.AMOUNT]: parsedAmountAmount,
     [Input.PRICE]: parsedPriceAmount
+  }
+
+  const wrappedCurrencyA = wrappedCurrency(loadedCurrencyA ?? undefined, chainId)
+  const wrappedCurrencyB = wrappedCurrency(loadedCurrencyB ?? undefined, chainId)
+
+  const wrappedCurrencies: { [field in Field]?: Token | undefined } = {
+    [Field.CURRENCY_A]: wrappedCurrencyA,
+    [Field.CURRENCY_B]: wrappedCurrencyB
   }
 
   const { onUserInput, onChangeRecipient } = useTradeActionHandlers()
@@ -473,6 +482,29 @@ export default function DoTrade({
             {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
             {isExpertMode && tradeErrorMessage ? <SwapCallbackError error={tradeErrorMessage} /> : null}
           </BottomGrouping>
+          {!trade?.orderBook &&
+            wrappedCurrencies[Field.CURRENCY_A] &&
+            wrappedCurrencies[Field.CURRENCY_B] &&
+            wrappedCurrencies[Field.CURRENCY_A]?.address !== wrappedCurrencies[Field.CURRENCY_B]?.address && (
+              <>
+                <div>
+                  <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+                    {'Want to use limit orders?'}{' '}
+                    <StyledInternalLink
+                      id="create-order-book"
+                      to={
+                        '/orderbook/' +
+                        wrappedCurrencies[Field.CURRENCY_A]?.address +
+                        '/' +
+                        wrappedCurrencies[Field.CURRENCY_B]?.address
+                      }
+                    >
+                      {'Create order book for this pair.'}
+                    </StyledInternalLink>
+                  </Text>
+                </div>
+              </>
+            )}
         </Wrapper>
       </AppBody>
       <TradeTradeRet tradeRet={trade?.tradeRet} />

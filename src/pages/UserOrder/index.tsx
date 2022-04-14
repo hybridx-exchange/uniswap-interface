@@ -17,6 +17,7 @@ import { useUserOrderIds, useUserOrders } from '../../hooks/Trades'
 import FullOrderCard from '../../components/OrderCard'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
+import { currencyId } from '../../utils/currencyId'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -46,12 +47,26 @@ export default function DoUserOrder() {
   //console.log('selectOrderBooks:', selectOrderBooks, 'userOrderIds:', userOrderIds)
   const userOrders = useUserOrders(selectOrderBooks, userOrderIds)
 
-  const handleTokenASelect = useCallback((currencyA: Currency) => {
-    setCurrencyA(currencyA)
+  const handleTokenASelect = useCallback((currency: Currency) => {
+    const newCurrencyIdA = currencyId(currency)
+    const currencyIdB = currencyB ? currencyId(currencyB) : ''
+    if (newCurrencyIdA === currencyIdB) {
+      setCurrencyA(currencyB)
+      setCurrencyB(currencyA)
+    } else {
+      setCurrencyA(currency)
+    }
   }, [])
 
-  const handleTokenBSelect = useCallback((currencyB: Currency) => {
-    setCurrencyB(currencyB)
+  const handleTokenBSelect = useCallback((currency: Currency) => {
+    const newCurrencyIdB = currencyId(currency)
+    const currencyIdA = currencyA ? currencyId(currencyA) : ''
+    if (newCurrencyIdB === currencyIdA) {
+      setCurrencyB(currencyA)
+      setCurrencyA(currencyB)
+    } else {
+      setCurrencyB(currency)
+    }
   }, [])
 
   if (currencyA && currencyB) {
@@ -132,6 +147,7 @@ export default function DoUserOrder() {
                   label={'tokenA'}
                   currency={currencyA}
                   onCurrencySelect={handleTokenASelect}
+                  otherCurrency={currencyB}
                   id="order-pair-from-token"
                   showCommonBases
                 />
@@ -139,6 +155,7 @@ export default function DoUserOrder() {
                   label={'tokenB'}
                   currency={currencyB}
                   onCurrencySelect={handleTokenBSelect}
+                  otherCurrency={currencyA}
                   id="order-pair-to-token"
                   showCommonBases
                 />

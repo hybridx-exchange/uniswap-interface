@@ -27,18 +27,24 @@ const Title = styled.div`
 `
 
 const Left = styled.div`
-  width: 50%;
-  color: #2ab66a;
-  border-bottom: 4px solid #2ab66a;
+  width: 33.3%;
+  color: #888d9b;
+  padding-bottom: 5px;
+  padding-left: 5px;
+`
+
+const Center = styled.div`
+  width: 33.3%;
+  color: #888d9b;
+  text-align: center;
   padding-bottom: 5px;
   padding-left: 5px;
 `
 
 const Right = styled.div`
-  width: 50%;
-  color: #ed5577;
+  width: 33.3%;
+  color: #888d9b;
   text-align: right;
-  border-bottom: 4px solid #ed5577;
   padding-bottom: 5px;
   padding-right: 5px;
 `
@@ -52,11 +58,11 @@ const Tr = styled.tr`
   display: flex;
 `
 
-const Th = styled.th`
+/*const Th = styled.th`
   flex: 1;
   font-weight: normal;
   padding: 16px 0;
-`
+`*/
 
 const Td = styled.td`
   flex: 1;
@@ -84,23 +90,21 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
   let i
   for (i = 0; i < minLen; i++) {
     row = []
-    row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) + ' ' + buyData[i]?.amount?.currency.symbol : ''
-    row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) + ' ' + buyData[i]?.price?.currency.symbol : ''
-    row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) + ' ' + sellData[i]?.price.currency.symbol : ''
-    row[3] = sellData[i]?.amount ? sellData[i].amount.toSignificant(4) + ' ' + sellData[i]?.amount.currency.symbol : ''
+    row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) : ''
+    row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) : ''
+    row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) : ''
+    row[3] = sellData[i]?.amount ? sellData[i].amount.toSignificant(4) : ''
     tb[i] = row
   }
 
   for (; i < maxLen; i++) {
     row = ['', '', '', '']
     if (maxLen === buyOrdersLength) {
-      row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) + ' ' + buyData[i]?.amount?.currency.symbol : ''
-      row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) + ' ' + buyData[i]?.price?.currency.symbol : ''
+      row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) : ''
+      row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) : ''
     } else {
-      row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) + ' ' + sellData[i]?.price.currency.symbol : ''
-      row[3] = sellData[i]?.amount
-        ? sellData[i].amount.toSignificant(4) + ' ' + sellData[i]?.amount.currency.symbol
-        : ''
+      row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) : ''
+      row[3] = sellData[i]?.amount ? sellData[i].amount.toSignificant(4) : ''
     }
 
     tb[i] = row
@@ -122,7 +126,7 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
           </TYPE.black>
         </RowFixed>
       </RowBetween>
-      <RowBetween>
+      <RowBetween style={{ paddingBottom: '10px', borderBottom: '1px solid #888d9b' }}>
         <RowFixed>
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             Reserves
@@ -138,22 +142,29 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
         </RowFixed>
       </RowBetween>
       <Title>
-        <Left>buy</Left>
-        <Right>sell</Right>
+        <Left>{'amount(' + quoteSymbol + ')'}</Left>
+        <Center>{'price(' + quoteSymbol + ')'}</Center>
+        <Right>{'amount(' + baseSymbol + ')'}</Right>
       </Title>
       {tb.length > 0 && (
         <Table>
           <tbody>
-            <Tr>
-              {thData.map((v, i) => {
-                return <Th key={i}>{v}</Th>
-              })}
-            </Tr>
             {tb.map((v: React.ReactNode[], i: string | number | undefined) => {
               return (
                 <Tr key={i}>
-                  {v.map((y: React.ReactNode, j: string | number | undefined) => {
-                    return <Td key={j}>{y}</Td>
+                  {v.map((y: React.ReactNode, j: string | number) => {
+                    return (
+                      <Td
+                        style={
+                          j == 1
+                            ? { borderRight: '1px solid #565a69', color: '#2ab66a' }
+                            : {} && (j == 0 ? { color: '#2ab66a' } : { color: '#ed5577' })
+                        }
+                        key={j}
+                      >
+                        {y}
+                      </Td>
+                    )
                   })}
                 </Tr>
               )
