@@ -164,6 +164,7 @@ export function useSingleContractMultipleData(
   callInputs: OptionalMethodInputs[],
   options?: ListenerOptions
 ): CallState[] {
+  //console.log('useSingleContractMultipleData', contract, methodName, callInputs)
   const fragment = useMemo(() => contract?.interface?.getFunction(methodName), [contract, methodName])
 
   const calls = useMemo(
@@ -195,6 +196,7 @@ export function useMultipleContractSingleData(
   callInputs?: OptionalMethodInputs,
   options?: ListenerOptions
 ): CallState[] {
+  //console.log('useMultipleContractSingleData', addresses, methodName, callInputs)
   const fragment = useMemo(() => contractInterface.getFunction(methodName), [contractInterface, methodName])
   const callData: string | undefined = useMemo(
     () =>
@@ -235,6 +237,7 @@ export function useMultipleContractMultipleData(
   callInputs: OptionalMethodInputs[],
   options?: ListenerOptions
 ): CallState[] {
+  //console.log('useMultipleContractMultipleData', addresses, methodNames, callInputs)
   const fragments = useMemo(() => {
     const fragmentsArray: FunctionFragment[] = []
     for (let i = 0; i < contractInterfaces.length; i++)
@@ -287,6 +290,7 @@ export function useSingleCallResult(
   inputs?: OptionalMethodInputs,
   options?: ListenerOptions
 ): CallState {
+  //console.log('useSingleCallResult', contract, methodName, inputs)
   const fragment = useMemo(() => contract?.interface?.getFunction(methodName), [contract, methodName])
 
   const calls = useMemo<Call[]>(() => {
