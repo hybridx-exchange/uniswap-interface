@@ -540,7 +540,12 @@ export default function DoTrade({
       </AppBody>
       <TradeTradeRet tradeRet={trade?.tradeRet} />
       <div style={{ marginBottom: '37px' }} />
-      <OrderBookTable thData={['amount', 'price', 'price', 'amount']} orderBook={trade?.orderBook} />
+      <OrderBookTable
+        thData={['amount', 'price', 'price', 'amount']}
+        orderBook={trade?.orderBook}
+        currencyA={currencies[Field.CURRENCY_A]}
+        currencyB={currencies[Field.CURRENCY_B]}
+      />
     </>
   )
 }

@@ -1,9 +1,10 @@
-import { OrderBook } from '@hybridx-exchange/uniswap-sdk'
+import { Currency, OrderBook, Token } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { RowBetween, RowFixed } from '../Row'
 import { TYPE } from '../../theme'
 import QuestionHelper from '../QuestionHelper'
+import { wrappedCurrency } from '../../utils/wrappedCurrency'
 
 const Wrapper = styled.div<{ show: boolean }>`
   position: relative;
@@ -73,9 +74,11 @@ const Td = styled.td`
 interface OrderBookTableProps {
   thData: any[]
   orderBook?: OrderBook
+  currencyA?: Currency
+  currencyB?: Currency
 }
 
-export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
+export function OrderBookTable({ thData, orderBook, currencyA, currencyB }: OrderBookTableProps) {
   const show = Boolean(orderBook)
   const buyData = orderBook?.buyOrders ?? []
   const sellData = orderBook?.sellOrders ?? []
@@ -83,6 +86,22 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
   const sellOrdersLength = sellData.length
   const quoteSymbol = orderBook?.quoteToken.currency.symbol ?? ''
   const baseSymbol = orderBook?.baseToken.currency.symbol ?? ''
+  const aIsBase = orderBook?.baseToken.token === wrappedCurrency(currencyA, orderBook?.baseToken.token.chainId)
+  const baseAddress = aIsBase
+    ? currencyA instanceof Token
+      ? (currencyA as Token).address
+      : currencyA?.symbol
+    : currencyB instanceof Token
+    ? (currencyB as Token).address
+    : currencyB?.symbol
+  const quoteAddress = aIsBase
+    ? currencyB instanceof Token
+      ? (currencyB as Token).address
+      : currencyB?.symbol
+    : currencyA instanceof Token
+    ? (currencyA as Token).address
+    : currencyA?.symbol
+  console.log(baseAddress, '/', quoteAddress)
   const minLen = buyOrdersLength > sellOrdersLength ? sellOrdersLength : buyOrdersLength
   const maxLen = buyOrdersLength > sellOrdersLength ? buyOrdersLength : sellOrdersLength
   const tb: any[] = []
