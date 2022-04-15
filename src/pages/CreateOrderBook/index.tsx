@@ -23,7 +23,7 @@ import { useDerivedOrderBookInfo, useOrderBookActionHandlers, useOrderBookState 
 
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { StyledInternalLink, TYPE } from '../../theme'
-import { calculateGasMargin, getOrderBook, getOrderBookFactoryContract } from '../../utils'
+import { calculateGasMargin, getHybridRouterContract, getOrderBookFactoryContract } from '../../utils'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
@@ -32,7 +32,6 @@ import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
 import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
 import { Field as SwapField } from '../../state/swap/actions'
-import { parseUnits } from '@ethersproject/units'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -77,12 +76,6 @@ export default function CreateOrderBook({
   // txn values
   const [txHash, setTxHash] = useState<string>('')
 
-  // get formatted amounts
-  const formattedAmounts = {
-    [Field.CURRENCY_BASE]: minAmountValue,
-    [Field.CURRENCY_QUOTE]: priceStepValue
-  }
-
   const addTransaction = useTransactionAdder()
   const wrappedCurrencyBase = wrappedCurrency(currencyBase ?? undefined, chainId)
   const wrappedCurrencyQuote = wrappedCurrency(currencyQuote ?? undefined, chainId)
@@ -90,6 +83,12 @@ export default function CreateOrderBook({
     [SwapField.INPUT]: wrappedCurrencyBase,
     [SwapField.OUTPUT]: wrappedCurrencyQuote
   }
+  console.log(
+    minAmountAmount?.toSignificant(),
+    priceStepAmount?.toSignificant(),
+    orderBook?.minAmount.toString(),
+    orderBook?.priceStep.toString()
+  )
 
   async function onAdd() {
     if (!priceStepAmount || !minAmountAmount || !currencyBase || !currencyQuote) {
@@ -123,12 +122,12 @@ export default function CreateOrderBook({
             summary:
               'Create ' +
               currencies[Field.CURRENCY_BASE]?.symbol +
-              ' and ' +
+              '/' +
               currencies[Field.CURRENCY_QUOTE]?.symbol +
               ' order book with price step ' +
-              priceStepAmount?.toSignificant(3) +
+              priceStepAmount?.toSignificant() +
               ' and min mount ' +
-              minAmountAmount?.toSignificant(3)
+              minAmountAmount?.toSignificant()
           })
 
           setTxHash(response.hash)
@@ -150,26 +149,28 @@ export default function CreateOrderBook({
   }
 
   async function onUpdate() {
-    if (!priceStepAmount || !minAmountAmount || !currencyBase || !currencyQuote) {
+    if (!(priceStepAmount && minAmountAmount) || !currencyBase || !currencyQuote || !orderBook) {
       return
     }
     if (!chainId || !library || !account) return
 
-    const orderBookAddress = orderBook?.orderBookAddress ?? ''
-
-    const orderBook_ = getOrderBook(orderBookAddress?.toString() ?? '', library, account)
-
-    const priceStep = await orderBook_.priceStep()
-    const minAmount = await orderBook_.minAmount()
-
-    const priceStepAmount_ = parseUnits(priceStepAmount.toSignificant(), currencyBase.decimals).toString()
-
-    if (priceStepAmount_ !== priceStep.toString()) {
+    const hybridRouterContract = getHybridRouterContract(chainId, library, account)
+    const priceStep = orderBook?.priceStep
+    const minAmount = orderBook?.minAmount
+    if (
+      minAmountAmount.raw.toString() !== minAmount?.toString() ||
+      priceStepAmount.raw.toString() !== priceStep?.toString()
+    ) {
       let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
       {
-        estimate = orderBook_.estimateGas.priceStepUpdate
-        method = orderBook_.priceStepUpdate
-        args = [priceStepAmount?.raw.toString() ?? '0']
+        estimate = hybridRouterContract.estimateGas.setMinAmountAndPriceStep
+        method = hybridRouterContract.setMinAmountAndPriceStep
+        args = [
+          orderBook.baseToken.token.address,
+          orderBook.quoteToken.token.address,
+          minAmountAmount.raw.toString() === minAmount?.toString() ? '0' : minAmountAmount.raw.toString(),
+          priceStepAmount.raw.toString() === priceStep?.toString() ? '0' : priceStepAmount.raw.toString()
+        ]
       }
 
       setAttemptingTxn(true)
@@ -179,19 +180,18 @@ export default function CreateOrderBook({
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
             setAttemptingTxn(false)
-
             addTransaction(response, {
               summary:
                 'Update ' +
                 currencies[Field.CURRENCY_BASE]?.symbol +
-                ' and ' +
+                '/' +
                 currencies[Field.CURRENCY_QUOTE]?.symbol +
-                ' order book with price step ' +
-                priceStepAmount?.toSignificant(3)
+                ' order book, min amount = ' +
+                minAmountAmount?.toSignificant() +
+                ', price step = ' +
+                priceStepAmount?.toSignificant()
             })
-
             setTxHash(response.hash)
-
             ReactGA.event({
               category: 'OrderBook',
               action: 'Update',
@@ -207,54 +207,6 @@ export default function CreateOrderBook({
           }
         })
     }
-
-    const minAmountAmount_ = parseUnits(minAmountAmount.toSignificant(), currencyBase.decimals).toString()
-
-    if (minAmountAmount_ !== minAmount.toString()) {
-      let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
-      {
-        estimate = orderBook_.estimateGas.minAmountUpdate
-        method = orderBook_.minAmountUpdate
-        args = [minAmountAmount?.raw.toString() ?? '0']
-      }
-
-      setAttemptingTxn(true)
-      await estimate(...args, {})
-        .then(estimatedGasLimit =>
-          method(...args, {
-            gasLimit: calculateGasMargin(estimatedGasLimit)
-          }).then(response => {
-            setAttemptingTxn(false)
-
-            addTransaction(response, {
-              summary:
-                'Update ' +
-                currencies[Field.CURRENCY_BASE]?.symbol +
-                ' and ' +
-                currencies[Field.CURRENCY_QUOTE]?.symbol +
-                ' order book with min amount ' +
-                minAmountAmount?.toSignificant(3)
-            })
-
-            setTxHash(response.hash)
-
-            ReactGA.event({
-              category: 'OrderBook',
-              action: 'Update',
-              label: [currencies[Field.CURRENCY_BASE]?.symbol, currencies[Field.CURRENCY_QUOTE]?.symbol].join('/')
-            })
-          })
-        )
-        .catch(error => {
-          setAttemptingTxn(false)
-          // we only care if the error is something _other_ than the user rejected the tx
-          if (error?.code !== 4001) {
-            console.error(error)
-          }
-        })
-    }
-
-    setAttemptingTxn(true)
   }
 
   const modalHeader = () => {
@@ -313,9 +265,9 @@ export default function CreateOrderBook({
 
   const pendingText =
     (!orderBookExist ? 'Create' : 'Update') +
-    ` order book with minimum amount ${minAmountAmount?.toSignificant(6)} ${
+    ` order book with minimum amount ${minAmountAmount?.toSignificant()} ${
       currencies[Field.CURRENCY_BASE]?.symbol
-    } and price step ${priceStepAmount?.toSignificant(6)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
+    } and price step ${priceStepAmount?.toSignificant()} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
 
   const handleCurrencyBaseSelect = useCallback(
     (currencyBase: Currency) => {
@@ -366,7 +318,7 @@ export default function CreateOrderBook({
             hash={txHash}
             content={() => (
               <ConfirmationModalContent
-                title={!orderBookExist ? 'You are creating a order book' : 'You are editing the order book'}
+                title={!orderBookExist ? 'You are creating a order book' : 'You are editing a order book'}
                 onDismiss={handleDismissConfirmation}
                 topContent={modalHeader}
                 bottomContent={modalBottom}
@@ -420,9 +372,10 @@ export default function CreateOrderBook({
                 showCommonBases
               />
             </CurrencyInputDiv>
+
             <CurrencyInputPanel
-              label={'input minimum amount'}
-              value={formattedAmounts[Field.CURRENCY_BASE]}
+              label={'Input minimum amount'}
+              value={minAmountValue}
               showMaxButton={false}
               hideBalance={true}
               onUserInput={onFieldBaseInput}
@@ -432,9 +385,10 @@ export default function CreateOrderBook({
               id="create-order-book-base-token"
               showCommonBases
             />
+
             <CurrencyInputPanel
-              label={'input price step'}
-              value={formattedAmounts[Field.CURRENCY_QUOTE]}
+              label={'Input price step'}
+              value={priceStepValue}
               showMaxButton={false}
               hideBalance={true}
               onUserInput={onFieldQuoteInput}

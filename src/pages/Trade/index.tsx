@@ -55,10 +55,10 @@ const CurrencyInputDiv = styled.div`
 
 export default function DoTrade({
   match: {
-    params: { currencyIdA, currencyIdB }
+    params: { currencyIdA, currencyIdB, inputPrice }
   },
   history
-}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
+}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string; inputPrice?: string }>) {
   const { account, chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
@@ -71,7 +71,7 @@ export default function DoTrade({
 
   // trade state
   const { typedAmountValue, typedPriceValue, recipient } = useTradeState()
-  const [loadedCurrencyA, loadedCurrencyB] = [useCurrency(currencyIdA), useCurrency(currencyIdB)]
+  const [loadedCurrencyA, loadedCurrencyB] = [useCurrency(currencyIdA ?? 'ROSE'), useCurrency(currencyIdB)]
   const {
     trade,
     currencyBalances,
@@ -105,19 +105,18 @@ export default function DoTrade({
       if (tradeType && trade?.baseToken && trade?.quoteToken && minAmount) {
         if (tradeType === TradeType.LIMIT_BUY) {
           const amountAmount = tryParseAmount(value, trade?.quoteToken)
-          if (JSBI.LT(amountAmount?.raw, parseBigintIsh(minAmount as BigintIsh))) {
-            value = new TokenAmount(trade.quoteToken, minAmount).toSignificant()
+          const minQuoteAmount = parsedPriceAmount ? trade?.orderBook.getMinQuoteAmount(parsedPriceAmount?.raw) : ZERO
+          if (JSBI.LT(amountAmount?.raw, minQuoteAmount)) {
+            value = new TokenAmount(trade.quoteToken, minQuoteAmount).toSignificant()
           }
         } else if (tradeType === TradeType.LIMIT_SELL) {
           const amountAmount = tryParseAmount(value, trade?.baseToken)
-          const minBaseAmount = parsedPriceAmount ? trade?.orderBook.getMinBaseAmount(parsedPriceAmount?.raw) : ZERO
-          console.log('minBaseAmount', minBaseAmount)
-          if (JSBI.LT(amountAmount?.raw, minBaseAmount)) {
-            value = new TokenAmount(trade.quoteToken, minBaseAmount).toSignificant()
+          if (JSBI.LT(amountAmount?.raw, parseBigintIsh(minAmount as BigintIsh))) {
+            value = new TokenAmount(trade.baseToken, minAmount).toSignificant()
           }
         }
       }
-
+      console.log('value', value, trade?.orderBook?.minAmount.toString(), trade)
       onUserInput(Input.AMOUNT, value)
     },
     [onUserInput, parsedPriceAmount, trade]
@@ -133,6 +132,7 @@ export default function DoTrade({
             trade.quoteToken.decimals
           )
         }
+
         if (typedAmountValue) {
           handleInputAmount(typedAmountValue)
         }
@@ -178,12 +178,18 @@ export default function DoTrade({
     }
   }, [approval, approvalSubmitted])
 
+  useEffect(() => {
+    if (inputPrice) {
+      onUserInput(Input.PRICE, inputPrice)
+    }
+  }, [onUserInput, inputPrice])
+
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.CURRENCY_A])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
 
   // the callback to execute the trade
   const { callback: tradeCallback, error: tradeCallbackError } = useTradeCallback(
-    trade?.amount && trade?.price && trade?.tradeRet ? trade : undefined,
+    isValid ? trade ?? undefined : undefined,
     deadline,
     recipient
   )

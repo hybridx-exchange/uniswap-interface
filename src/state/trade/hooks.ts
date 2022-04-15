@@ -164,13 +164,13 @@ export function useDerivedTradeInfo(
   if (orderBook?.minAmount) {
     if (
       type === TradeType.LIMIT_BUY &&
-      JSBI.LT(parsedAmountAmount, parseBigintIsh(orderBook?.minAmount as BigintIsh))
+      parsedPriceAmount &&
+      JSBI.LT(parsedAmountAmount, orderBook.getMinQuoteAmount(parsedPriceAmount.raw))
     ) {
       inputError = inputError ?? 'Invalid amount'
     } else if (
       type === TradeType.LIMIT_SELL &&
-      parsedPriceAmount &&
-      JSBI.LT(parsedAmountAmount, orderBook.getMinBaseAmount(parsedPriceAmount.raw))
+      JSBI.LT(parsedAmountAmount, parseBigintIsh(orderBook?.minAmount as BigintIsh))
     ) {
       inputError = inputError ?? 'Invalid amount'
     }

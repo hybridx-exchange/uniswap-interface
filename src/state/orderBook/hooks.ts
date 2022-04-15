@@ -51,10 +51,7 @@ export function useDerivedOrderBookInfo(
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS || Boolean(totalSupply && JSBI.equal(totalSupply.raw, ZERO))
 
-  const balances = useCurrencyBalances(account ?? undefined, [
-    currencyBase ?? undefined,
-    currencyQuote ?? undefined
-  ])
+  const balances = useCurrencyBalances(account ?? undefined, [currencyBase ?? undefined, currencyQuote ?? undefined])
 
   const currencyBalances: { [field in Field]?: CurrencyAmount } = {
     [Field.CURRENCY_BASE]: balances[0],
@@ -64,6 +61,7 @@ export function useDerivedOrderBookInfo(
   // amounts
   const priceStepAmount: CurrencyAmount | undefined = tryParseAmount(priceStepValue, currencies[Field.CURRENCY_QUOTE])
   const minAmountAmount: CurrencyAmount | undefined = tryParseAmount(minAmountValue, currencies[Field.CURRENCY_BASE])
+  console.log('minAmountAmount', minAmountAmount?.raw.toString())
 
   const orderBook = useOrderBook(
     currencies[Field.CURRENCY_BASE] ?? undefined,

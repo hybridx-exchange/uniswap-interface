@@ -18,15 +18,15 @@ export function RedirectOldTradePathStructure(props: RouteComponentProps<{ curre
 }
 
 export function RedirectDuplicateTokenIdsForTrade(
-  props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>
+  props: RouteComponentProps<{ currencyIdA: string; currencyIdB: string; inputPrice: string }>
 ) {
   const {
     match: {
-      params: { currencyIdA, currencyIdB }
+      params: { currencyIdA, currencyIdB, inputPrice }
     }
   } = props
   if (currencyIdA.toLowerCase() === currencyIdB.toLowerCase()) {
-    return <Redirect to={`/trade/${currencyIdA}/ROSE`} />
+    return <Redirect to={`/trade/ROSE/${currencyIdA}/${inputPrice}`} />
   }
   return <DoTrade {...props} />
 }

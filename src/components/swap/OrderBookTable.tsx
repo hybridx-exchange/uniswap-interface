@@ -156,9 +156,9 @@ export function OrderBookTable({ thData, orderBook }: OrderBookTableProps) {
                     return (
                       <Td
                         style={
-                          j == 1
+                          j === 1
                             ? { borderRight: '1px solid #565a69', color: '#2ab66a' }
-                            : {} && (j == 0 ? { color: '#2ab66a' } : { color: '#ed5577' })
+                            : {} && (j === 0 ? { color: '#2ab66a' } : { color: '#ed5577' })
                         }
                         key={j}
                       >

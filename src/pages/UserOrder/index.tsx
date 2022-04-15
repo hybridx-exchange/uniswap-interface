@@ -47,27 +47,33 @@ export default function DoUserOrder() {
   //console.log('selectOrderBooks:', selectOrderBooks, 'userOrderIds:', userOrderIds)
   const userOrders = useUserOrders(selectOrderBooks, userOrderIds)
 
-  const handleTokenASelect = useCallback((currency: Currency) => {
-    const newCurrencyIdA = currencyId(currency)
-    const currencyIdB = currencyB ? currencyId(currencyB) : ''
-    if (newCurrencyIdA === currencyIdB) {
-      setCurrencyA(currencyB)
-      setCurrencyB(currencyA)
-    } else {
-      setCurrencyA(currency)
-    }
-  }, [])
+  const handleTokenASelect = useCallback(
+    (currency: Currency) => {
+      const newCurrencyIdA = currencyId(currency)
+      const currencyIdB = currencyB ? currencyId(currencyB) : ''
+      if (newCurrencyIdA === currencyIdB) {
+        setCurrencyA(currencyB)
+        setCurrencyB(currencyA)
+      } else {
+        setCurrencyA(currency)
+      }
+    },
+    [currencyA, currencyB]
+  )
 
-  const handleTokenBSelect = useCallback((currency: Currency) => {
-    const newCurrencyIdB = currencyId(currency)
-    const currencyIdA = currencyA ? currencyId(currencyA) : ''
-    if (newCurrencyIdB === currencyIdA) {
-      setCurrencyB(currencyA)
-      setCurrencyA(currencyB)
-    } else {
-      setCurrencyB(currency)
-    }
-  }, [])
+  const handleTokenBSelect = useCallback(
+    (currency: Currency) => {
+      const newCurrencyIdB = currencyId(currency)
+      const currencyIdA = currencyA ? currencyId(currencyA) : ''
+      if (newCurrencyIdB === currencyIdA) {
+        setCurrencyB(currencyA)
+        setCurrencyA(currencyB)
+      } else {
+        setCurrencyB(currency)
+      }
+    },
+    [currencyA, currencyB]
+  )
 
   if (currencyA && currencyB) {
     const tokenA = wrappedCurrency(currencyA, chainId)
