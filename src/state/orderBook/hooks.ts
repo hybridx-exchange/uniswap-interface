@@ -61,7 +61,6 @@ export function useDerivedOrderBookInfo(
   // amounts
   const priceStepAmount: CurrencyAmount | undefined = tryParseAmount(priceStepValue, currencies[Field.CURRENCY_QUOTE])
   const minAmountAmount: CurrencyAmount | undefined = tryParseAmount(minAmountValue, currencies[Field.CURRENCY_BASE])
-  console.log('minAmountAmount', minAmountAmount?.raw.toString())
 
   const orderBook = useOrderBook(
     currencies[Field.CURRENCY_BASE] ?? undefined,
@@ -89,7 +88,7 @@ export function useDerivedOrderBookInfo(
     error = error ?? 'Enter price step'
   }
 
-  if (orderBook && !priceStepAmount && !minAmountAmount) {
+  if (orderBook && !(priceStepAmount || minAmountAmount)) {
     error = error ?? 'Enter the parameter value'
   }
 

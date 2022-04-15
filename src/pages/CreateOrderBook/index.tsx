@@ -151,7 +151,7 @@ export default function CreateOrderBook({
   }
 
   async function onUpdate() {
-    if (!(priceStepAmount && minAmountAmount) || !currencyBase || !currencyQuote || !orderBook) {
+    if (!(priceStepAmount || minAmountAmount) || !currencyBase || !currencyQuote || !orderBook) {
       return
     }
     if (!chainId || !library || !account) return
@@ -160,8 +160,8 @@ export default function CreateOrderBook({
     const priceStep = orderBook?.priceStep
     const minAmount = orderBook?.minAmount
     if (
-      minAmountAmount.raw.toString() !== minAmount?.toString() ||
-      priceStepAmount.raw.toString() !== priceStep?.toString()
+      minAmountAmount?.raw.toString() !== minAmount?.toString() ||
+      priceStepAmount?.raw.toString() !== priceStep?.toString()
     ) {
       let estimate, method: (...args: any) => Promise<TransactionResponse>, args: Array<string | string[] | number>
       {
@@ -170,8 +170,8 @@ export default function CreateOrderBook({
         args = [
           orderBook.baseToken.token.address,
           orderBook.quoteToken.token.address,
-          minAmountAmount.raw.toString() === minAmount?.toString() ? '0' : minAmountAmount.raw.toString(),
-          priceStepAmount.raw.toString() === priceStep?.toString() ? '0' : priceStepAmount.raw.toString()
+          minAmountAmount?.raw.toString() === minAmount?.toString() ? '0' : minAmountAmount?.raw.toString() ?? '0',
+          priceStepAmount?.raw.toString() === priceStep?.toString() ? '0' : priceStepAmount?.raw.toString() ?? '0'
         ]
       }
 
