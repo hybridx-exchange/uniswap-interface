@@ -13,13 +13,13 @@ import TradeModalHeader from './TradeModalHeader'
  * @param tradeB trade B
  */
 function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
-  console.log(tradeA, tradeB)
   return (
     tradeA.tradeType !== tradeB.tradeType ||
     !currencyEquals(tradeA.amount?.currency, tradeB.amount?.currency) ||
     !tradeA.amount.equalTo(tradeB.amount) ||
     !currencyEquals(tradeA.price?.currency, tradeB.price?.currency) ||
-    !tradeA.price.equalTo(tradeB.price)
+    !tradeA.price.equalTo(tradeB.price) ||
+    !tradeA.tradeRet.equalTo(tradeB.tradeRet)
   )
 }
 
