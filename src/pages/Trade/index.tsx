@@ -390,7 +390,7 @@ export default function DoTrade({
               label={'Price'}
               showMaxButton={false}
               hideBalance={true}
-              currency={currencies[Field.CURRENCY_B]}
+              currency={trade?.quoteToken}
               onCurrencySelect={handleCurrencyBSelect}
               otherCurrency={currencies[Field.CURRENCY_A]}
               isOrderBook={true}

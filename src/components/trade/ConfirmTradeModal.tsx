@@ -1,4 +1,4 @@
-import { currencyEquals, Trade } from '@hybridx-exchange/uniswap-sdk'
+import { currencyEquals, Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -74,9 +74,11 @@ export default function ConfirmTradeModal({
   }, [onConfirm, showAcceptChanges, tradeErrorMessage, trade])
 
   // text to show while loading
-  const pendingText = `Trading ${trade?.amount?.toSignificant(6)} ${
-    trade?.amount?.currency?.symbol
-  } at ${trade?.price?.toSignificant(6)} ${trade?.price?.currency?.symbol}`
+  const pendingText = `${
+    trade?.tradeType === TradeType.LIMIT_BUY ? 'Buy ' + trade?.baseToken?.symbol + 'with amount of ' : 'Sell amount of '
+  } ${trade?.amount?.toSignificant(trade?.orderBook.getAmountSignificantDigits(trade?.tradeType))} ${' ' +
+    trade?.amount?.currency?.symbol} at price ${' ' +
+    trade?.price?.toSignificant(trade?.orderBook?.getPriceSignificantDigits())} ${' ' + trade?.price?.currency?.symbol}`
 
   const confirmationContent = useCallback(
     () =>
