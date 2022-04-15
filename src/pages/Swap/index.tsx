@@ -42,7 +42,6 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
-import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
 import OrderBookTip from '../../components/swap/OrderBookTip'
 
@@ -92,11 +91,6 @@ export default function DoSwap() {
     currencies[Field.OUTPUT],
     typedValue
   )
-  const { chainId } = useActiveWeb3React()
-  const wrappedCurrencies: { [field in Field]?: Token | undefined } = {
-    [Field.INPUT]: wrappedCurrency(currencies[Field.INPUT], chainId),
-    [Field.OUTPUT]: wrappedCurrency(currencies[Field.OUTPUT], chainId)
-  }
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { address: recipientAddress } = useENSAddress(recipient)
   const swap = showWrap ? undefined : v2Swap
@@ -458,7 +452,7 @@ export default function DoSwap() {
             {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
           </BottomGrouping>
-          <OrderBookTip orderBook={orderBook} wrappedCurrencies={wrappedCurrencies} />
+          <OrderBookTip orderBook={orderBook} currencies={currencies} />
         </Wrapper>
       </AppBody>
       <AdvancedSwapDetailsDropdown swap={swap} />

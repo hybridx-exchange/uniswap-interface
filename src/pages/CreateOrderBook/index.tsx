@@ -446,9 +446,7 @@ export default function CreateOrderBook({
           </AutoColumn>
         </Wrapper>
       </AppBody>
-      {orderBook && (
-        <OrderBookDetailsDropdown orderBook={orderBook ?? undefined} wrappedCurrencies={wrappedCurrencies} />
-      )}
+      {orderBook && <OrderBookDetailsDropdown orderBook={orderBook ?? undefined} currencies={wrappedCurrencies} />}
     </>
   )
 }

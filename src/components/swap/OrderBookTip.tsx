@@ -11,20 +11,16 @@ const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
   display: ${({ show }) => (show ? 'block' : 'none')};
 `
 
-export default function OrderBookTip({ orderBook, wrappedCurrencies, ...rest }: OrderBookDetailsProps) {
+export default function OrderBookTip({ orderBook, currencies, ...rest }: OrderBookDetailsProps) {
   const lastOrderBook = useLastTruthy(orderBook)
   const show =
     Boolean(orderBook) ||
-    (wrappedCurrencies[Field.INPUT] !== undefined &&
-      wrappedCurrencies[Field.OUTPUT] !== undefined &&
-      wrappedCurrencies[Field.INPUT] !== wrappedCurrencies[Field.OUTPUT])
+    (currencies[Field.INPUT] !== undefined &&
+      currencies[Field.OUTPUT] !== undefined &&
+      currencies[Field.INPUT] !== currencies[Field.OUTPUT])
   return (
     <OrderBookDetailsFooter show={show}>
-      <OrderBookDetails
-        {...rest}
-        orderBook={orderBook ?? lastOrderBook ?? undefined}
-        wrappedCurrencies={wrappedCurrencies}
-      />
+      <OrderBookDetails {...rest} orderBook={orderBook ?? lastOrderBook ?? undefined} currencies={currencies} />
     </OrderBookDetailsFooter>
   )
 }
