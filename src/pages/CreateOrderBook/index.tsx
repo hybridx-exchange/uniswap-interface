@@ -1,5 +1,5 @@
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, Token } from '@hybridx-exchange/uniswap-sdk'
+import { Currency, parseBigintIsh, Token } from '@hybridx-exchange/uniswap-sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
@@ -32,6 +32,7 @@ import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
 import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
 import { Field as SwapField } from '../../state/swap/actions'
+import { formatUnits } from 'ethers/lib/utils'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -424,7 +425,9 @@ export default function CreateOrderBook({
                 Min Amount
               </ClickableText>
               <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.minAmount.toString()}
+                {orderBook?.minAmount && currencyBase
+                  ? formatUnits(orderBook?.minAmount.toString(), currencyBase?.decimals) + ' ' + currencyBase.symbol
+                  : '-'}
               </ClickableText>
             </RowBetween>
             <RowBetween align="center">
@@ -432,15 +435,25 @@ export default function CreateOrderBook({
                 Price Step
               </ClickableText>
               <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.priceStep.toString()}
+                {orderBook?.priceStep && currencyQuote
+                  ? formatUnits(orderBook?.priceStep.toString(), currencyQuote.decimals) + ' ' + currencyQuote.symbol
+                  : '-'}
               </ClickableText>
             </RowBetween>
             <RowBetween align="center">
               <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                Fee Rate
+                Protocol Fee Rate
               </ClickableText>
               <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.protocolFeeRate.toLocaleString()}
+                {orderBook?.protocolFeeRate ? parseBigintIsh(orderBook?.protocolFeeRate) + '/10000' : '-'}
+              </ClickableText>
+            </RowBetween>
+            <RowBetween align="center">
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                Subsidy Fee Rate
+              </ClickableText>
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                {orderBook?.subsidyFeeRate ? parseBigintIsh(orderBook?.protocolFeeRate) + '/100 of PFR' : '-'}
               </ClickableText>
             </RowBetween>
           </AutoColumn>
