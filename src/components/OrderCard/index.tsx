@@ -101,7 +101,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
         <FixedHeightRow onClick={() => setShowMore(!showMore)} style={{ cursor: 'pointer' }}>
           <RowFixed>
             <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} margin={true} size={20} />
-            <Text fontWeight={500} fontSize={20}>
+            <Text fontWeight={500} fontSize={20} minWidth={170}>
               {!currencyBase || !currencyQuote ? (
                 <Dots>Loading</Dots>
               ) : (
@@ -175,20 +175,20 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
               <ButtonSecondary
                 as={Link}
                 to={`/trade/${currencyId(currencyQuote)}/${currencyId(currencyBase)}`}
-                width="48%"
+                width="30%"
               >
                 Buy
               </ButtonSecondary>
               <ButtonSecondary
                 as={Link}
                 to={`/trade/${currencyId(currencyBase)}/${currencyId(currencyQuote)}`}
-                width="48%"
+                width="30%"
               >
                 Sell
               </ButtonSecondary>
               <ButtonSecondary
                 as={Link}
-                width="48%"
+                width="30%"
                 to={`/remove/${currencyId(currencyBase)}/${currencyId(currencyQuote)}/${order.orderId}`}
               >
                 Remove

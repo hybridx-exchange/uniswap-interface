@@ -367,6 +367,7 @@ export default function DoTrade({
               onCurrencySelect={handleCurrencyASelect}
               otherCurrency={currencies[Field.CURRENCY_B]}
               isOrderBook={true}
+              inputDisable={!trade?.orderBook}
               id="trade-currency-amount"
             />
             <AutoColumn justify="space-between">
@@ -388,6 +389,7 @@ export default function DoTrade({
               onCurrencySelect={handleCurrencyBSelect}
               otherCurrency={currencies[Field.CURRENCY_A]}
               isOrderBook={true}
+              inputDisable={!trade?.orderBook}
               id="trade-currency-price"
             />
 
@@ -505,9 +507,33 @@ export default function DoTrade({
                 </div>
               </>
             )}
+          {trade?.orderBook &&
+            wrappedCurrencies[Field.CURRENCY_A] &&
+            wrappedCurrencies[Field.CURRENCY_B] &&
+            wrappedCurrencies[Field.CURRENCY_A]?.address !== wrappedCurrencies[Field.CURRENCY_B]?.address && (
+              <>
+                <div>
+                  <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+                    {'Want to use limit orders?'}{' '}
+                    <StyledInternalLink
+                      id="create-order-book"
+                      to={
+                        '/orderbook/' +
+                        wrappedCurrencies[Field.CURRENCY_A]?.address +
+                        '/' +
+                        wrappedCurrencies[Field.CURRENCY_B]?.address
+                      }
+                    >
+                      {'edit order book for this pair.'}
+                    </StyledInternalLink>
+                  </Text>
+                </div>
+              </>
+            )}
         </Wrapper>
       </AppBody>
       <TradeTradeRet tradeRet={trade?.tradeRet} />
+      <div style={{ marginBottom: '37px' }} />
       <OrderBookTable thData={['amount', 'price', 'price', 'amount']} orderBook={trade?.orderBook} />
     </>
   )

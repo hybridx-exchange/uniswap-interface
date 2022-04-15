@@ -1,10 +1,10 @@
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, Token } from '@hybridx-exchange/uniswap-sdk'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import styled from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonLight } from '../../components/Button'
 import { BlueCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -13,7 +13,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { CreateEditTabs } from '../../components/NavigationTabs'
-import Row, { RowFlat } from '../../components/Row'
+import Row, { RowBetween, RowFlat } from '../../components/Row'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -26,7 +26,7 @@ import { StyledInternalLink, TYPE } from '../../theme'
 import { calculateGasMargin, getOrderBook, getOrderBookFactoryContract } from '../../utils'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
-import { Wrapper } from '../Pool/styleds'
+import { ClickableText, Wrapper } from '../Pool/styleds'
 import { ConfirmCreateModalBottom } from './ConfirmCreateModalBottom'
 import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
@@ -49,6 +49,8 @@ export default function CreateOrderBook({
 
   const currencyBase = useCurrency(currencyIdBase)
   const currencyQuote = useCurrency(currencyIdQuote)
+
+  const theme = useContext(ThemeContext)
 
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
 
@@ -461,6 +463,32 @@ export default function CreateOrderBook({
                 </ButtonError>
               </AutoColumn>
             )}
+          </AutoColumn>
+          <AutoColumn gap="4px">
+            <RowBetween align="center">
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                Min Amount
+              </ClickableText>
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                {orderBook?.minAmount.toString()}
+              </ClickableText>
+            </RowBetween>
+            <RowBetween align="center">
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                Price Step
+              </ClickableText>
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                {orderBook?.priceStep.toString()}
+              </ClickableText>
+            </RowBetween>
+            <RowBetween align="center">
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                Fee Rate
+              </ClickableText>
+              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                {orderBook?.protocolFeeRate.toLocaleString()}
+              </ClickableText>
+            </RowBetween>
           </AutoColumn>
         </Wrapper>
       </AppBody>

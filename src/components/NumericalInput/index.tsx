@@ -43,6 +43,7 @@ export const Input = React.memo(function InnerInput({
   value,
   onUserInput,
   placeholder,
+  inputDisable,
   ...rest
 }: {
   value: string | number
@@ -50,6 +51,7 @@ export const Input = React.memo(function InnerInput({
   error?: boolean
   fontSize?: string
   align?: 'right' | 'left'
+  inputDisable?: boolean
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
@@ -77,6 +79,7 @@ export const Input = React.memo(function InnerInput({
       minLength={1}
       maxLength={79}
       spellCheck="false"
+      disabled={inputDisable}
     />
   )
 })
