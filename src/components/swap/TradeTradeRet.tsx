@@ -34,7 +34,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'amm amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="The price calculated based on the liquidity pool" />
+            <QuestionHelper text="Input and output in the liquidity pool" />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -55,7 +55,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'order amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="The price calculated based on the liquidity pool" />
+            <QuestionHelper text="Input and output in the order book" />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -76,17 +76,17 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'amount left/expert'}
             </TYPE.black>
-            <QuestionHelper text="The price calculated based on the liquidity pool" />
+            <QuestionHelper text="Left and expect amount after the trade" />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
-              {tradeRet?.orderAmountIn.toSignificant() +
+              {tradeRet?.amountLeft.toSignificant() +
                 ' ' +
-                tradeRet?.orderAmountIn.currency.symbol +
+                tradeRet?.amountLeft.currency.symbol +
                 '/' +
-                tradeRet?.orderAmountIn.toSignificant() +
+                tradeRet?.amountExpect.toSignificant() +
                 ' ' +
-                tradeRet?.orderAmountIn.currency.symbol}
+                tradeRet?.amountExpect.currency.symbol}
             </TYPE.black>
           </RowFixed>
         </RowBetween>
@@ -97,7 +97,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'price'}
             </TYPE.black>
-            <QuestionHelper text="The price calculated based on the liquidity pool" />
+            <QuestionHelper text="The prices before and after the trade" />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>

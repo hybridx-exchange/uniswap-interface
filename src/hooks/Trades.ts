@@ -448,7 +448,7 @@ export function useTradeRet(
         orderAmountOutRaw,
         orderFeeRaw,
         amountLeftRaw,
-        amountExpertRaw,
+        amountExpectRaw,
         priceToRaw
       ]
     } = returns[0].data
@@ -471,8 +471,8 @@ export function useTradeRet(
     const amountLeft = tokenIn
       ? wrappedCurrencyAmount(new TokenAmount(tokenIn?.token, amountLeftRaw), tokenIn?.token.chainId)
       : undefined
-    const amountExpert = tokenOut
-      ? wrappedCurrencyAmount(new TokenAmount(tokenOut?.token, amountExpertRaw), tokenOut?.token.chainId)
+    const amountExpect = tokenOut
+      ? wrappedCurrencyAmount(new TokenAmount(tokenOut?.token, amountExpectRaw), tokenOut?.token.chainId)
       : undefined
     const priceTo = orderBook?.quoteToken
       ? wrappedCurrencyAmount(new TokenAmount(orderBook?.quoteToken.token, priceToRaw), tokenOut?.token.chainId)
@@ -485,7 +485,7 @@ export function useTradeRet(
       orderAmountOut &&
       orderFee &&
       amountLeft &&
-      amountExpert &&
+      amountExpect &&
       priceTo
     ) {
       return new TradeRet(
@@ -496,7 +496,7 @@ export function useTradeRet(
         orderAmountOut,
         orderFee,
         amountLeft,
-        amountExpert,
+        amountExpect,
         priceTo
       )
     }
