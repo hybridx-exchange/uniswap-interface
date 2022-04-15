@@ -88,6 +88,10 @@ export function useDerivedOrderBookInfo(
     error = error ?? 'Enter price step'
   }
 
+  if (orderBook && (orderBook.sellOrders.length > 0 || orderBook.buyOrders.length > 0)) {
+    error = error ?? 'Wait orders to be filled'
+  }
+
   if (orderBook && !(priceStepAmount || minAmountAmount)) {
     error = error ?? 'Enter the parameter value'
   }
