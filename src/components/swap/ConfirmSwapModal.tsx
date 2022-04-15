@@ -12,7 +12,7 @@ import SwapModalHeader from './SwapModalHeader'
  * @param swapA trade A
  * @param swapB trade B
  */
-function tradeMeaningfullyDiffers(swapA: Swap, swapB: Swap): boolean {
+function swapMeaningfullyDiffers(swapA: Swap, swapB: Swap): boolean {
   return (
     swapA.swapType !== swapB.swapType ||
     !currencyEquals(swapA.inputAmount.currency, swapB.inputAmount.currency) ||
@@ -48,7 +48,7 @@ export default function ConfirmSwapModal({
   onDismiss: () => void
 }) {
   const showAcceptChanges = useMemo(
-    () => Boolean(swap && originalSwap && tradeMeaningfullyDiffers(swap, originalSwap)),
+    () => Boolean(swap && originalSwap && swapMeaningfullyDiffers(swap, originalSwap)),
     [originalSwap, swap]
   )
 

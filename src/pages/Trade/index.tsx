@@ -106,17 +106,16 @@ export default function DoTrade({
         if (tradeType === TradeType.LIMIT_BUY) {
           const amountAmount = tryParseAmount(value, trade?.quoteToken)
           const minQuoteAmount = parsedPriceAmount ? trade?.orderBook.getMinQuoteAmount(parsedPriceAmount?.raw) : ZERO
-          if (JSBI.LT(amountAmount?.raw, minQuoteAmount)) {
+          if (amountAmount && JSBI.LT(amountAmount?.raw, minQuoteAmount)) {
             value = new TokenAmount(trade.quoteToken, minQuoteAmount).toSignificant()
           }
         } else if (tradeType === TradeType.LIMIT_SELL) {
           const amountAmount = tryParseAmount(value, trade?.baseToken)
-          if (JSBI.LT(amountAmount?.raw, parseBigintIsh(minAmount as BigintIsh))) {
+          if (amountAmount && JSBI.LT(amountAmount?.raw, parseBigintIsh(minAmount as BigintIsh))) {
             value = new TokenAmount(trade.baseToken, minAmount).toSignificant()
           }
         }
       }
-      console.log('value', value, trade?.orderBook?.minAmount.toString(), trade)
       onUserInput(Input.AMOUNT, value)
     },
     [onUserInput, parsedPriceAmount, trade]
