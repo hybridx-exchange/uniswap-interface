@@ -1,13 +1,12 @@
 import { Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
-import { AlertTriangle, ArrowDown } from 'react-feather'
+import { AlertTriangle } from 'react-feather'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TYPE } from '../../theme'
 import { ButtonPrimary } from '../Button'
 import { isAddress, shortenAddress } from '../../utils'
 import { AutoColumn } from '../Column'
-import CurrencyLogo from '../CurrencyLogo'
 import { RowBetween, RowFixed } from '../Row'
 import { SwapShowAcceptChanges, TruncatedText } from './styleds'
 
@@ -26,14 +25,16 @@ export default function TradeModalHeader({
 
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
+      <RowFixed>
+        <TruncatedText size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }}>
+          {trade.tradeType === TradeType.LIMIT_BUY
+            ? 'Buy ' + trade.baseToken.symbol + ' with amount of '
+            : 'Sell amount of '}
+        </TruncatedText>
+      </RowFixed>
       <RowBetween align="flex-end">
-        <RowFixed gap={'0px'}>
-          <CurrencyLogo currency={trade.amount.currency} size={'24px'} style={{ marginRight: '12px' }} />
-          <TruncatedText
-            fontSize={24}
-            fontWeight={500}
-            color={showAcceptChanges && trade.tradeType === TradeType.LIMIT_BUY ? theme.primary1 : ''}
-          >
+        <RowFixed>
+          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
             {trade.amount.toSignificant(6)}
           </TruncatedText>
         </RowFixed>
@@ -44,16 +45,13 @@ export default function TradeModalHeader({
         </RowFixed>
       </RowBetween>
       <RowFixed>
-        <ArrowDown size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }} />
+        <TruncatedText size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }}>
+          {'At price of '}
+        </TruncatedText>
       </RowFixed>
       <RowBetween align="flex-end">
-        <RowFixed gap={'0px'}>
-          <CurrencyLogo currency={trade.price.currency} size={'24px'} style={{ marginRight: '12px' }} />
-          <TruncatedText
-            fontSize={24}
-            fontWeight={500}
-            color={showAcceptChanges && trade.tradeType === TradeType.LIMIT_SELL ? theme.primary1 : ''}
-          >
+        <RowFixed>
+          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
             {trade.price.toSignificant(6)}
           </TruncatedText>
         </RowFixed>
@@ -82,19 +80,35 @@ export default function TradeModalHeader({
       <AutoColumn justify="flex-start" gap="sm" style={{ padding: '12px 0 0 0px' }}>
         {trade.tradeType === TradeType.LIMIT_BUY ? (
           <TYPE.italic textAlign="left" style={{ width: '100%' }}>
-            {`Output is estimated. You will receive at least `}
+            {`You will received at least `}
             <b>
-              {trade.amount.toSignificant(6)} {trade.amount.currency.symbol}
+              {trade.tradeRet.ammAmountOut.add(trade.tradeRet.orderAmountOut).toSignificant()} {trade.baseToken.symbol}
+              {' immediately. '}
             </b>
-            {' or the transaction will revert.'}
+            {!trade.tradeRet.amountLeft.equalTo('0') &&
+              trade.tradeRet.amountLeft.toSignificant() +
+                ' ' +
+                trade.baseToken.symbol +
+                ' will be place on the order book at price of ' +
+                trade.price.toSignificant() +
+                ' ' +
+                trade.price.currency.symbol}
           </TYPE.italic>
         ) : (
           <TYPE.italic textAlign="left" style={{ width: '100%' }}>
-            {`Input is estimated. You will sell at most `}
+            {`You will received at most `}
             <b>
-              {trade.price.toSignificant(6)} {trade.price.currency.symbol}
+              {trade.tradeRet.ammAmountOut.add(trade.tradeRet.orderAmountOut).toSignificant()} {trade.quoteToken.symbol}
+              {' immediately. '}
             </b>
-            {' or the transaction will revert.'}
+            {!trade.tradeRet.amountLeft.equalTo('0') &&
+              trade.tradeRet.amountLeft.toSignificant() +
+                ' ' +
+                trade.baseToken.symbol +
+                ' will be place on the order book at price of ' +
+                trade.price.toSignificant() +
+                ' ' +
+                trade.price.currency.symbol}
           </TYPE.italic>
         )}
       </AutoColumn>

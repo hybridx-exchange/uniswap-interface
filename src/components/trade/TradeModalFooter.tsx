@@ -43,7 +43,7 @@ export default function TradeModalFooter({
               paddingLeft: '10px'
             }}
           >
-            {'price:' + trade.price.toSignificant(6)}
+            {trade.price.toSignificant() + ' ' + trade.price.currency}
             <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)}>
               <Repeat size={14} />
             </StyledBalanceMaxMini>
@@ -53,7 +53,7 @@ export default function TradeModalFooter({
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {trade.tradeType === TradeType.LIMIT_BUY ? 'Minimum received' : 'Maximum sold'}
+              {trade.tradeType === TradeType.LIMIT_BUY ? trade.tradeRet : 'Sell'}
             </TYPE.black>
             <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
           </RowFixed>

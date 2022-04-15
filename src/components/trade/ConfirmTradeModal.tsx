@@ -14,12 +14,13 @@ import TradeModalHeader from './TradeModalHeader'
  */
 function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
   return (
-    tradeA.tradeType !== tradeB.tradeType ||
-    !currencyEquals(tradeA.amount?.currency, tradeB.amount?.currency) ||
-    !tradeA.amount.equalTo(tradeB.amount) ||
-    !currencyEquals(tradeA.price?.currency, tradeB.price?.currency) ||
-    !tradeA.price.equalTo(tradeB.price) ||
-    !tradeA.tradeRet.equalTo(tradeB.tradeRet)
+    tradeA?.tradeType !== tradeB?.tradeType ||
+    !currencyEquals(tradeA?.amount?.currency, tradeB?.amount?.currency) ||
+    !tradeA?.amount?.equalTo(tradeB?.amount) ||
+    !currencyEquals(tradeA?.price?.currency, tradeB?.price?.currency) ||
+    !tradeA?.price?.equalTo(tradeB?.price) ||
+    !(tradeA?.tradeRet && tradeB?.tradeRet) ||
+    !tradeA?.tradeRet?.equalTo(tradeB?.tradeRet)
   )
 }
 
@@ -75,7 +76,9 @@ export default function ConfirmTradeModal({
 
   // text to show while loading
   const pendingText = `${
-    trade?.tradeType === TradeType.LIMIT_BUY ? 'Buy ' + trade?.baseToken?.symbol + 'with amount of ' : 'Sell amount of '
+    trade?.tradeType === TradeType.LIMIT_BUY
+      ? 'Buy ' + trade?.baseToken?.symbol + ' with amount of '
+      : 'Sell amount of '
   } ${trade?.amount?.toSignificant(trade?.orderBook.getAmountSignificantDigits(trade?.tradeType))} ${' ' +
     trade?.amount?.currency?.symbol} at price ${' ' +
     trade?.price?.toSignificant(trade?.orderBook?.getPriceSignificantDigits())} ${' ' + trade?.price?.currency?.symbol}`
