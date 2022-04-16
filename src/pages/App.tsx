@@ -85,6 +85,11 @@ export default function App() {
                 <Route exact strict path="/order" component={DoUserOrder} />
                 <Route exact strict path="/trade" component={DoTrade} />
                 <Route exact path="/trade/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIdsForTrade} />
+                <Route
+                  exact
+                  path="/trade/:currencyIdA/:currencyIdB/:inputPrice"
+                  component={RedirectDuplicateTokenIdsForTrade}
+                />
                 <Route exact path="/trade/:currencyIdA" component={RedirectOldTradePathStructure} />
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />
