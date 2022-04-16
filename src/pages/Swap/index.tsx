@@ -456,12 +456,7 @@ export default function DoSwap() {
         </Wrapper>
       </AppBody>
       <AdvancedSwapDetailsDropdown swap={swap} />
-      <OrderBookTable
-        thData={['amount', 'price', 'price', 'amount']}
-        orderBook={orderBook}
-        currencyA={currencies[Field.INPUT]}
-        currencyB={currencies[Field.OUTPUT]}
-      />
+      <OrderBookTable orderBook={orderBook} currencyA={currencies[Field.INPUT]} currencyB={currencies[Field.OUTPUT]} />
     </>
   )
 }

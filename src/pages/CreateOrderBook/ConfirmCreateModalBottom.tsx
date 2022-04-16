@@ -53,13 +53,13 @@ export function ConfirmCreateModalBottom({
       <RowBetween>
         <TYPE.body>Price step</TYPE.body>
         <TYPE.body>
-          {priceStepAmount?.toSignificant(4)} {currencies[Field.CURRENCY_QUOTE]?.symbol}
+          {priceStepAmount?.toSignificant()} {currencies[Field.CURRENCY_QUOTE]?.symbol}
         </TYPE.body>
       </RowBetween>
       <RowBetween>
         <TYPE.body>Minimum amount</TYPE.body>
         <TYPE.body>
-          {minAmountAmount?.toSignificant(4)} {currencies[Field.CURRENCY_BASE]?.symbol}
+          {minAmountAmount?.toSignificant()} {currencies[Field.CURRENCY_BASE]?.symbol}
         </TYPE.body>
       </RowBetween>
       <RowBetween>

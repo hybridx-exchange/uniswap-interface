@@ -40,13 +40,13 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import AppBody from '../AppBody'
 import Loader from '../../components/Loader'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
-import { TradeTradeRet } from '../../components/swap/TradeTradeRet'
 import { useTradeCallback } from '../../hooks/useTradeCallback'
 import { RouteComponentProps } from 'react-router'
 import { currencyId } from '../../utils/currencyId'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import { formatUnits, parseUnits } from '@ethersproject/units'
+import AdvancedOrderBookDetailsDropdown from '../../components/swap/AdvancedOrderBookDetailsDropdown'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -116,6 +116,7 @@ export default function DoTrade({
           }
         }
       }
+      console.log('value', value, trade?.orderBook?.minAmount.toString(), trade)
       onUserInput(Input.AMOUNT, value)
     },
     [onUserInput, parsedPriceAmount, trade]
@@ -537,10 +538,8 @@ export default function DoTrade({
             )}
         </Wrapper>
       </AppBody>
-      <TradeTradeRet tradeRet={trade?.tradeRet} />
-      <div style={{ marginBottom: '37px' }} />
+      <AdvancedOrderBookDetailsDropdown tradeRet={trade?.tradeRet} />
       <OrderBookTable
-        thData={['amount', 'price', 'price', 'amount']}
         orderBook={trade?.orderBook}
         currencyA={currencies[Field.CURRENCY_A]}
         currencyB={currencies[Field.CURRENCY_B]}

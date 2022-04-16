@@ -2,11 +2,12 @@ import { Currency, OrderBook, Token } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { RowBetween, RowFixed } from '../Row'
-import { TYPE } from '../../theme'
+import { StyledInternalLink, TYPE } from '../../theme'
 import QuestionHelper from '../QuestionHelper'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 
 const Wrapper = styled.div<{ show: boolean }>`
+  margin-top: 10px;
   position: relative;
   background-color: #ffffff;
   width: 100%;
@@ -21,22 +22,21 @@ const Wrapper = styled.div<{ show: boolean }>`
 
 const Title = styled.div`
   display: flex;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
   justify-content: space-between;
   margin-top: 20px;
+  color: #000;
+  font-weight: 500;
 `
 
 const Left = styled.div`
   width: 33.3%;
-  color: #888d9b;
   padding-bottom: 5px;
   padding-left: 5px;
 `
 
 const Center = styled.div`
   width: 33.3%;
-  color: #888d9b;
   text-align: center;
   padding-bottom: 5px;
   padding-left: 5px;
@@ -44,7 +44,6 @@ const Center = styled.div`
 
 const Right = styled.div`
   width: 33.3%;
-  color: #888d9b;
   text-align: right;
   padding-bottom: 5px;
   padding-right: 5px;
@@ -59,26 +58,19 @@ const Tr = styled.tr`
   display: flex;
 `
 
-/*const Th = styled.th`
-  flex: 1;
-  font-weight: normal;
-  padding: 16px 0;
-`*/
-
 const Td = styled.td`
   flex: 1;
   text-align: center;
-  padding: 8px 0;
+  padding: 4px 0;
 `
 
 interface OrderBookTableProps {
-  thData: any[]
   orderBook?: OrderBook
   currencyA?: Currency
   currencyB?: Currency
 }
 
-export function OrderBookTable({ thData, orderBook, currencyA, currencyB }: OrderBookTableProps) {
+export function OrderBookTable({ orderBook, currencyA, currencyB }: OrderBookTableProps) {
   const show = Boolean(orderBook)
   const buyData = orderBook?.buyOrders ?? []
   const sellData = orderBook?.sellOrders ?? []
@@ -104,6 +96,12 @@ export function OrderBookTable({ thData, orderBook, currencyA, currencyB }: Orde
   console.log(baseAddress, '/', quoteAddress)
   const minLen = buyOrdersLength > sellOrdersLength ? sellOrdersLength : buyOrdersLength
   const maxLen = buyOrdersLength > sellOrdersLength ? buyOrdersLength : sellOrdersLength
+  const baseTokenAddress = orderBook?.baseToken.token.address
+  const quoteTokenAddress = orderBook?.quoteToken.token.address
+
+  const buyRoute = '/trade/' + baseTokenAddress + '/' + quoteTokenAddress + '/'
+  const sellRoute = '/trade/' + quoteTokenAddress + '/' + baseTokenAddress + '/'
+
   const tb: any[] = []
   let row: string[]
   let i
@@ -161,9 +159,9 @@ export function OrderBookTable({ thData, orderBook, currencyA, currencyB }: Orde
         </RowFixed>
       </RowBetween>
       <Title>
-        <Left>{'amount(' + quoteSymbol + ')'}</Left>
-        <Center>{'price(' + quoteSymbol + ')'}</Center>
-        <Right>{'amount(' + baseSymbol + ')'}</Right>
+        <Left>{'Amount(' + quoteSymbol + ')'}</Left>
+        <Center>{'Price(' + quoteSymbol + ')'}</Center>
+        <Right>{'Amount(' + baseSymbol + ')'}</Right>
       </Title>
       {tb.length > 0 && (
         <Table>
@@ -175,13 +173,34 @@ export function OrderBookTable({ thData, orderBook, currencyA, currencyB }: Orde
                     return (
                       <Td
                         style={
-                          j === 1
-                            ? { borderRight: '1px solid #565a69', color: '#2ab66a' }
-                            : {} && (j === 0 ? { color: '#2ab66a' } : { color: '#ed5577' })
+                          j === 0
+                            ? { color: '#2ab66a', textAlign: 'left', paddingLeft: '5px' }
+                            : {} && j === 1
+                            ? {
+                                borderRight: '1px solid #565a69',
+                                color: '#2ab66a',
+                                textAlign: 'right',
+                                paddingRight: '5px'
+                              }
+                            : {} && j === 2
+                            ? { color: '#ed5577', textAlign: 'left', paddingLeft: '5px' }
+                            : {} && j === 3
+                            ? { color: '#ed5577', textAlign: 'right', paddingRight: '5px' }
+                            : {}
                         }
                         key={j}
                       >
-                        {y}
+                        {j === 1 ? (
+                          <StyledInternalLink id="order-book-trade" to={buyRoute + y} linkColor="#2ab66a">
+                            {y}
+                          </StyledInternalLink>
+                        ) : y && j == 2 ? (
+                          <StyledInternalLink id="order-book-trade" to={sellRoute + y} linkColor="#ed5577">
+                            {y}
+                          </StyledInternalLink>
+                        ) : (
+                          y
+                        )}
                       </Td>
                     )
                   })}

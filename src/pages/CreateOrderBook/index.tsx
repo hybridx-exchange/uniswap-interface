@@ -1,10 +1,10 @@
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, parseBigintIsh, Token } from '@hybridx-exchange/uniswap-sdk'
-import React, { useCallback, useContext, useState } from 'react'
+import { Currency, Token } from '@hybridx-exchange/uniswap-sdk'
+import React, { useCallback, useState } from 'react'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { ButtonError, ButtonLight } from '../../components/Button'
 import { BlueCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -13,7 +13,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { CreateEditTabs } from '../../components/NavigationTabs'
-import Row, { RowBetween, RowFlat } from '../../components/Row'
+import Row, { RowFlat } from '../../components/Row'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -26,13 +26,12 @@ import { StyledInternalLink, TYPE } from '../../theme'
 import { calculateGasMargin, getHybridRouterContract, getOrderBookFactoryContract } from '../../utils'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
-import { ClickableText, Wrapper } from '../Pool/styleds'
+import { Wrapper } from '../Pool/styleds'
 import { ConfirmCreateModalBottom } from './ConfirmCreateModalBottom'
 import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
 import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
 import { Field as SwapField } from '../../state/swap/actions'
-import { formatUnits } from 'ethers/lib/utils'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -49,8 +48,6 @@ export default function CreateOrderBook({
 
   const currencyBase = useCurrency(currencyIdBase)
   const currencyQuote = useCurrency(currencyIdQuote)
-
-  const theme = useContext(ThemeContext)
 
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
 
@@ -418,44 +415,6 @@ export default function CreateOrderBook({
                 </ButtonError>
               </AutoColumn>
             )}
-          </AutoColumn>
-          <AutoColumn gap="4px">
-            <RowBetween align="center">
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                Min Amount
-              </ClickableText>
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.minAmount && currencyBase
-                  ? formatUnits(orderBook?.minAmount.toString(), currencyBase?.decimals) + ' ' + currencyBase.symbol
-                  : '-'}
-              </ClickableText>
-            </RowBetween>
-            <RowBetween align="center">
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                Price Step
-              </ClickableText>
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.priceStep && currencyQuote
-                  ? formatUnits(orderBook?.priceStep.toString(), currencyQuote.decimals) + ' ' + currencyQuote.symbol
-                  : '-'}
-              </ClickableText>
-            </RowBetween>
-            <RowBetween align="center">
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                Protocol Fee Rate
-              </ClickableText>
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.protocolFeeRate ? parseBigintIsh(orderBook?.protocolFeeRate) + '/10000' : '-'}
-              </ClickableText>
-            </RowBetween>
-            <RowBetween align="center">
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                Subsidy Fee Rate
-              </ClickableText>
-              <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                {orderBook?.subsidyFeeRate ? parseBigintIsh(orderBook?.protocolFeeRate) + '/100 of PFR' : '-'}
-              </ClickableText>
-            </RowBetween>
           </AutoColumn>
         </Wrapper>
       </AppBody>

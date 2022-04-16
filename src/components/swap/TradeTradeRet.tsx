@@ -32,7 +32,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {'amm amount in/out'}
+              {'Amm amount in/out'}
             </TYPE.black>
             <QuestionHelper text="Input and output in the liquidity pool" />
           </RowFixed>
@@ -53,7 +53,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {'order amount in/out'}
+              {'Order amount in/out'}
             </TYPE.black>
             <QuestionHelper text="Input and output in the order book" />
           </RowFixed>
@@ -74,7 +74,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {'amount left/expert'}
+              {'Amount left/expert'}
             </TYPE.black>
             <QuestionHelper text="Left and expect amount after the trade" />
           </RowFixed>
@@ -95,7 +95,7 @@ export function TradeTradeRet({ tradeRet }: RradeRetInfoProps) {
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {'price'}
+              {'Price'}
             </TYPE.black>
             <QuestionHelper text="The prices before and after the trade" />
           </RowFixed>

@@ -63,8 +63,8 @@ export default function OrderTable({ thData, tdData }: OrderTableProps) {
   return (
     <Wrapper>
       <Title>
-        <Left>买</Left>
-        <Right>卖</Right>
+        <Left>buy</Left>
+        <Right>sell</Right>
       </Title>
       <Table>
         <Tr>
