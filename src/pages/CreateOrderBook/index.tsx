@@ -185,7 +185,7 @@ export default function CreateOrderBook({
                 currencies[Field.CURRENCY_BASE]?.symbol +
                 '/' +
                 currencies[Field.CURRENCY_QUOTE]?.symbol +
-                ' order book, min amount = ' +
+                ' order book, minimum amount = ' +
                 minAmountAmount?.toSignificant() +
                 ', price step = ' +
                 priceStepAmount?.toSignificant()
@@ -373,7 +373,7 @@ export default function CreateOrderBook({
             </CurrencyInputDiv>
 
             <CurrencyInputPanel
-              label={'Input minimum amount'}
+              label={'Minimum amount'}
               value={minAmountValue}
               showMaxButton={false}
               hideBalance={true}
@@ -381,12 +381,12 @@ export default function CreateOrderBook({
               onCurrencySelect={handleCurrencyBaseSelect}
               currency={currencies[Field.CURRENCY_BASE]}
               isOrderBook={true}
-              id="create-order-book-base-token"
+              id="create-order-book-minimum-amount"
               showCommonBases
             />
 
             <CurrencyInputPanel
-              label={'Input price step'}
+              label={'Price step'}
               value={priceStepValue}
               showMaxButton={false}
               hideBalance={true}
@@ -394,7 +394,7 @@ export default function CreateOrderBook({
               onCurrencySelect={handleCurrencyQuoteSelect}
               currency={currencies[Field.CURRENCY_QUOTE]}
               isOrderBook={true}
-              id="create-order-book-quote-token"
+              id="create-order-book-price-step"
               showCommonBases
             />
             {!account ? (

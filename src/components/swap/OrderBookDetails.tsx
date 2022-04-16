@@ -31,7 +31,7 @@ export function OrderBookDetails({ orderBook, currencies }: OrderBookDetailsProp
         <div>
           <RowBetween align="center" style={{ padding: '10px 20px' }}>
             <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-              Min amount
+              Minimum amount
             </ClickableText>
             <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
               {orderBook?.minAmount && currencyBase
