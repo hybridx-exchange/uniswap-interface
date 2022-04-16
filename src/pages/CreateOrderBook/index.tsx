@@ -348,7 +348,7 @@ export default function CreateOrderBook({
                 <BlueCard>
                   <AutoColumn gap="10px">
                     <TYPE.link fontWeight={600} color={'primaryText1'}>
-                      You can only modify order book parameters without any orders.
+                      Order book parameters can only be modified if there is no order in the current order book.
                     </TYPE.link>
                   </AutoColumn>
                 </BlueCard>
