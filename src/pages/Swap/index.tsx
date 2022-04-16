@@ -43,7 +43,7 @@ import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { OrderBookTable } from '../../components/swap/OrderBookTable'
-import OrderBookTip from '../../components/swap/OrderBookTip'
+import OrderBookTipDropDown from '../../components/swap/OrderBookTipDropDown'
 
 export default function DoSwap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -452,7 +452,7 @@ export default function DoSwap() {
             {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
           </BottomGrouping>
-          <OrderBookTip orderBook={orderBook} currencies={currencies} />
+          <OrderBookTipDropDown orderBook={orderBook} currencies={currencies} />
         </Wrapper>
       </AppBody>
       <AdvancedSwapDetailsDropdown swap={swap} />
