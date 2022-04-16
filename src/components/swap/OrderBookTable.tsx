@@ -194,7 +194,7 @@ export function OrderBookTable({ orderBook, currencyA, currencyB }: OrderBookTab
                           <StyledInternalLink id="order-book-trade" to={buyRoute + y} linkcolor="#2ab66a">
                             {y}
                           </StyledInternalLink>
-                        ) : y && j == 2 ? (
+                        ) : y && j === 2 ? (
                           <StyledInternalLink id="order-book-trade" to={sellRoute + y} linkcolor="#ed5577">
                             {y}
                           </StyledInternalLink>

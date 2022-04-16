@@ -35,13 +35,15 @@ export function useDerivedOrderBookInfo(
 
   const { priceStepValue, minAmountValue } = useOrderBookState()
 
+  const orderBook = useOrderBook(currencyBase ?? undefined, currencyQuote ?? undefined)
+
   // tokens
   const currencies: { [field in Field]?: Currency } = useMemo(
     () => ({
-      [Field.CURRENCY_BASE]: currencyBase ?? undefined,
-      [Field.CURRENCY_QUOTE]: currencyQuote ?? undefined
+      [Field.CURRENCY_BASE]: orderBook?.baseToken.currency ?? currencyBase,
+      [Field.CURRENCY_QUOTE]: orderBook?.quoteToken.currency ?? currencyQuote
     }),
-    [currencyBase, currencyQuote]
+    [orderBook, currencyBase, currencyQuote]
   )
 
   // pair
@@ -51,7 +53,10 @@ export function useDerivedOrderBookInfo(
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS || Boolean(totalSupply && JSBI.equal(totalSupply.raw, ZERO))
 
-  const balances = useCurrencyBalances(account ?? undefined, [currencyBase ?? undefined, currencyQuote ?? undefined])
+  const balances = useCurrencyBalances(account ?? undefined, [
+    currencies[Field.CURRENCY_BASE],
+    currencies[Field.CURRENCY_QUOTE]
+  ])
 
   const currencyBalances: { [field in Field]?: CurrencyAmount } = {
     [Field.CURRENCY_BASE]: balances[0],
@@ -61,11 +66,6 @@ export function useDerivedOrderBookInfo(
   // amounts
   const priceStepAmount: CurrencyAmount | undefined = tryParseAmount(priceStepValue, currencies[Field.CURRENCY_QUOTE])
   const minAmountAmount: CurrencyAmount | undefined = tryParseAmount(minAmountValue, currencies[Field.CURRENCY_BASE])
-
-  const orderBook = useOrderBook(
-    currencies[Field.CURRENCY_BASE] ?? undefined,
-    currencies[Field.CURRENCY_QUOTE] ?? undefined
-  )
 
   let error: string | undefined
   if (!account) {

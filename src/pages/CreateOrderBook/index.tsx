@@ -77,18 +77,12 @@ export default function CreateOrderBook({
   const [txHash, setTxHash] = useState<string>('')
 
   const addTransaction = useTransactionAdder()
-  const wrappedCurrencyBase = wrappedCurrency(currencyBase ?? undefined, chainId)
-  const wrappedCurrencyQuote = wrappedCurrency(currencyQuote ?? undefined, chainId)
+  const wrappedCurrencyBase = wrappedCurrency(currencies[Field.CURRENCY_BASE] ?? undefined, chainId)
+  const wrappedCurrencyQuote = wrappedCurrency(currencies[Field.CURRENCY_QUOTE] ?? undefined, chainId)
   const wrappedCurrencies: { [field in TradeField]?: Token | undefined } = {
     [TradeField.CURRENCY_A]: wrappedCurrencyBase,
     [TradeField.CURRENCY_B]: wrappedCurrencyQuote
   }
-  console.log(
-    minAmountAmount?.toSignificant(),
-    priceStepAmount?.toSignificant(),
-    orderBook?.minAmount.toString(),
-    orderBook?.priceStep.toString()
-  )
 
   async function onAdd() {
     if (!priceStepAmount || !minAmountAmount || !currencyBase || !currencyQuote) {
@@ -149,7 +143,12 @@ export default function CreateOrderBook({
   }
 
   async function onUpdate() {
-    if (!(priceStepAmount || minAmountAmount) || !currencyBase || !currencyQuote || !orderBook) {
+    if (
+      !(priceStepAmount || minAmountAmount) ||
+      !currencies[Field.CURRENCY_BASE] ||
+      !currencies[Field.CURRENCY_QUOTE] ||
+      !orderBook
+    ) {
       return
     }
     if (!chainId || !library || !account) return
