@@ -49,30 +49,40 @@ export default function DoUserOrder() {
 
   const handleTokenASelect = useCallback(
     (currency: Currency) => {
+      const currencyWRose = wrappedCurrency(ETHER, chainId)
       const newCurrencyIdA = currencyId(currency)
       const currencyIdB = currencyB ? currencyId(currencyB) : ''
-      if (newCurrencyIdA === currencyIdB) {
+      if (
+        newCurrencyIdA === currencyIdB ||
+        (newCurrencyIdA === ETHER.symbol && currencyB === currencyWRose) ||
+        (newCurrencyIdA === currencyWRose?.address && currencyIdB === ETHER.symbol)
+      ) {
         setCurrencyA(currencyB)
         setCurrencyB(currencyA)
       } else {
         setCurrencyA(currency)
       }
     },
-    [currencyA, currencyB]
+    [currencyA, currencyB, chainId]
   )
 
   const handleTokenBSelect = useCallback(
     (currency: Currency) => {
+      const currencyWRose = wrappedCurrency(ETHER, chainId)
       const newCurrencyIdB = currencyId(currency)
       const currencyIdA = currencyA ? currencyId(currencyA) : ''
-      if (newCurrencyIdB === currencyIdA) {
+      if (
+        newCurrencyIdB === currencyIdA ||
+        (newCurrencyIdB === ETHER.symbol && currencyA === currencyWRose) ||
+        (newCurrencyIdB === currencyWRose?.address && currencyIdA === ETHER.symbol)
+      ) {
         setCurrencyB(currencyA)
         setCurrencyA(currencyB)
       } else {
         setCurrencyB(currency)
       }
     },
-    [currencyA, currencyB]
+    [currencyA, currencyB, chainId]
   )
 
   if (currencyA && currencyB) {
@@ -150,7 +160,7 @@ export default function DoUserOrder() {
             {onImport && (
               <CurrencyInputDiv>
                 <CurrencySelectPanel
-                  label={'tokenA'}
+                  label={'TokenA'}
                   currency={currencyA}
                   onCurrencySelect={handleTokenASelect}
                   otherCurrency={currencyB}
@@ -158,7 +168,7 @@ export default function DoUserOrder() {
                   showCommonBases
                 />
                 <CurrencySelectPanel
-                  label={'tokenB'}
+                  label={'TokenB'}
                   currency={currencyB}
                   onCurrencySelect={handleTokenBSelect}
                   otherCurrency={currencyA}

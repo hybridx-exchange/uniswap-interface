@@ -31,7 +31,7 @@ import { ConfirmCreateModalBottom } from './ConfirmCreateModalBottom'
 import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
 import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
-import { Field as SwapField } from '../../state/swap/actions'
+import { Field as TradeField } from '../../state/trade/actions'
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -79,9 +79,9 @@ export default function CreateOrderBook({
   const addTransaction = useTransactionAdder()
   const wrappedCurrencyBase = wrappedCurrency(currencyBase ?? undefined, chainId)
   const wrappedCurrencyQuote = wrappedCurrency(currencyQuote ?? undefined, chainId)
-  const wrappedCurrencies: { [field in SwapField]?: Token | undefined } = {
-    [SwapField.INPUT]: wrappedCurrencyBase,
-    [SwapField.OUTPUT]: wrappedCurrencyQuote
+  const wrappedCurrencies: { [field in TradeField]?: Token | undefined } = {
+    [TradeField.CURRENCY_A]: wrappedCurrencyBase,
+    [TradeField.CURRENCY_B]: wrappedCurrencyQuote
   }
   console.log(
     minAmountAmount?.toSignificant(),

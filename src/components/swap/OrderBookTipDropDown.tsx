@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useLastTruthy } from '../../hooks/useLast'
 import { OrderBookDetailsProps } from './OrderBookDetails'
-import { Field } from '../../state/swap/actions'
+import { Field } from '../../state/trade/actions'
 import { Text } from 'rebass'
 import { StyledInternalLink } from '../../theme'
 import { AutoColumn } from '../Column'
@@ -17,27 +17,26 @@ const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
 
 export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }: OrderBookDetailsProps) {
   const lastOrderBook = useLastTruthy(orderBook)
-  const show =
-    Boolean(!orderBook) &&
-    currencies[Field.INPUT] !== undefined &&
-    currencies[Field.OUTPUT] !== undefined &&
-    currencies[Field.INPUT] !== currencies[Field.OUTPUT]
   const currencyAAddress =
-    currencies[Field.INPUT] instanceof Token
-      ? (currencies[Field.INPUT] as Token).address
-      : currencies[Field.INPUT]?.symbol
+    currencies[Field.CURRENCY_A] instanceof Token
+      ? (currencies[Field.CURRENCY_A] as Token).address
+      : currencies[Field.CURRENCY_A]?.symbol
   const currencyBAddress =
-    currencies[Field.OUTPUT] instanceof Token
-      ? (currencies[Field.OUTPUT] as Token).address
-      : currencies[Field.OUTPUT]?.symbol
+    currencies[Field.CURRENCY_B] instanceof Token
+      ? (currencies[Field.CURRENCY_B] as Token).address
+      : currencies[Field.CURRENCY_B]?.symbol
+  const show =
+    currencies[Field.CURRENCY_A] !== undefined &&
+    currencies[Field.CURRENCY_B] !== undefined &&
+    currencyAAddress !== currencyBAddress
   return (
     <OrderBookDetailsFooter show={show}>
       <AutoColumn gap="md">
-        {!lastOrderBook && currencyAAddress !== currencyBAddress && (
+        {
           <>
             <div>
-              <Text textAlign="right" fontSize={12} style={{ padding: '.5rem 0 .5rem 0' }}>
-                {'Create order book'}{' '}
+              <Text textAlign="right" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+                {!lastOrderBook ? 'Create ' : 'Edit '}
                 <StyledInternalLink
                   id="create-order-book"
                   to={'/orderbook/' + currencyAAddress + '/' + currencyBAddress}
@@ -47,7 +46,7 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
               </Text>
             </div>
           </>
-        )}
+        }
       </AutoColumn>
     </OrderBookDetailsFooter>
   )

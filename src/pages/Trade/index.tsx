@@ -47,6 +47,7 @@ import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import AdvancedOrderBookDetailsDropdown from '../../components/swap/AdvancedOrderBookDetailsDropdown'
+import OrderBookTipDropDown from "../../components/swap/OrderBookTipDropDown";
 
 const CurrencyInputDiv = styled.div`
   display: flex;
@@ -490,52 +491,7 @@ export default function DoTrade({
             {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
             {isExpertMode && tradeErrorMessage ? <SwapCallbackError error={tradeErrorMessage} /> : null}
           </BottomGrouping>
-          {!trade?.orderBook &&
-            wrappedCurrencies[Field.CURRENCY_A] &&
-            wrappedCurrencies[Field.CURRENCY_B] &&
-            wrappedCurrencies[Field.CURRENCY_A]?.address !== wrappedCurrencies[Field.CURRENCY_B]?.address && (
-              <>
-                <div>
-                  <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-                    {'Want to use limit orders?'}{' '}
-                    <StyledInternalLink
-                      id="create-order-book"
-                      to={
-                        '/orderbook/' +
-                        wrappedCurrencies[Field.CURRENCY_A]?.address +
-                        '/' +
-                        wrappedCurrencies[Field.CURRENCY_B]?.address
-                      }
-                    >
-                      {'Create order book for this pair.'}
-                    </StyledInternalLink>
-                  </Text>
-                </div>
-              </>
-            )}
-          {trade?.orderBook &&
-            wrappedCurrencies[Field.CURRENCY_A] &&
-            wrappedCurrencies[Field.CURRENCY_B] &&
-            wrappedCurrencies[Field.CURRENCY_A]?.address !== wrappedCurrencies[Field.CURRENCY_B]?.address && (
-              <>
-                <div>
-                  <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-                    {'Want to use limit orders?'}{' '}
-                    <StyledInternalLink
-                      id="create-order-book"
-                      to={
-                        '/orderbook/' +
-                        wrappedCurrencies[Field.CURRENCY_A]?.address +
-                        '/' +
-                        wrappedCurrencies[Field.CURRENCY_B]?.address
-                      }
-                    >
-                      {'edit order book for this pair.'}
-                    </StyledInternalLink>
-                  </Text>
-                </div>
-              </>
-            )}
+          <OrderBookTipDropDown orderBook={trade?.orderBook} currencies={wrappedCurrencies} />
         </Wrapper>
       </AppBody>
       <AdvancedOrderBookDetailsDropdown tradeRet={trade?.tradeRet} />

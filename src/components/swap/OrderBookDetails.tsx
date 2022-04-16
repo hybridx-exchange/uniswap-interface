@@ -1,7 +1,7 @@
 import { Token, OrderBook, Currency, parseBigintIsh } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import { AutoColumn } from '../Column'
-import { Field } from '../../state/swap/actions'
+import { Field } from '../../state/trade/actions'
 import { RowBetween } from '../Row'
 import { ClickableText } from '../../pages/Pool/styleds'
 import { ThemeContext } from 'styled-components'
@@ -16,13 +16,13 @@ export function OrderBookDetails({ orderBook, currencies }: OrderBookDetailsProp
   const theme = useContext(ThemeContext)
 
   const currencyAAddress =
-    currencies[Field.INPUT] instanceof Token
-      ? (currencies[Field.INPUT] as Token).address
-      : currencies[Field.INPUT]?.symbol
+    currencies[Field.CURRENCY_A] instanceof Token
+      ? (currencies[Field.CURRENCY_A] as Token).address
+      : currencies[Field.CURRENCY_A]?.symbol
   const currencyBAddress =
-    currencies[Field.OUTPUT] instanceof Token
-      ? (currencies[Field.OUTPUT] as Token).address
-      : currencies[Field.OUTPUT]?.symbol
+    currencies[Field.CURRENCY_B] instanceof Token
+      ? (currencies[Field.CURRENCY_B] as Token).address
+      : currencies[Field.CURRENCY_B]?.symbol
   const currencyBase = orderBook?.baseToken.currency
   const currencyQuote = orderBook?.quoteToken.currency
   return (

@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useLastTruthy } from '../../hooks/useLast'
 import { OrderBookDetails, OrderBookDetailsProps } from './OrderBookDetails'
-import { Field } from '../../state/swap/actions'
+import { Field } from '../../state/trade/actions'
 
 const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
   padding-top: calc(16px + 2rem);
@@ -24,9 +24,9 @@ export default function OrderBookDetailsDropdown({ orderBook, currencies, ...res
   const lastOrderBook = useLastTruthy(orderBook)
   const show =
     Boolean(orderBook) ||
-    (currencies[Field.INPUT] !== undefined &&
-      currencies[Field.OUTPUT] !== undefined &&
-      currencies[Field.INPUT] !== currencies[Field.OUTPUT])
+    (currencies[Field.CURRENCY_A] !== undefined &&
+      currencies[Field.CURRENCY_B] !== undefined &&
+      currencies[Field.CURRENCY_A] !== currencies[Field.CURRENCY_B])
   return (
     <OrderBookDetailsFooter show={show}>
       <OrderBookDetails {...rest} orderBook={orderBook ?? lastOrderBook ?? undefined} currencies={currencies} />
