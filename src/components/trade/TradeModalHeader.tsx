@@ -1,7 +1,6 @@
 import { Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import { AlertTriangle } from 'react-feather'
-import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TYPE } from '../../theme'
 import { ButtonPrimary } from '../Button'
@@ -25,42 +24,34 @@ export default function TradeModalHeader({
 
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
-      <RowFixed>
-        <TruncatedText size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }}>
-          {trade.tradeType === TradeType.LIMIT_BUY
-            ? 'Buy ' + trade.baseToken.symbol + ' with amount of '
-            : 'Sell amount of '}
-        </TruncatedText>
-      </RowFixed>
       <RowBetween align="flex-end">
         <RowFixed>
-          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
-            {trade.amount.toSignificant(6)}
+          <TruncatedText size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }}>
+            {trade.tradeType === TradeType.LIMIT_BUY
+              ? 'Buy ' + trade.baseToken.symbol + ' amount of '
+              : 'Sell amount of '}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={'0px'}>
-          <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-            {trade.amount.currency.symbol}
-          </Text>
+          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
+            {trade.amount.toSignificant(6) + ' ' + trade.amount.currency.symbol}
+          </TruncatedText>
         </RowFixed>
       </RowBetween>
-      <RowFixed>
-        <TruncatedText size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }}>
-          {'At price of '}
-        </TruncatedText>
-      </RowFixed>
+
       <RowBetween align="flex-end">
         <RowFixed>
-          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
-            {trade.price.toSignificant(6)}
+          <TruncatedText fontSize={16} color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }}>
+            {'At price of'}
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={'0px'}>
-          <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-            {trade.price.currency.symbol}
-          </Text>
+          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
+            {trade.price.toSignificant(6) + ' ' + trade.price.currency.symbol}
+          </TruncatedText>
         </RowFixed>
       </RowBetween>
+
       {showAcceptChanges ? (
         <SwapShowAcceptChanges justify="flex-start" gap={'0px'}>
           <RowBetween>

@@ -18,7 +18,7 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Amm amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+            <QuestionHelper text="Input and output in the liquidity pool." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -38,7 +38,7 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Order amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
+            <QuestionHelper text="Input and output in the order book." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -58,17 +58,17 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Amount left/expert'}
             </TYPE.black>
-            <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
+            <QuestionHelper text="Left and expect amount after the trade." />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
             <TYPE.black color={theme.text1} fontSize={14}>
-              {tradeRet?.orderAmountIn.toSignificant() +
+              {tradeRet?.amountLeft.toSignificant() +
                 ' ' +
-                tradeRet?.orderAmountIn.currency.symbol +
+                tradeRet?.amountLeft.currency.symbol +
                 '/' +
-                tradeRet?.orderAmountIn.toSignificant() +
+                tradeRet?.amountExpect.toSignificant() +
                 ' ' +
-                tradeRet?.orderAmountIn.currency.symbol}
+                tradeRet?.amountExpect.currency.symbol}
             </TYPE.black>
           </TYPE.black>
         </RowBetween>

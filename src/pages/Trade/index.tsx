@@ -47,7 +47,7 @@ import CurrencySelectPanel from '../../components/CurrencySelectPanel'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import AdvancedOrderBookDetailsDropdown from '../../components/swap/AdvancedOrderBookDetailsDropdown'
-import OrderBookTipDropDown from "../../components/swap/OrderBookTipDropDown";
+import OrderBookTipDropDown from '../../components/swap/OrderBookTipDropDown'
 
 const CurrencyInputDiv = styled.div`
   display: flex;

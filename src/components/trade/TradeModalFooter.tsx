@@ -1,6 +1,5 @@
 import { Trade, TradeType } from '@hybridx-exchange/uniswap-sdk'
-import React, { useContext, useState } from 'react'
-import { Repeat } from 'react-feather'
+import React, { useContext } from 'react'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TYPE } from '../../theme'
@@ -8,7 +7,7 @@ import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
-import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
+import { SwapCallbackError } from './styleds'
 
 export default function TradeModalFooter({
   trade,
@@ -21,7 +20,6 @@ export default function TradeModalFooter({
   tradeErrorMessage: string | undefined
   disabledConfirm: boolean
 }) {
-  const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
 
   return (
@@ -29,7 +27,8 @@ export default function TradeModalFooter({
       <AutoColumn gap="0px">
         <RowBetween align="center">
           <Text fontWeight={400} fontSize={14} color={theme.text2}>
-            Price
+            {'Amm amount in/out'}
+            <QuestionHelper text="Input and output in the liquidity pool." />
           </Text>
           <Text
             fontWeight={500}
@@ -43,43 +42,53 @@ export default function TradeModalFooter({
               paddingLeft: '10px'
             }}
           >
-            {trade.price.toSignificant() + ' ' + trade.price.currency}
-            <StyledBalanceMaxMini onClick={() => setShowInverted(!showInverted)}>
-              <Repeat size={14} />
-            </StyledBalanceMaxMini>
+            {trade?.tradeRet?.ammAmountIn.toSignificant() +
+              ' ' +
+              trade?.tradeRet?.ammAmountIn.currency.symbol +
+              '/' +
+              trade?.tradeRet?.ammAmountOut.toSignificant() +
+              ' ' +
+              trade?.tradeRet?.ammAmountOut.currency.symbol}
           </Text>
         </RowBetween>
 
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {trade.tradeType === TradeType.LIMIT_BUY ? trade.tradeRet : 'Sell'}
+              {'Order amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+            <QuestionHelper text="Input and output in the order book." />
           </RowFixed>
           <RowFixed>
-            <TYPE.black fontSize={14}>{trade.tradeType === TradeType.LIMIT_BUY ? 'buy' : 'sell'}</TYPE.black>
-            <TYPE.black fontSize={14} marginLeft={'4px'}>
-              {trade.tradeType === TradeType.LIMIT_BUY ? trade.quoteToken.symbol : trade.baseToken?.symbol}
+            <TYPE.black fontSize={14}>
+              {trade?.tradeRet?.orderAmountIn.toSignificant() +
+                ' ' +
+                trade?.tradeRet?.orderAmountIn.currency.symbol +
+                '/' +
+                trade?.tradeRet?.orderAmountOut.toSignificant() +
+                ' ' +
+                trade?.tradeRet?.orderAmountOut.currency.symbol}
             </TYPE.black>
           </RowFixed>
         </RowBetween>
         <RowBetween>
           <RowFixed>
             <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
-              Price Impact
+              {'Amount left/expert'}
             </TYPE.black>
-            <QuestionHelper text="The difference between the market price and your price due to trade size." />
+            <QuestionHelper text="Left and expect amount after the trade." />
           </RowFixed>
-        </RowBetween>
-        <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              Liquidity Provider Fee
+            <TYPE.black fontSize={14}>
+              {trade?.tradeRet?.amountLeft.toSignificant() +
+                ' ' +
+                trade?.tradeRet?.amountLeft.currency.symbol +
+                '/' +
+                trade?.tradeRet?.amountExpect.toSignificant() +
+                ' ' +
+                trade?.tradeRet?.amountExpect.currency.symbol}
             </TYPE.black>
-            <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
           </RowFixed>
-          <TYPE.black fontSize={14}>{trade.amount.toSignificant(6) + ' ' + trade.amount.currency.symbol}</TYPE.black>
         </RowBetween>
       </AutoColumn>
 
