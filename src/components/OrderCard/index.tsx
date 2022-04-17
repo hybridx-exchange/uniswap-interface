@@ -58,7 +58,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
               </RowFixed>
               <RowFixed>
                 <Text fontWeight={500} fontSize={20}>
-                  {order.amountLeft.toSignificant(4) + '/' + order.amountOffer.toSignificant(4)}
+                  {order.amountLeft.toExact() + '/' + order.amountOffer.toExact()}
                 </Text>
               </RowFixed>
             </FixedHeightRow>
@@ -76,7 +76,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
                 {
                   <RowFixed>
                     <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
-                      {order.price?.toSignificant(6)}
+                      {order.price?.toExact()}
                     </Text>
                   </RowFixed>
                 }
@@ -133,7 +133,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
               {
                 <RowFixed>
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
-                    {order.amountOffer?.toSignificant(6)} {currencyAmount.symbol}:
+                    {order.amountOffer?.toExact()} {currencyAmount.symbol}:
                   </Text>
                   <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currencyAmount} />
                 </RowFixed>
@@ -149,7 +149,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
               {
                 <RowFixed>
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
-                    {order.amountLeft?.toSignificant(6)} {currencyAmount.symbol}:
+                    {order.amountLeft?.toExact()} {currencyAmount.symbol}:
                   </Text>
                   <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currencyAmount} />
                 </RowFixed>
@@ -165,7 +165,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
               {
                 <RowFixed>
                   <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
-                    {order.price?.toSignificant(6)} {currencyQuote.symbol}:
+                    {order.price?.toExact()} {currencyQuote.symbol}:
                   </Text>
                   <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currencyQuote} />
                 </RowFixed>

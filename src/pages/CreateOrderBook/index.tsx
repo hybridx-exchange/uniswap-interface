@@ -119,9 +119,9 @@ export default function CreateOrderBook({
               '/' +
               currencies[Field.CURRENCY_QUOTE]?.symbol +
               ' order book with price step ' +
-              priceStepAmount?.toSignificant() +
+              priceStepAmount?.toExact() +
               ' and min mount ' +
-              minAmountAmount?.toSignificant()
+              minAmountAmount?.toExact()
           })
 
           setTxHash(response.hash)
@@ -186,9 +186,9 @@ export default function CreateOrderBook({
                 '/' +
                 currencies[Field.CURRENCY_QUOTE]?.symbol +
                 ' order book, minimum amount = ' +
-                minAmountAmount?.toSignificant() +
+                minAmountAmount?.toExact() +
                 ', price step = ' +
-                priceStepAmount?.toSignificant()
+                priceStepAmount?.toExact()
             })
             setTxHash(response.hash)
             ReactGA.event({
@@ -228,7 +228,7 @@ export default function CreateOrderBook({
       <AutoColumn gap="20px">
         <RowFlat style={{ marginTop: '20px' }}>
           <Text fontSize="48px" fontWeight={500} lineHeight="42px" marginRight={10}>
-            {priceStepAmount?.toSignificant(6)}
+            {priceStepAmount?.toExact()}
           </Text>
           <DoubleCurrencyLogo
             currency0={currencies[Field.CURRENCY_BASE]}
@@ -264,9 +264,9 @@ export default function CreateOrderBook({
 
   const pendingText =
     (!orderBookExist ? 'Create' : 'Update') +
-    ` order book with minimum amount ${minAmountAmount?.toSignificant()} ${
+    ` order book with minimum amount ${minAmountAmount?.toExact()} ${
       currencies[Field.CURRENCY_BASE]?.symbol
-    } and price step ${priceStepAmount?.toSignificant()} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
+    } and price step ${priceStepAmount?.toExact()} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`
 
   const handleCurrencyBaseSelect = useCallback(
     (currencyBase: Currency) => {

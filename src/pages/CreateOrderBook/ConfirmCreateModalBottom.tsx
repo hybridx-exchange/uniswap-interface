@@ -53,21 +53,21 @@ export function ConfirmCreateModalBottom({
       <RowBetween>
         <TYPE.body>Price step</TYPE.body>
         <TYPE.body>
-          {priceStepAmount?.toSignificant()} {currencies[Field.CURRENCY_QUOTE]?.symbol}
+          {priceStepAmount?.toExact()} {currencies[Field.CURRENCY_QUOTE]?.symbol}
         </TYPE.body>
       </RowBetween>
       <RowBetween>
         <TYPE.body>Minimum amount</TYPE.body>
         <TYPE.body>
-          {minAmountAmount?.toSignificant()} {currencies[Field.CURRENCY_BASE]?.symbol}
+          {minAmountAmount?.toExact()} {currencies[Field.CURRENCY_BASE]?.symbol}
         </TYPE.body>
       </RowBetween>
       <RowBetween>
         <TYPE.body>Pool reserves</TYPE.body>
         <TYPE.body>
-          {`${currencyBalances[Field.CURRENCY_BASE]?.toSignificant(4)} ${
+          {`${currencyBalances[Field.CURRENCY_BASE]?.toSignificant()} ${
             currencies[Field.CURRENCY_BASE]?.symbol
-          } / ${currencyBalances[Field.CURRENCY_QUOTE]?.toSignificant(4)} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`}
+          } / ${currencyBalances[Field.CURRENCY_QUOTE]?.toSignificant()} ${currencies[Field.CURRENCY_QUOTE]?.symbol}`}
         </TYPE.body>
       </RowBetween>
       <RowBetween>

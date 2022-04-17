@@ -1,4 +1,4 @@
-import { Currency, OrderBook, Token } from '@hybridx-exchange/uniswap-sdk'
+import {Currency, OrderBook, Token, TradeType} from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { RowBetween, RowFixed } from '../Row'
@@ -93,35 +93,35 @@ export function OrderBookTable({ orderBook, currencyA, currencyB }: OrderBookTab
     : currencyA instanceof Token
     ? (currencyA as Token).address
     : currencyA?.symbol
-  console.log(baseAddress, '/', quoteAddress)
   const minLen = buyOrdersLength > sellOrdersLength ? sellOrdersLength : buyOrdersLength
   const maxLen = buyOrdersLength > sellOrdersLength ? buyOrdersLength : sellOrdersLength
-  const baseTokenAddress = orderBook?.baseToken.token.address
-  const quoteTokenAddress = orderBook?.quoteToken.token.address
+  const priceDecimal = orderBook?.getPriceStepDecimal()
+  const buyAmountDecimal = orderBook?.getMinAmountDecimal(TradeType.LIMIT_BUY)
+  const sellAmountDecimal = orderBook?.getMinAmountDecimal(TradeType.LIMIT_SELL)
 
-  const buyRoute = '/trade/' + baseTokenAddress + '/' + quoteTokenAddress + '/'
-  const sellRoute = '/trade/' + quoteTokenAddress + '/' + baseTokenAddress + '/'
+  const buyRoute = '/trade/' + baseAddress + '/' + quoteAddress + '/'
+  const sellRoute = '/trade/' + quoteAddress + '/' + baseAddress + '/'
 
   const tb: any[] = []
   let row: string[]
   let i
   for (i = 0; i < minLen; i++) {
     row = []
-    row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) : ''
-    row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) : ''
-    row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) : ''
-    row[3] = sellData[i]?.amount ? sellData[i].amount.toSignificant(4) : ''
+    row[0] = buyData[i]?.amount ? buyData[i].amount.toFixedWithoutExtraZero(buyAmountDecimal) : ''
+    row[1] = buyData[i]?.price ? buyData[i].price.toFixedWithoutExtraZero(priceDecimal) : ''
+    row[2] = sellData[i]?.price ? sellData[i].price.toFixedWithoutExtraZero(priceDecimal) : ''
+    row[3] = sellData[i]?.amount ? sellData[i].amount.toFixedWithoutExtraZero(sellAmountDecimal) : ''
     tb[i] = row
   }
 
   for (; i < maxLen; i++) {
     row = ['', '', '', '']
     if (maxLen === buyOrdersLength) {
-      row[0] = buyData[i]?.amount ? buyData[i].amount.toSignificant(4) : ''
-      row[1] = buyData[i]?.price ? buyData[i].price.toSignificant(4) : ''
+      row[0] = buyData[i]?.amount ? buyData[i].amount.toFixedWithoutExtraZero(buyAmountDecimal) : ''
+      row[1] = buyData[i]?.price ? buyData[i].price.toFixedWithoutExtraZero(priceDecimal) : ''
     } else {
-      row[2] = sellData[i]?.price ? sellData[i].price.toSignificant(4) : ''
-      row[3] = sellData[i]?.amount ? sellData[i].amount.toSignificant(4) : ''
+      row[2] = sellData[i]?.price ? sellData[i].price.toFixedWithoutExtraZero(priceDecimal) : ''
+      row[3] = sellData[i]?.amount ? sellData[i].amount.toFixedWithoutExtraZero(sellAmountDecimal) : ''
     }
 
     tb[i] = row

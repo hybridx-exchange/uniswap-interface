@@ -79,9 +79,10 @@ export default function ConfirmTradeModal({
     trade?.tradeType === TradeType.LIMIT_BUY
       ? 'Buy ' + trade?.baseToken?.symbol + ' with amount of '
       : 'Sell amount of '
-  } ${trade?.amount?.toSignificant(trade?.orderBook.getAmountSignificantDigits(trade?.tradeType))} ${' ' +
+  } ${trade?.amount?.toFixedWithoutExtraZero(trade?.orderBook.getMinAmountDecimal(trade?.tradeType))} ${' ' +
     trade?.amount?.currency?.symbol} at price ${' ' +
-    trade?.price?.toSignificant(trade?.orderBook?.getPriceSignificantDigits())} ${' ' + trade?.price?.currency?.symbol}`
+    trade?.price?.toFixedWithoutExtraZero(trade?.orderBook?.getPriceStepDecimal())} ${' ' +
+    trade?.price?.currency?.symbol}`
 
   const confirmationContent = useCallback(
     () =>
@@ -89,7 +90,7 @@ export default function ConfirmTradeModal({
         <TransactionErrorContent onDismiss={onDismiss} message={tradeErrorMessage} />
       ) : (
         <ConfirmationModalContent
-          title="Confirm Trade"
+          title="Confirm trade"
           onDismiss={onDismiss}
           topContent={modalHeader}
           bottomContent={modalBottom}
