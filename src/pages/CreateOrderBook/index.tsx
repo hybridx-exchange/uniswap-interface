@@ -30,7 +30,7 @@ import { Wrapper } from '../Pool/styleds'
 import { ConfirmCreateModalBottom } from './ConfirmCreateModalBottom'
 import { currencyId } from '../../utils/currencyId'
 import { PairState } from '../../data/Reserves'
-import OrderBookDetailsDropdown from '../../components/swap/OrderBookDetailsDropdown'
+import OrderBookDetailsDropdown from '../../components/Swap/OrderBookDetailsDropdown'
 import { Field as TradeField } from '../../state/trade/actions'
 
 const CurrencyInputDiv = styled.div`

@@ -18,7 +18,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { usePairs } from '../../data/Reserves'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import AppBody from '../AppBody'
-import { Dots } from '../../components/swap/styleds'
+import { Dots } from '../../components/Swap/styleds'
 
 export default function DoPool() {
   const theme = useContext(ThemeContext)
