@@ -191,7 +191,7 @@ export default function RemoveOrder({
     )
   }
 
-  const pendingText = `Removing order ${userOrder?.orderId}, ${userOrder?.amountLeft.toSignificant(6)} ${
+  const pendingText = `Removing order ${userOrder?.orderId}, and ${userOrder?.amountLeft.toSignificant(6)} ${
     userOrder?.amountLeft.token.symbol
   } will send to ${userOrder?.to} immediately`
 
