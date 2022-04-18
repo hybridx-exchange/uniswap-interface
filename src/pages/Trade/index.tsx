@@ -179,9 +179,15 @@ export default function DoTrade({
   }, [approval, approvalSubmitted])
 
   useEffect(() => {
-    const inputPriceValue = parseBigintIsh(inputPrice ?? '')
-    if (inputPriceValue) {
-      onUserInput(Input.PRICE, inputPriceValue.toString())
+    try {
+      const inputPriceValue = parseBigintIsh(inputPrice ?? '')
+      if (inputPriceValue.toString() !== '0') {
+        onUserInput(Input.PRICE, inputPriceValue.toString())
+      } else {
+        onUserInput(Input.PRICE, '')
+      }
+    } catch (e) {
+      onUserInput(Input.PRICE, '')
     }
   }, [onUserInput, inputPrice])
 
