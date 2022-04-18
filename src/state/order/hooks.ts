@@ -24,11 +24,15 @@ export function useDerivedCancelOrderInfo(
   }
 
   if (!userOrder) {
-    error = 'Invalid Order'
+    error = error ?? 'Invalid Order'
+  }
+
+  if (userOrder?.orderId.toString() === '0') {
+    error = error ?? 'Order not exist'
   }
 
   if (userOrder?.owner.toLowerCase() !== account?.toLowerCase()) {
-    error = 'Change Wallet'
+    error = error ?? 'Change Wallet'
   }
 
   return { userOrder, error }
