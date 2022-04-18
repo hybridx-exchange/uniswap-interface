@@ -562,6 +562,7 @@ export function useUserOrders(selectOrderBooks: (Token | string)[][], userOrderI
     const userOrders: UserOrder[] = []
     for (let i = 0; i < userOrderIds.length; i++) {
       const order = returns[i].data ?? []
+      if (order.length === 0) continue
       const [owner, to, orderId, price, amountOffer, amountRemain, orderType, orderIndex] = order[0]
       //console.log('order:', owner, to, orderId, price, amountOffer, amountRemain, orderType, orderIndex)
       const quoteAddress = returns[userOrderIds.length + i].data?.toString()

@@ -11,7 +11,7 @@ import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
-import { AddRemoveTabs } from '../../components/NavigationTabs'
+import { RemoveOrderTabs } from '../../components/NavigationTabs'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
 
 import CurrencyLogo from '../../components/CurrencyLogo'
@@ -29,7 +29,6 @@ import { useDerivedCancelOrderInfo } from '../../state/order/hooks'
 import { MinimalOrderCard } from '../../components/OrderCard'
 
 export default function RemoveOrder({
-  history,
   match: {
     params: { currencyIdA, currencyIdB, orderId }
   }
@@ -107,11 +106,11 @@ export default function RemoveOrder({
               'Remove order id=' +
               orderId +
               ' amount=' +
-              userOrder?.amountLeft.toSignificant(3) +
+              userOrder?.amountLeft.toExact() +
               ' ' +
               userOrder?.amountLeft.token.symbol +
               ' price=' +
-              userOrder?.price.toSignificant(3) +
+              userOrder?.price.toExact() +
               ' ' +
               userOrder?.price.token.symbol
           })
@@ -137,7 +136,7 @@ export default function RemoveOrder({
       <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
         <RowBetween align="flex-end">
           <Text fontSize={24} fontWeight={500}>
-            {userOrder?.amountLeft.toSignificant(6)}
+            {userOrder?.amountLeft.toExact()}
           </Text>
           <RowFixed gap="4px">
             <CurrencyLogo currency={currencyA} size={'24px'} />
@@ -151,7 +150,7 @@ export default function RemoveOrder({
         </RowFixed>
         <RowBetween align="flex-end">
           <Text fontSize={24} fontWeight={500}>
-            {userOrder?.price.toSignificant(6)}
+            {userOrder?.price.toExact()}
           </Text>
           <RowFixed gap="4px">
             <CurrencyLogo currency={currencyB} size={'24px'} />
@@ -211,7 +210,7 @@ export default function RemoveOrder({
   return (
     <>
       <AppBody>
-        <AddRemoveTabs adding={false} />
+        <RemoveOrderTabs />
         <Wrapper>
           <TransactionConfirmationModal
             isOpen={showConfirm}
@@ -236,7 +235,7 @@ export default function RemoveOrder({
                 </RowBetween>
                 <Row style={{ alignItems: 'flex-end' }}>
                   <Text fontSize={72} fontWeight={500}>
-                    {userOrder?.amountLeft.toSignificant(6)}%
+                    {userOrder?.amountLeft.toSignificant(6)}
                   </Text>
                 </Row>
               </AutoColumn>

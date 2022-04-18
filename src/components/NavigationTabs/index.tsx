@@ -119,6 +119,24 @@ export function AddRemoveTabs({ adding }: { adding: boolean }) {
   )
 }
 
+export function RemoveOrderTabs() {
+  return (
+    <Tabs>
+      <RowBetween style={{ padding: '1rem' }}>
+        <HistoryLink to="/order">
+          <StyledArrowLeft />
+        </HistoryLink>
+        <ActiveText>Remove Order</ActiveText>
+        <QuestionHelper
+          text={
+            'Removing the order, the tokens that are not filled in the order will be returned to the destination account.'
+          }
+        />
+      </RowBetween>
+    </Tabs>
+  )
+}
+
 export function CreateEditTabs({ creating }: { creating: boolean }) {
   return (
     <Tabs>
