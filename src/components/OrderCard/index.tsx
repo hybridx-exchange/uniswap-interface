@@ -56,18 +56,43 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
                   {currencyBase.symbol}/{currencyQuote.symbol}
                 </Text>
               </RowFixed>
-              <RowFixed>
-                <Text fontWeight={500} fontSize={20}>
-                  {order.amountLeft.toExact() + '/' + order.amountOffer.toExact()}
-                </Text>
-              </RowFixed>
             </FixedHeightRow>
             <AutoColumn gap="4px">
               <FixedHeightRow>
                 <Text color="#888D9B" fontSize={16} fontWeight={500}>
                   Order Type:
                 </Text>
-                {order.orderType === TradeType.LIMIT_BUY ? 'buy' : 'sell'}
+                {
+                  <RowFixed>
+                    <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
+                      {order?.orderType === TradeType.LIMIT_BUY ? 'buy' : 'sell'}
+                    </Text>
+                  </RowFixed>
+                }
+              </FixedHeightRow>
+              <FixedHeightRow>
+                <Text color="#888D9B" fontSize={16} fontWeight={500}>
+                  Amount offer:
+                </Text>
+                {
+                  <RowFixed>
+                    <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
+                      {order?.amountOffer.toExact() + ' ' + order?.amountOffer.currency.symbol}
+                    </Text>
+                  </RowFixed>
+                }
+              </FixedHeightRow>
+              <FixedHeightRow>
+                <Text color="#888D9B" fontSize={16} fontWeight={500}>
+                  Amount left:
+                </Text>
+                {
+                  <RowFixed>
+                    <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
+                      {order?.amountLeft.toExact() + ' ' + order?.amountLeft.currency.symbol}
+                    </Text>
+                  </RowFixed>
+                }
               </FixedHeightRow>
               <FixedHeightRow>
                 <Text color="#888D9B" fontSize={16} fontWeight={500}>
@@ -76,7 +101,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
                 {
                   <RowFixed>
                     <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
-                      {order.price?.toExact()}
+                      {order?.price.toExact() + ' ' + order?.price.currency.symbol}
                     </Text>
                   </RowFixed>
                 }

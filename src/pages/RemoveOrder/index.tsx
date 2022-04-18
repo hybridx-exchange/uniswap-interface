@@ -1,18 +1,18 @@
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
 import React, { useCallback, useContext, useState } from 'react'
-import { ArrowDown, Plus } from 'react-feather'
+import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
-import { AutoColumn, ColumnCenter } from '../../components/Column'
+import { AutoColumn } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { RemoveOrderTabs } from '../../components/NavigationTabs'
-import Row, { RowBetween, RowFixed } from '../../components/Row'
+import { RowBetween, RowFixed } from '../../components/Row'
 
 import CurrencyLogo from '../../components/CurrencyLogo'
 import { useActiveWeb3React } from '../../hooks'
@@ -228,62 +228,39 @@ export default function RemoveOrder({
             pendingText={pendingText}
           />
           <AutoColumn gap="md">
-            <LightCard>
-              <AutoColumn gap="20px">
-                <RowBetween>
-                  <Text fontWeight={500}>Amount</Text>
-                </RowBetween>
-                <Row style={{ alignItems: 'flex-end' }}>
-                  <Text fontSize={72} fontWeight={500}>
-                    {userOrder?.amountLeft.toSignificant(6)}
-                  </Text>
-                </Row>
-              </AutoColumn>
-            </LightCard>
             {
               <>
-                <ColumnCenter>
-                  <ArrowDown size="16" color={theme.text2} />
-                </ColumnCenter>
                 <LightCard>
                   <AutoColumn gap="10px">
                     <RowBetween>
-                      <Text fontSize={24} fontWeight={500}>
-                        {userOrder?.amountLeft.toSignificant(6) || '-'}
+                      <Text fontSize={14} fontWeight={500}>
+                        Order id
                       </Text>
-                      <RowFixed>
-                        <CurrencyLogo currency={currencyA} style={{ marginRight: '12px' }} />
-                        <Text fontSize={24} fontWeight={500} id="remove-liquidity-tokena-symbol">
-                          {currencyA?.symbol}
-                        </Text>
-                      </RowFixed>
+                      <Text fontSize={12} fontWeight={500}>
+                        {userOrder?.orderId.toString()}
+                      </Text>
                     </RowBetween>
                     <RowBetween>
-                      <Text fontSize={24} fontWeight={500}>
-                        {userOrder?.price.toSignificant(6) || '-'}
+                      <Text fontSize={14} fontWeight={500}>
+                        Owner
                       </Text>
-                      <RowFixed>
-                        <CurrencyLogo currency={currencyB} style={{ marginRight: '12px' }} />
-                        <Text fontSize={24} fontWeight={500} id="remove-liquidity-tokenb-symbol">
-                          {currencyB?.symbol}
-                        </Text>
-                      </RowFixed>
+                      <Text fontSize={12} fontWeight={500}>
+                        {userOrder?.owner}
+                      </Text>
+                    </RowBetween>
+                    <RowBetween>
+                      <Text fontSize={14} fontWeight={500}>
+                        Receiver
+                      </Text>
+                      <Text fontSize={12} fontWeight={500}>
+                        {userOrder?.to}
+                      </Text>
                     </RowBetween>
                   </AutoColumn>
                 </LightCard>
               </>
             }
 
-            {userOrder && (
-              <div style={{ padding: '10px 20px' }}>
-                <RowBetween>
-                  Price:
-                  <div>
-                    1 {userOrder.quoteToken.symbol} = {userOrder.price.toSignificant(6)} {userOrder.price.token.symbol}
-                  </div>
-                </RowBetween>
-              </div>
-            )}
             <div style={{ position: 'relative' }}>
               {!account ? (
                 <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
