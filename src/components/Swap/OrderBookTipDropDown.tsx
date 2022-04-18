@@ -28,7 +28,7 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
       ? (currencies[Field.CURRENCY_B] as Token).address
       : currencies[Field.CURRENCY_B]?.symbol
   const show =
-    isExpertMode &&
+    (isExpertMode || !lastOrderBook) &&
     currencies[Field.CURRENCY_A] !== undefined &&
     currencies[Field.CURRENCY_B] !== undefined &&
     currencyAAddress !== currencyBAddress
@@ -43,7 +43,7 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
                   id="create-order-book"
                   to={'/orderbook/' + currencyAAddress + '/' + currencyBAddress}
                 >
-                  {!lastOrderBook ? 'Create ' : 'Edit '}
+                  {!lastOrderBook ? 'Create OrderBook' : 'Edit OrderBook'}
                 </StyledInternalLink>
               </Text>
             </div>
