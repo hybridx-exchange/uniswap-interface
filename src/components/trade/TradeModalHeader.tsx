@@ -31,7 +31,7 @@ export default function TradeModalHeader({
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={'0px'}>
-          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
+          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''} textAlign={'right'}>
             {trade?.amount.toExact() + ' ' + trade?.amount.currency.symbol}
           </TruncatedText>
         </RowFixed>
@@ -44,7 +44,7 @@ export default function TradeModalHeader({
           </TruncatedText>
         </RowFixed>
         <RowFixed gap={'0px'}>
-          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''}>
+          <TruncatedText fontSize={24} fontWeight={500} color={showAcceptChanges ? theme.primary1 : ''} textAlign={'right'}>
             {trade?.price.toExact() + ' ' + trade?.price.currency.symbol}
           </TruncatedText>
         </RowFixed>

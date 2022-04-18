@@ -9,7 +9,7 @@ import { AutoColumn } from '../Column'
 import { Token } from '@hybridx-exchange/uniswap-sdk'
 
 const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
-  padding: 20px 0;
+  padding: 1px 0;
   width: 100%;
   color: ${({ theme }) => theme.text2};
   display: ${({ show }) => (show ? 'block' : 'none')};
@@ -35,7 +35,7 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
         {
           <>
             <div>
-              <Text textAlign="right" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+              <Text textAlign="right" fontSize={14} style={{ padding: '10px 12px 0' }}>
                 <StyledInternalLink
                   id="create-order-book"
                   to={'/orderbook/' + currencyAAddress + '/' + currencyBAddress}
