@@ -120,7 +120,7 @@ export function useDerivedTradeInfo(
   const baseToken = orderBook?.baseToken?.token
   const type = !(tokenA && baseToken)
     ? undefined
-    : baseToken.equals(tokenA as Token)
+    : baseToken.address === tokenA.address
     ? TradeType.LIMIT_SELL
     : TradeType.LIMIT_BUY
   const currencyBalances = {
@@ -158,7 +158,7 @@ export function useDerivedTradeInfo(
   }
 
   if (!parsedAmountAmount) {
-    inputError = inputError ?? 'Enter amount to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
+    inputError = inputError ?? 'Enter ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell') + ' amount'
   }
 
   if (orderBook?.minAmount) {
@@ -177,7 +177,7 @@ export function useDerivedTradeInfo(
   }
 
   if (!parsedPriceAmount) {
-    inputError = inputError ?? 'Enter price to ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell')
+    inputError = inputError ?? 'Enter ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell') + ' price'
   }
 
   if (
