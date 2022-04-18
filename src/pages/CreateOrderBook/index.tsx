@@ -1,6 +1,6 @@
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, Token } from '@hybridx-exchange/uniswap-sdk'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
@@ -83,6 +83,12 @@ export default function CreateOrderBook({
     [TradeField.CURRENCY_A]: wrappedCurrencyBase,
     [TradeField.CURRENCY_B]: wrappedCurrencyQuote
   }
+
+  useEffect(() => {
+    if (wrappedCurrencyBase?.address === wrappedCurrencyQuote?.address) {
+      history.push(`/orderbook/${currencyIdBase}`)
+    }
+  }, [wrappedCurrencyBase, wrappedCurrencyQuote, currencyIdBase, history])
 
   async function onAdd() {
     if (!priceStepAmount || !minAmountAmount || !currencyBase || !currencyQuote) {
@@ -271,28 +277,34 @@ export default function CreateOrderBook({
   const handleCurrencyBaseSelect = useCallback(
     (currencyBase: Currency) => {
       const newCurrencyIdBase = currencyId(currencyBase)
-      if (newCurrencyIdBase === currencyIdQuote) {
-        history.push(`/orderbook/${currencyIdQuote}/${currencyIdBase}`)
+      const newWrappedCurrencyBase = wrappedCurrency(currencyBase, chainId)
+      if (newWrappedCurrencyBase?.address === wrappedCurrencyQuote?.address) {
+        if (wrappedCurrencyBase?.address === newWrappedCurrencyBase?.address) {
+          history.push(`/orderbook/${newCurrencyIdBase}`)
+        } else {
+          history.push(`/orderbook/${currencyIdQuote}/${newCurrencyIdBase}`)
+        }
       } else {
         history.push(`/orderbook/${newCurrencyIdBase}/${currencyIdQuote}`)
       }
     },
-    [currencyIdQuote, history, currencyIdBase]
+    [currencyIdQuote, history, wrappedCurrencyBase, wrappedCurrencyQuote, chainId]
   )
   const handleCurrencyQuoteSelect = useCallback(
     (currencyQuote: Currency) => {
       const newCurrencyIdQuote = currencyId(currencyQuote)
-      if (currencyIdBase === newCurrencyIdQuote) {
-        if (currencyIdQuote) {
-          history.push(`/orderbook/${currencyIdQuote}/${newCurrencyIdQuote}`)
+      const newWrappedCurrencyQuote = wrappedCurrency(currencyQuote, chainId)
+      if (wrappedCurrencyBase?.address === newWrappedCurrencyQuote?.address) {
+        if (wrappedCurrencyQuote?.address === newWrappedCurrencyQuote?.address) {
+          history.push(`/orderbook//${newCurrencyIdQuote}`)
         } else {
-          history.push(`/orderbook/${newCurrencyIdQuote}`)
+          history.push(`/orderbook/${currencyIdQuote}/${newCurrencyIdQuote}`)
         }
       } else {
-        history.push(`/orderbook/${currencyIdBase ? currencyIdBase : 'ROSE'}/${newCurrencyIdQuote}`)
+        history.push(`/orderbook/${currencyIdBase ?? 'ROSE'}/${newCurrencyIdQuote}`)
       }
     },
-    [currencyIdBase, history, currencyIdQuote]
+    [currencyIdBase, history, currencyIdQuote, wrappedCurrencyBase, wrappedCurrencyQuote, chainId]
   )
 
   const handleDismissConfirmation = useCallback(() => {

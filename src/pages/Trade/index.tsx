@@ -117,7 +117,6 @@ export default function DoTrade({
           }
         }
       }
-      console.log('value', value, trade?.orderBook?.minAmount.toString(), trade)
       onUserInput(Input.AMOUNT, value)
     },
     [onUserInput, parsedPriceAmount, trade]
@@ -184,6 +183,12 @@ export default function DoTrade({
       onUserInput(Input.PRICE, inputPrice)
     }
   }, [onUserInput, inputPrice])
+
+  useEffect(() => {
+    if (wrappedCurrencyA?.address === wrappedCurrencyB?.address) {
+      history.push(`/trade/${currencyIdA}`)
+    }
+  }, [wrappedCurrencyA, wrappedCurrencyB, currencyIdA, history])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.CURRENCY_A])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Input.AMOUNT]?.equalTo(maxAmountInput))
@@ -271,46 +276,34 @@ export default function DoTrade({
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {
       const newCurrencyIdA = currencyId(currencyA)
-      const roseId = currencyId(Currency.ETHER)
-      const wRoseId = wrappedCurrency(Currency.ETHER, chainId)
-        ? currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
-        : undefined
-      if (newCurrencyIdA === currencyIdB) {
-        history.push(`/trade/${currencyIdB}/${currencyIdA}`)
-      } else if (
-        (newCurrencyIdA === roseId && currencyIdB === wRoseId) ||
-        (newCurrencyIdA === wRoseId && currencyIdB === roseId)
-      ) {
-        history.push(`/trade/${newCurrencyIdA}`)
+      const newWrappedCurrencyA = wrappedCurrency(currencyA, chainId)
+      if (newWrappedCurrencyA?.address === wrappedCurrencyB?.address) {
+        if (wrappedCurrencyA?.address === newWrappedCurrencyA?.address) {
+          history.push(`/trade/${newCurrencyIdA}`)
+        } else {
+          history.push(`/trade/${currencyIdA}/${newCurrencyIdA}`)
+        }
       } else {
-        history.push(`/trade/${newCurrencyIdA}/${currencyIdB}`)
+        history.push(`/trade/${newCurrencyIdA}/${currencyIdB ?? ''}`)
       }
     },
-    [currencyIdB, history, currencyIdA, chainId]
+    [currencyIdB, wrappedCurrencyA, wrappedCurrencyB, history, currencyIdA, chainId]
   )
   const handleCurrencyBSelect = useCallback(
     (currencyB: Currency) => {
       const newCurrencyIdB = currencyId(currencyB)
-      const roseId = currencyId(Currency.ETHER)
-      const wRoseId = wrappedCurrency(Currency.ETHER, chainId)
-        ? currencyId(wrappedCurrency(Currency.ETHER, chainId) as Currency)
-        : undefined
-      if (currencyIdA === newCurrencyIdB) {
-        if (currencyIdB) {
-          history.push(`/trade/${currencyIdB}/${newCurrencyIdB}`)
+      const newWrappedCurrencyB = wrappedCurrency(currencyB, chainId)
+      if (newWrappedCurrencyB?.address === wrappedCurrencyA?.address) {
+        if (newWrappedCurrencyB?.address === wrappedCurrencyB?.address) {
+          history.push(`/trade//${newCurrencyIdB}`)
         } else {
-          history.push(`/trade/${newCurrencyIdB}`)
+          history.push(`/trade/${newCurrencyIdB}/${currencyIdB}`)
         }
-      } else if (
-        (newCurrencyIdB === roseId && currencyIdA === wRoseId) ||
-        (newCurrencyIdB === wRoseId && currencyIdA === roseId)
-      ) {
-        history.push(`/trade/${newCurrencyIdB}`)
       } else {
-        history.push(`/trade/${currencyIdA ? currencyIdA : 'ROSE'}/${newCurrencyIdB}`)
+        history.push(`/trade/${currencyIdA ?? 'ROSE'}/${newCurrencyIdB}`)
       }
     },
-    [currencyIdA, history, currencyIdB, chainId]
+    [currencyIdA, wrappedCurrencyA, wrappedCurrencyB, history, currencyIdB, chainId]
   )
 
   const handleMaxInput = useCallback(() => {
