@@ -169,8 +169,8 @@ export function useTradeCallback(
 
             const base =
               trade.tradeType === TradeType.LIMIT_BUY
-                ? `buy ${baseSymbol} with ${inputAmount} ${quoteSymbol} at price ${priceAmount} ${quoteSymbol}`
-                : `sell ${inputAmount} ${quoteSymbol} to ${quoteSymbol} at price ${priceAmount} ${quoteSymbol}`
+                ? `Buy ${baseSymbol} with ${inputAmount} ${quoteSymbol} at price ${priceAmount} ${quoteSymbol}`
+                : `Sell ${inputAmount} ${baseSymbol} to ${quoteSymbol} at price ${priceAmount} ${quoteSymbol}`
             const withRecipient =
               recipient === account
                 ? base

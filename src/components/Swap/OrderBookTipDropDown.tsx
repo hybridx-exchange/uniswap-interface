@@ -7,6 +7,7 @@ import { Text } from 'rebass'
 import { StyledInternalLink } from '../../theme'
 import { AutoColumn } from '../Column'
 import { Token } from '@hybridx-exchange/uniswap-sdk'
+import { useExpertModeManager } from '../../state/user/hooks'
 
 const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
   padding: 1px 0;
@@ -17,6 +18,7 @@ const OrderBookDetailsFooter = styled.div<{ show: boolean }>`
 
 export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }: OrderBookDetailsProps) {
   const lastOrderBook = useLastTruthy(orderBook)
+  const [isExpertMode] = useExpertModeManager()
   const currencyAAddress =
     currencies[Field.CURRENCY_A] instanceof Token
       ? (currencies[Field.CURRENCY_A] as Token).address
@@ -26,6 +28,7 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
       ? (currencies[Field.CURRENCY_B] as Token).address
       : currencies[Field.CURRENCY_B]?.symbol
   const show =
+    isExpertMode &&
     currencies[Field.CURRENCY_A] !== undefined &&
     currencies[Field.CURRENCY_B] !== undefined &&
     currencyAAddress !== currencyBAddress
