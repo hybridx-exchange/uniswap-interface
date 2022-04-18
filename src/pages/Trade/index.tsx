@@ -487,7 +487,7 @@ export default function DoTrade({
           <OrderBookTipDropDown orderBook={trade?.orderBook} currencies={wrappedCurrencies} />
         </Wrapper>
       </AppBody>
-      <AdvancedOrderBookDetailsDropdown tradeRet={trade?.tradeRet} />
+      <AdvancedOrderBookDetailsDropdown trade={trade ?? undefined} />
       <OrderBookTable
         orderBook={trade?.orderBook}
         currencyA={currencies[Field.CURRENCY_A]}

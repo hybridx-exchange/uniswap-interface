@@ -19,10 +19,10 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   transition: transform 300ms ease-in-out;
 `
 
-export default function AdvancedOrderBookDetailsDropdown({ tradeRet, ...rest }: AdvancedOrderBookDetailsProps) {
+export default function AdvancedOrderBookDetailsDropdown({ trade, ...rest }: AdvancedOrderBookDetailsProps) {
   return (
-    <AdvancedDetailsFooter show={Boolean(tradeRet)}>
-      <AdvancedOrderBookDetails {...rest} tradeRet={tradeRet} />
+    <AdvancedDetailsFooter show={Boolean(trade?.tradeRet)}>
+      <AdvancedOrderBookDetails {...rest} trade={trade} />
     </AdvancedDetailsFooter>
   )
 }

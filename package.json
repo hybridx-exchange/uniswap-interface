@@ -26,7 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^2.31.0",
     "@typescript-eslint/parser": "^2.31.0",
     "@hybridx-exchange/token-list": "0.1.0",
-    "@hybridx-exchange/uniswap-sdk": "0.2.38",
+    "@hybridx-exchange/uniswap-sdk": "0.2.39",
     "@uniswap/token-lists": "^1.0.0-beta.16",
     "@hybridx-exchange/v2-core": "0.2.0",
     "@hybridx-exchange/v2-periphery": "0.2.1",

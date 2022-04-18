@@ -1,15 +1,16 @@
-import { TradeRet } from '@hybridx-exchange/uniswap-sdk'
+import { Trade } from '@hybridx-exchange/uniswap-sdk'
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
-import { useUserSlippageTolerance } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 
-function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allowedSlippage: number }) {
+function TradeSummary({ trade }: { trade: Trade }) {
   const theme = useContext(ThemeContext)
-
+  const tradeRet = trade?.tradeRet
+  const inDecimal = trade?.orderBook.getMinAmountDecimal(trade?.tradeType)
+  const outDecimal = trade?.orderBook.getMinOutputAmountDecimal(trade?.tradeType)
   return (
     <>
       <AutoColumn style={{ padding: '0 20px' }}>
@@ -18,15 +19,15 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Amm amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Input and output in the liquidity pool." />
+            <QuestionHelper text="Input and output from liquidity pool." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
-              {tradeRet?.ammAmountIn.toSignificant() +
+              {tradeRet?.ammAmountIn.toFixedWithoutExtraZero(inDecimal) +
                 ' ' +
                 tradeRet?.ammAmountIn.currency.symbol +
                 '/' +
-                tradeRet?.ammAmountOut.toSignificant() +
+                tradeRet?.ammAmountOut.toFixedWithoutExtraZero(outDecimal) +
                 ' ' +
                 tradeRet?.ammAmountOut.currency.symbol}
             </TYPE.black>
@@ -38,15 +39,15 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Order amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Input and output in the order book." />
+            <QuestionHelper text="Input and output from order book." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
-              {tradeRet?.orderAmountIn.toSignificant() +
+              {tradeRet?.orderAmountIn.toFixedWithoutExtraZero(inDecimal) +
                 ' ' +
                 tradeRet?.orderAmountIn.currency.symbol +
                 '/' +
-                tradeRet?.orderAmountOut.toSignificant() +
+                tradeRet?.orderAmountOut.toFixedWithoutExtraZero(outDecimal) +
                 ' ' +
                 tradeRet?.orderAmountOut.currency.symbol}
             </TYPE.black>
@@ -62,11 +63,11 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
             <TYPE.black color={theme.text1} fontSize={14}>
-              {tradeRet?.amountLeft.toSignificant() +
+              {tradeRet?.amountLeft.toFixedWithoutExtraZero(inDecimal) +
                 ' ' +
                 tradeRet?.amountLeft.currency.symbol +
                 '/' +
-                tradeRet?.amountExpect.toSignificant() +
+                tradeRet?.amountExpect.toFixedWithoutExtraZero(outDecimal) +
                 ' ' +
                 tradeRet?.amountExpect.currency.symbol}
             </TYPE.black>
@@ -78,16 +79,15 @@ function TradeSummary({ tradeRet, allowedSlippage }: { tradeRet: TradeRet; allow
 }
 
 export interface AdvancedOrderBookDetailsProps {
-  tradeRet?: TradeRet
+  trade?: Trade
 }
 
-export function AdvancedOrderBookDetails({ tradeRet }: AdvancedOrderBookDetailsProps) {
-  const [allowedSlippage] = useUserSlippageTolerance()
+export function AdvancedOrderBookDetails({ trade }: AdvancedOrderBookDetailsProps) {
   return (
     <AutoColumn gap="md">
-      {tradeRet && (
+      {trade?.tradeRet && (
         <>
-          <TradeSummary tradeRet={tradeRet} allowedSlippage={allowedSlippage} />
+          <TradeSummary trade={trade} />
         </>
       )}
     </AutoColumn>
