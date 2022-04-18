@@ -1,7 +1,6 @@
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
 import React, { useCallback, useContext, useState } from 'react'
-import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
@@ -10,7 +9,6 @@ import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button
 import { LightCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
-import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { RemoveOrderTabs } from '../../components/NavigationTabs'
 import { RowBetween, RowFixed } from '../../components/Row'
 
@@ -136,26 +134,20 @@ export default function RemoveOrder({
       <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
         <RowBetween align="flex-end">
           <Text fontSize={24} fontWeight={500}>
-            {userOrder?.amountLeft.toExact()}
+            Order Book
           </Text>
           <RowFixed gap="4px">
             <CurrencyLogo currency={currencyA} size={'24px'} />
-            <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-              {userOrder?.amountLeft.token.symbol}
-            </Text>
+            <CurrencyLogo currency={currencyB} size={'24px'} />
           </RowFixed>
         </RowBetween>
-        <RowFixed>
-          <Plus size="16" color={theme.text2} />
-        </RowFixed>
         <RowBetween align="flex-end">
           <Text fontSize={24} fontWeight={500}>
-            {userOrder?.price.toExact()}
+            Order Id
           </Text>
           <RowFixed gap="4px">
-            <CurrencyLogo currency={currencyB} size={'24px'} />
             <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-              {userOrder?.price.token.symbol}
+              {userOrder?.orderId.toString()}
             </Text>
           </RowFixed>
         </RowBetween>
@@ -166,26 +158,27 @@ export default function RemoveOrder({
   function modalBottom() {
     return (
       <>
-        <RowBetween>
-          <Text color={theme.text2} fontWeight={500} fontSize={16}>
-            {'UNI ' + currencyA?.symbol + '/' + currencyB?.symbol} Burned
-          </Text>
-          <RowFixed>
-            <DoubleCurrencyLogo currency0={currencyA} currency1={currencyB} margin={true} />
-            <Text fontWeight={500} fontSize={16}>
-              {userOrder?.amountLeft.toSignificant(6)}
-            </Text>
-          </RowFixed>
-        </RowBetween>
         {userOrder && (
           <>
             <RowBetween>
               <Text color={theme.text2} fontWeight={500} fontSize={16}>
-                Price
+                Return
               </Text>
-              <Text fontWeight={500} fontSize={16} color={theme.text1}>
-                1 {userOrder.quoteToken.symbol} = {userOrder.price.toSignificant(6)} {userOrder.price.token.symbol}
+              <RowFixed>
+                <Text fontWeight={500} fontSize={16}>
+                  {userOrder?.amountLeft.toExact()} {userOrder?.amountLeft.currency.symbol ?? '-'}
+                </Text>
+              </RowFixed>
+            </RowBetween>
+            <RowBetween>
+              <Text color={theme.text2} fontWeight={500} fontSize={16}>
+                To
               </Text>
+              <RowFixed>
+                <Text fontWeight={500} fontSize={12}>
+                  {userOrder?.to}
+                </Text>
+              </RowFixed>
             </RowBetween>
           </>
         )}
@@ -198,9 +191,9 @@ export default function RemoveOrder({
     )
   }
 
-  const pendingText = `Removing ${userOrder?.amountLeft.toSignificant(6)} ${
+  const pendingText = `Removing order ${userOrder?.orderId}, ${userOrder?.amountLeft.toSignificant(6)} ${
     userOrder?.amountLeft.token.symbol
-  } and ${userOrder?.price.toSignificant(6)} ${userOrder?.price.token.symbol}`
+  } will send to ${userOrder?.to} immediately`
 
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
@@ -219,7 +212,7 @@ export default function RemoveOrder({
             hash={txHash ? txHash : ''}
             content={() => (
               <ConfirmationModalContent
-                title={'You will receive'}
+                title={'You are removing'}
                 onDismiss={handleDismissConfirmation}
                 topContent={modalHeader}
                 bottomContent={modalBottom}

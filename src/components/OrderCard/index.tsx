@@ -60,7 +60,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
             <AutoColumn gap="4px">
               <FixedHeightRow>
                 <Text color="#888D9B" fontSize={16} fontWeight={500}>
-                  Order Type:
+                  Order Type
                 </Text>
                 {
                   <RowFixed>
@@ -72,7 +72,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
               </FixedHeightRow>
               <FixedHeightRow>
                 <Text color="#888D9B" fontSize={16} fontWeight={500}>
-                  Amount offer:
+                  Amount offer
                 </Text>
                 {
                   <RowFixed>
@@ -84,7 +84,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
               </FixedHeightRow>
               <FixedHeightRow>
                 <Text color="#888D9B" fontSize={16} fontWeight={500}>
-                  Amount left:
+                  Amount left
                 </Text>
                 {
                   <RowFixed>
@@ -96,7 +96,7 @@ export function MinimalOrderCard({ order, border }: OrderCardProps) {
               </FixedHeightRow>
               <FixedHeightRow>
                 <Text color="#888D9B" fontSize={16} fontWeight={500}>
-                  Price:
+                  Price
                 </Text>
                 {
                   <RowFixed>
@@ -152,7 +152,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
             <FixedHeightRow>
               <RowFixed>
                 <Text fontSize={16} fontWeight={500}>
-                  Amount Offer:
+                  Amount Offer
                 </Text>
               </RowFixed>
               {
@@ -168,7 +168,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
             <FixedHeightRow>
               <RowFixed>
                 <Text fontSize={16} fontWeight={500}>
-                  Amount Left:
+                  Amount Left
                 </Text>
               </RowFixed>
               {
@@ -184,7 +184,7 @@ export default function FullOrderCard({ order, border }: OrderCardProps) {
             <FixedHeightRow>
               <RowFixed>
                 <Text fontSize={16} fontWeight={500}>
-                  Price:
+                  Price
                 </Text>
               </RowFixed>
               {
