@@ -21,14 +21,15 @@ export default function TradeModalFooter({
   disabledConfirm: boolean
 }) {
   const theme = useContext(ThemeContext)
-
+  const inDecimal = trade?.orderBook.getMinAmountDecimal(trade?.tradeType)
+  const outDecimal = trade?.orderBook.getMinOutputAmountDecimal(trade?.tradeType)
   return (
     <>
       <AutoColumn gap="0px">
         <RowBetween align="center">
           <Text fontWeight={400} fontSize={14} color={theme.text2}>
             {'Amm amount in/out'}
-            <QuestionHelper text="Input and output in the liquidity pool." />
+            <QuestionHelper text="Input/Output amount from liquidity pool." />
           </Text>
           <Text
             fontWeight={500}
@@ -42,11 +43,11 @@ export default function TradeModalFooter({
               paddingLeft: '10px'
             }}
           >
-            {trade?.tradeRet?.ammAmountIn.toSignificant() +
+            {trade?.tradeRet?.ammAmountIn.toFixedWithoutExtraZero(inDecimal) +
               ' ' +
               trade?.tradeRet?.ammAmountIn.currency.symbol +
               '/' +
-              trade?.tradeRet?.ammAmountOut.toSignificant() +
+              trade?.tradeRet?.ammAmountOut.toFixedWithoutExtraZero(outDecimal) +
               ' ' +
               trade?.tradeRet?.ammAmountOut.currency.symbol}
           </Text>
@@ -57,15 +58,15 @@ export default function TradeModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Order amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Input and output in the order book." />
+            <QuestionHelper text="Input/Output amount from order book." />
           </RowFixed>
           <RowFixed>
             <TYPE.black fontSize={14}>
-              {trade?.tradeRet?.orderAmountIn.toSignificant() +
+              {trade?.tradeRet?.orderAmountIn.toFixedWithoutExtraZero(inDecimal) +
                 ' ' +
                 trade?.tradeRet?.orderAmountIn.currency.symbol +
                 '/' +
-                trade?.tradeRet?.orderAmountOut.toSignificant() +
+                trade?.tradeRet?.orderAmountOut.toFixedWithoutExtraZero(outDecimal) +
                 ' ' +
                 trade?.tradeRet?.orderAmountOut.currency.symbol}
             </TYPE.black>
@@ -76,17 +77,51 @@ export default function TradeModalFooter({
             <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
               {'Amount left/expert'}
             </TYPE.black>
-            <QuestionHelper text="Left and expect amount after the trade." />
+            <QuestionHelper text="Left/Expected amount in limit order." />
           </RowFixed>
           <RowFixed>
             <TYPE.black fontSize={14}>
-              {trade?.tradeRet?.amountLeft.toSignificant() +
+              {trade?.tradeRet?.amountLeft.toFixedWithoutExtraZero(inDecimal) +
                 ' ' +
                 trade?.tradeRet?.amountLeft.currency.symbol +
                 '/' +
-                trade?.tradeRet?.amountExpect.toSignificant() +
+                trade?.tradeRet?.amountExpect.toFixedWithoutExtraZero(outDecimal) +
                 ' ' +
                 trade?.tradeRet?.amountExpect.currency.symbol}
+            </TYPE.black>
+          </RowFixed>
+        </RowBetween>
+        <RowBetween>
+          <RowFixed>
+            <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
+              {'Gas subsidy fee'}
+            </TYPE.black>
+            <QuestionHelper text="Subsidized gas fee when taking orders." />
+          </RowFixed>
+          <RowFixed>
+            <TYPE.black fontSize={14}>
+              {trade?.tradeRet?.orderFee.toFixedWithoutExtraZero(outDecimal) +
+                ' ' +
+                trade?.tradeRet?.orderFee.currency.symbol}
+            </TYPE.black>
+          </RowFixed>
+        </RowBetween>
+        <RowBetween>
+          <RowFixed>
+            <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
+              {'Price changed'}
+            </TYPE.black>
+            <QuestionHelper text="Price changes before and after the trade." />
+          </RowFixed>
+          <RowFixed>
+            <TYPE.black fontSize={14}>
+              {trade?.orderBook?.curPrice?.toFixedWithoutExtraZero(trade?.orderBook.getPriceStepDecimal()) +
+                ' ' +
+                trade?.orderBook?.curPrice.currency.symbol +
+                ' -> ' +
+                trade?.tradeRet?.priceTo?.toFixedWithoutExtraZero(trade?.orderBook.getPriceStepDecimal()) +
+                ' ' +
+                trade?.tradeRet?.priceTo.currency.symbol}
             </TYPE.black>
           </RowFixed>
         </RowBetween>
@@ -101,7 +136,7 @@ export default function TradeModalFooter({
           id="confirm-trade-or-send"
         >
           <Text fontSize={20} fontWeight={500}>
-            {trade.tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}
+            {trade?.tradeType === TradeType.LIMIT_BUY ? 'Buy' : 'Sell'}
           </Text>
         </ButtonError>
 

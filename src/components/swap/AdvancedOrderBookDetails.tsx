@@ -19,7 +19,7 @@ function TradeSummary({ trade }: { trade: Trade }) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Amm amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Input and output from liquidity pool." />
+            <QuestionHelper text="Input/Output amount from liquidity pool." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -39,7 +39,7 @@ function TradeSummary({ trade }: { trade: Trade }) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Order amount in/out'}
             </TYPE.black>
-            <QuestionHelper text="Input and output from order book." />
+            <QuestionHelper text="Input/Output amount from order book." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -59,7 +59,7 @@ function TradeSummary({ trade }: { trade: Trade }) {
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Amount left/expert'}
             </TYPE.black>
-            <QuestionHelper text="Left and expect amount after the trade." />
+            <QuestionHelper text="Left/Expected amount in limit order." />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
             <TYPE.black color={theme.text1} fontSize={14}>

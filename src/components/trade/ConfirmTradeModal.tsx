@@ -13,6 +13,7 @@ import TradeModalHeader from './TradeModalHeader'
  * @param tradeB trade B
  */
 function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
+  if (tradeA?.tradeRet === undefined && tradeB?.tradeRet === undefined) return false
   return (
     tradeA?.tradeType !== tradeB?.tradeType ||
     !currencyEquals(tradeA?.amount?.currency, tradeB?.amount?.currency) ||
