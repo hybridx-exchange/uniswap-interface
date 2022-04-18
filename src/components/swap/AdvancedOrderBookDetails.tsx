@@ -73,6 +73,26 @@ function TradeSummary({ trade }: { trade: Trade }) {
             </TYPE.black>
           </TYPE.black>
         </RowBetween>
+
+        <RowBetween>
+          <RowFixed>
+            <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
+              {'Price changed'}
+            </TYPE.black>
+            <QuestionHelper text="Price changes before and after the trade." />
+          </RowFixed>
+          <RowFixed>
+            <TYPE.black fontSize={14}>
+              {trade?.orderBook?.curPrice?.toFixedWithoutExtraZero(trade?.orderBook.getPriceStepDecimal()) +
+                ' ' +
+                trade?.orderBook?.curPrice.currency.symbol +
+                ' -> ' +
+                tradeRet?.priceTo?.toFixedWithoutExtraZero(trade?.orderBook.getPriceStepDecimal()) +
+                ' ' +
+                tradeRet?.priceTo.currency.symbol}
+            </TYPE.black>
+          </RowFixed>
+        </RowBetween>
       </AutoColumn>
     </>
   )
