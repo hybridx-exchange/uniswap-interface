@@ -57,7 +57,7 @@ const Title = styled.a`
   display: flex;
   align-items: center;
   pointer-events: auto;
-  text-decoration:none;
+  text-decoration: none;
   :hover {
     cursor: pointer;
   }
@@ -69,7 +69,7 @@ const TitleText = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
-  margin-left:4px;
+  margin-left: 4px;
   color: #555;
   // font-size: 20px;
   font-weight: 700;
@@ -108,7 +108,7 @@ const UniIcon = styled.div`
   :hover {
     transform: rotate(-5deg);
   }
-  img{
+  img {
     width: 10rem;
     // height:30px;
   }
@@ -139,7 +139,7 @@ const BalanceText = styled(Text)`
 
 const NETWORK_LABELS: { [chainId in ChainId]: string | null } = {
   [ChainId.MAINNET]: null,
-  [ChainId.TESTNET]: 'TestNet'
+  [ChainId.TESTNET]: 'Emerald-Testnet'
 }
 
 export default function Header() {

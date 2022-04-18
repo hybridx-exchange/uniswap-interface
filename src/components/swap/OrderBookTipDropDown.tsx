@@ -36,12 +36,11 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
           <>
             <div>
               <Text textAlign="right" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-                {!lastOrderBook ? 'Create ' : 'Edit '}
                 <StyledInternalLink
                   id="create-order-book"
                   to={'/orderbook/' + currencyAAddress + '/' + currencyBAddress}
                 >
-                  {'->'}
+                  {!lastOrderBook ? 'Create ' : 'Edit '}
                 </StyledInternalLink>
               </Text>
             </div>

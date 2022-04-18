@@ -2,7 +2,7 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@hybridx-exchange/uniswap-s
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 //import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
-import { injected, walletconnect } from '../connectors'
+import { injected /*, walletconnect*/ } from '../connectors'
 
 export const ROUTER_ADDRESS = '0xEb08c06Ab0eb039339B2970CFCF0330451762B78'
 export const HYBRIDX_ROUTER_ADDRESS = '0xE8bA812F026797C360165BEbC524De98fb755A1d'
@@ -77,7 +77,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D'
-  },
+  } /*,
   WALLET_CONNECT: {
     connector: walletconnect,
     name: 'WalletConnect',
@@ -86,7 +86,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: '#4196FC',
     mobile: true
-  }
+  }*/
 }
 
 export const NetworkContextName = 'NETWORK'
