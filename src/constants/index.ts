@@ -28,8 +28,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
  * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
  * tokens.
  */
-export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
-}
+export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {}
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
@@ -43,8 +42,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET]]
 }
 
-export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-}
+export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {}
 
 export interface WalletInfo {
   connector?: AbstractConnector
@@ -75,7 +73,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D'
-  }/*,
+  } /*,
   WALLET_CONNECT: {
     connector: walletconnect,
     name: 'WalletConnect',
