@@ -378,7 +378,7 @@ export default function DoTrade({
               id="trade-currency-amount"
             />
             <AutoColumn justify="space-between">
-              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+              <AutoRow justify={isExpertMode ? 'end' : 'center'} style={{ padding: '0 1rem' }}>
                 {recipient === null && isExpertMode ? (
                   <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                     + Add a send (optional)
