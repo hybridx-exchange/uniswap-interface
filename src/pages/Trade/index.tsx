@@ -180,9 +180,9 @@ export default function DoTrade({
 
   useEffect(() => {
     try {
-      const inputPriceValue = parseBigintIsh(inputPrice ?? '')
-      if (inputPriceValue.toString() !== '0') {
-        onUserInput(Input.PRICE, inputPriceValue.toString())
+      const typedValueParsed = parseUnits(inputPrice ?? '', 18)
+      if (typedValueParsed.toString() !== '0') {
+        onUserInput(Input.PRICE, formatUnits(typedValueParsed, 18))
       } else {
         onUserInput(Input.PRICE, '')
       }
