@@ -6,7 +6,9 @@ import { Text } from 'rebass'
 import styled from 'styled-components'
 
 // import Logo from '../../assets/svg/logo.svg'
-import Logo from '../../assets/images/logo_h.png'
+// import Logo from '../../assets/images/logo_h.png'
+import Logo from '../../assets/images/test-3.png'
+
 // import LogoDark from '../../assets/svg/logo_white.svg'
 // import Wordmark from '../../assets/svg/wordmark.svg'
 // import WordmarkDark from '../../assets/svg/wordmark_white.svg'
@@ -55,7 +57,7 @@ const Title = styled.a`
   display: flex;
   align-items: center;
   pointer-events: auto;
-  text-decoration:none;
+  text-decoration: none;
   :hover {
     cursor: pointer;
   }
@@ -67,8 +69,8 @@ const TitleText = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
-  margin-left:4px;
-  color: #fff;
+  margin-left: 4px;
+  color: #555;
   // font-size: 20px;
   font-weight: 700;
 `
@@ -77,7 +79,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
+  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg1)};
   border-radius: 12px;
   white-space: nowrap;
   width: 100%;
@@ -106,8 +108,8 @@ const UniIcon = styled.div`
   :hover {
     transform: rotate(-5deg);
   }
-  img{
-    width: 1.8rem;
+  img {
+    width: 10rem;
     // height:30px;
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -129,6 +131,7 @@ const HeaderControls = styled.div`
 `
 
 const BalanceText = styled(Text)`
+  // background-color: ${({ theme }) => theme.bg1};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
@@ -136,7 +139,7 @@ const BalanceText = styled(Text)`
 
 const NETWORK_LABELS: { [chainId in ChainId]: string | null } = {
   [ChainId.MAINNET]: null,
-  [ChainId.TESTNET]: 'TestNet'
+  [ChainId.TESTNET]: 'Emerald-Testnet'
 }
 
 export default function Header() {
@@ -154,7 +157,7 @@ export default function Header() {
               <img src={isDark ? Logo : Logo} alt="logo" />
             </UniIcon>
             <TitleText>
-              Hybrid-X
+              {/* HybridX */}
               {/* <img style={{ marginLeft: '4px', marginTop: '4px' }} src={isDark ? WordmarkDark : Wordmark} alt="logo" /> */}
             </TitleText>
           </Title>

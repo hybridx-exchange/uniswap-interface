@@ -12,12 +12,21 @@ import {
   RedirectOldAddLiquidityPathStructure,
   RedirectToAddLiquidity
 } from './AddLiquidity/redirects'
-import Pool from './Pool'
+import CreateOrderBook from './CreateOrderBook'
+import {
+  RedirectDuplicateTokenIdsForCreateOrderBook,
+  RedirectOldCreateOrderBookPathStructure
+} from './CreateOrderBook/redirects'
+import DoPool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
-import Swap from './Swap'
+import DoSwap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import DoTrade from './Trade'
+import { RedirectDuplicateTokenIdsForTrade, RedirectOldTradePathStructure } from './Trade/redirects'
+import DoUserOrder from './UserOrder'
+import RemoveOrder from './RemoveOrder'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -68,17 +77,34 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/swap" component={Swap} />
+                <Route exact strict path="/swap" component={DoSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                 <Route exact strict path="/find" component={PoolFinder} />
-                <Route exact strict path="/pool" component={Pool} />
+                <Route exact strict path="/pool" component={DoPool} />
+                <Route exact strict path="/order" component={DoUserOrder} />
+                <Route exact strict path="/trade" component={DoTrade} />
+                <Route exact path="/trade/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIdsForTrade} />
+                <Route
+                  exact
+                  path="/trade/:currencyIdA/:currencyIdB/:inputPrice"
+                  component={RedirectDuplicateTokenIdsForTrade}
+                />
+                <Route exact path="/trade/:currencyIdA" component={RedirectOldTradePathStructure} />
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />
+                <Route exact path="/orderbook" component={CreateOrderBook} />
+                <Route exact path="/orderbook/:currencyIdBase" component={RedirectOldCreateOrderBookPathStructure} />
+                <Route
+                  exact
+                  path="/orderbook/:currencyIdBase/:currencyIdQuote"
+                  component={RedirectDuplicateTokenIdsForCreateOrderBook}
+                />
                 <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
                 <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
                 <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
                 <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                <Route exact strict path="/remove/:currencyIdA/:currencyIdB/:orderId" component={RemoveOrder} />
                 <Route component={RedirectPathToSwapOnly} />
               </Switch>
             </Web3ReactManager>

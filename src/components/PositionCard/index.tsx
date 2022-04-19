@@ -19,7 +19,7 @@ import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
-import { Dots } from '../swap/styleds'
+import { Dots } from '../Swap/styleds'
 
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;

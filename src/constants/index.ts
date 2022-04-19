@@ -2,9 +2,12 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@hybridx-exchange/uniswap-s
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 //import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
-import { injected } from '../connectors'
+import { injected /*, walletconnect*/ } from '../connectors'
 
-export const ROUTER_ADDRESS = '0x65e55c5129D5998Db1F9d05C3f9C49Bc5518E5b7'
+export const ROUTER_ADDRESS = '0xEb08c06Ab0eb039339B2970CFCF0330451762B78'
+export const HYBRIDX_ROUTER_ADDRESS = '0xE8bA812F026797C360165BEbC524De98fb755A1d'
+export const DEFAULT_LIMIT_SIZE = 8
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 // a list of tokens by chain
 type ChainTokenList = {
@@ -29,8 +32,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
  * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
  * tokens.
  */
-export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
-}
+export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {}
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
@@ -44,8 +46,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET]]
 }
 
-export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-}
+export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {}
 
 export interface WalletInfo {
   connector?: AbstractConnector
@@ -76,7 +77,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D'
-  }/*,
+  } /*,
   WALLET_CONNECT: {
     connector: walletconnect,
     name: 'WalletConnect',
@@ -84,41 +85,6 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
     href: null,
     color: '#4196FC',
-    mobile: true
-  },
-  WALLET_LINK: {
-    connector: walletlink,
-    name: 'Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Use Coinbase Wallet app on mobile device',
-    href: null,
-    color: '#315CF5'
-  },
-  COINBASE_LINK: {
-    name: 'Open in Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Open in Coinbase Wallet app.',
-    href: 'https://go.cb-w.com/mtUDhEZPy1',
-    color: '#315CF5',
-    mobile: true,
-    mobileOnly: true
-  },
-  FORTMATIC: {
-    connector: fortmatic,
-    name: 'Fortmatic',
-    iconName: 'fortmaticIcon.png',
-    description: 'Login using Fortmatic hosted wallet',
-    href: null,
-    color: '#6748FF',
-    mobile: true
-  },
-  Portis: {
-    connector: portis,
-    name: 'Portis',
-    iconName: 'portisIcon.png',
-    description: 'Login using Portis hosted wallet',
-    href: null,
-    color: '#4A6C9B',
     mobile: true
   }*/
 }
