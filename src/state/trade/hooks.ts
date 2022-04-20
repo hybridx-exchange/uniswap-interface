@@ -157,6 +157,10 @@ export function useDerivedTradeInfo(
     inputError = inputError ?? 'Select a token'
   }
 
+  if (!orderBook) {
+    inputError = inputError ?? 'Unavailable order book'
+  }
+
   if (!parsedAmountAmount) {
     inputError = inputError ?? 'Enter ' + (type === TradeType.LIMIT_BUY ? 'buy' : 'sell') + ' amount'
   }

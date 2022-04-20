@@ -1998,15 +1998,15 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@hybridx-exchange/orderbook-core@0.2.6":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/orderbook-core/-/orderbook-core-0.2.6.tgz#7984f7797b85d7284bbc49fc5c4a253a3e74a6ba"
-  integrity sha512-jDi3nZteiqK0P8XITJQ5Vymsz+uNs61IJiFI/zJNyUjHoR7vh+jMgc7Grk2ZmP8u6umKr5D4rqrvc6qrqgA17g==
+"@hybridx-exchange/orderbook-core@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/orderbook-core/-/orderbook-core-1.1.0.tgz#16df36f08d5498eaf55a0c44b200b0312d3b2f23"
+  integrity sha512-wzgTXWKbMJzfk+t0YscFzWTXcEaSmj90q0G03uWAA/P1ZX673boO3HoS2MmJApmor44CJ1pP83XHHOLcs7wMRw==
 
-"@hybridx-exchange/orderbook-periphery@0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/orderbook-periphery/-/orderbook-periphery-0.2.4.tgz#f530b30e4b20d46d39f947e90381bbe2a3f472e6"
-  integrity sha512-xp0QJPgW+QzGelxVkAh58fwPp1E+nopkBksJdoYsGy6y1On4m52VPw/Mg5FvmWWRml+KCoY7X6rYrmQsJ+GFUg==
+"@hybridx-exchange/orderbook-periphery@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/orderbook-periphery/-/orderbook-periphery-1.1.0.tgz#a7fe655cda2091a8a2dcbfff85a7793be6ecdf68"
+  integrity sha512-5goX07xfd/nLyiqaefBo4cFvm4mAhMz6Y1tO33n188UZ6gBTm3WavqvRHxc+ciZAHidLP2Fta5wq1SerJG9Ofw==
   dependencies:
     "@uniswap/lib" "4.0.1-alpha"
 
@@ -2015,10 +2015,10 @@
   resolved "https://registry.yarnpkg.com/@hybridx-exchange/token-list/-/token-list-0.1.0.tgz#9646fe2b3c4eed9be3c0e7750ce4434c1a8ddd70"
   integrity sha512-hLZ7+CxlJ0BIXUtS9PKW2qM2gYYVCTR3olqnj6ifgDilUSXN/YPNOmO7lS9nSF8dIH3SYM7tVh3m3KZHSH7g4w==
 
-"@hybridx-exchange/uniswap-sdk@0.2.39":
-  version "0.2.39"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-0.2.39.tgz#ff1bea401eac75add7cc7d3e6790e442987e0589"
-  integrity sha512-DRrDIJ9juvXAYj9qmXVSV739gmP9ZYcdtAKjrchk6mq0YOtr2J+k9ZwaMjPGKnKnGKmfKEW4ocQJM5r+ifhdbg==
+"@hybridx-exchange/uniswap-sdk@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/uniswap-sdk/-/uniswap-sdk-1.1.0.tgz#1f0a774ab81e6077697b0d539e81165cfa8c9490"
+  integrity sha512-kwKlsQqCvgEaxgNFQv2BTpbx/pJ47MMaFg/bXPy2RQvzrOsxRT/cVx16b0Fmt83SlKP207J14hdgojBx+sfz6Q==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
@@ -2026,7 +2026,7 @@
     "@ethersproject/providers" "^5.0.0-beta.153"
     "@ethersproject/solidity" "^5.0.0-beta.131"
     "@ethersproject/units" "^5.0.0-beta.131"
-    "@hybridx-exchange/v2-core" "0.1.0"
+    "@hybridx-exchange/v2-core" "1.1.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"
     jsbi "^3.1.1"
@@ -2034,20 +2034,15 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@hybridx-exchange/v2-core@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-core/-/v2-core-0.1.0.tgz#83534c7e59a3d942a30c202a47580ab7a9061ded"
-  integrity sha512-xGjrWYAnKEXbXChY5iVjO3Jqg40tAQ2ZDtNQhHBUkDmz30PiZLZaFQVUmzlmOpwtpoipmSw+H18t0Pl3aCcIlQ==
+"@hybridx-exchange/v2-core@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-core/-/v2-core-1.1.0.tgz#f15bd33adf5190029ff50245b7706e35b6285e27"
+  integrity sha512-3nfvfDGLJD2MSHTD2I9cSwIVGbVB71tOS/h27OzVWbulPDgABuR76mximwJZX3d+alEe7aLaxMIAkleDOk0llA==
 
-"@hybridx-exchange/v2-core@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-core/-/v2-core-0.2.0.tgz#7e2bf3ec721435db6f396aba8f4357c72ea90c22"
-  integrity sha512-YXDTfXUjV2cXvEy+qLFtvoCI6515lJCjAFdxzz9LLIbkvslumjVV7NwDhYwe+EeAR9fpLiSjmVqq6VYMghk8nw==
-
-"@hybridx-exchange/v2-periphery@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-periphery/-/v2-periphery-0.2.1.tgz#b467067d9fd60f16426fb3c05468d4bdb32c587b"
-  integrity sha512-+QzFkPbK+xwbAnq8fAzXM7LaIN/ikGdnCvNLhkWRbNuV27+QHGfXhgEh0IjTt3H7nFoky/r/q0UbEeCyKP5JqA==
+"@hybridx-exchange/v2-periphery@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@hybridx-exchange/v2-periphery/-/v2-periphery-1.1.0.tgz#d936e4b8f8e410e5cc4fced5b3acce3de10776d0"
+  integrity sha512-gY2H8NWUIR6UAlx3m3LzWGr5N3t7JVPk4yt7+MAFu5wEHZDYHhBJBxuv+FEF+hrWxC234zhRgVpNrRE9ToSS2w==
   dependencies:
     "@uniswap/lib" "4.0.1-alpha"
 
