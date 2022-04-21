@@ -35,6 +35,7 @@ import { abi as IUniswapV2Router02ABI } from '@hybridx-exchange/v2-periphery/bui
 import { abi as IHybridRouterABI } from '@hybridx-exchange/orderbook-periphery/build/IHybridRouter.json'
 import { abi as IOrderBookABI } from '@hybridx-exchange/orderbook-core/build/IOrderBook.json'
 import { Interface } from '@ethersproject/abi'
+import {useUserSingleHopOnly} from "../state/user/hooks";
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
@@ -255,12 +256,15 @@ export function useGetBestInputAmount(
  */
 export function useSwapExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Swap | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+  const [singleHopOnly] = useUserSingleHopOnly()
   const allSwap = useMemo(() => {
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
+      if (singleHopOnly)
+        return Swap.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })
       return Swap.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })
     }
     return null
-  }, [allowedPairs, currencyAmountIn, currencyOut])
+  }, [allowedPairs, singleHopOnly, currencyAmountIn, currencyOut])
 
   return useGetBestOutputAmount(currencyAmountIn, currencyOut, allowedPairs, allSwap).bestSwap
 }
@@ -270,12 +274,15 @@ export function useSwapExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: 
  */
 export function useSwapExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Swap | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+  const [singleHopOnly] = useUserSingleHopOnly()
   const allSwap = useMemo(() => {
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
+      if (singleHopOnly)
+        return Swap.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })
       return Swap.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })
     }
     return null
-  }, [allowedPairs, currencyIn, currencyAmountOut])
+  }, [allowedPairs, singleHopOnly, currencyIn, currencyAmountOut])
   return useGetBestInputAmount(currencyIn, currencyAmountOut, allowedPairs, allSwap).bestSwap
 }
 

@@ -62,7 +62,7 @@ export function OrderBookDetails({ orderBook, currencies }: OrderBookDetailsProp
               Subsidy fee rate
             </ClickableText>
             <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-              {orderBook?.subsidyFeeRate ? parseBigintIsh(orderBook?.protocolFeeRate) + '/100 of PFR' : '-'}
+              {orderBook?.subsidyFeeRate ? parseBigintIsh(orderBook?.subsidyFeeRate) + '/100 of PFR' : '-'}
             </ClickableText>
           </RowBetween>
         </div>

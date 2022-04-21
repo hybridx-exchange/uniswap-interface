@@ -35,7 +35,12 @@ import {
   useSwapActionHandlers,
   useSwapState
 } from '../../state/swap/hooks'
-import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from '../../state/user/hooks'
+import {
+  useExpertModeManager,
+  useUserDeadline,
+  useUserSingleHopOnly,
+  useUserSlippageTolerance
+} from '../../state/user/hooks'
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
@@ -175,6 +180,8 @@ export default function DoSwap() {
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(swap)
 
+  const [singleHopOnly] = useUserSingleHopOnly()
+
   const handleSwap = useCallback(() => {
     if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
       return
@@ -197,6 +204,11 @@ export default function DoSwap() {
               : 'Swap w/ Send',
           label: [swap?.inputAmount?.currency?.symbol, swap?.outputAmount?.currency?.symbol, Version.v2].join('/')
         })
+
+        ReactGA.event({
+          category: 'Routing',
+          action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
+        })
       })
       .catch(error => {
         setSwapState({
@@ -207,7 +219,17 @@ export default function DoSwap() {
           txHash: undefined
         })
       })
-  }, [swapToConfirm, account, priceImpactWithoutFee, recipient, recipientAddress, showConfirm, swapCallback, swap])
+  }, [
+    swapToConfirm,
+    account,
+    priceImpactWithoutFee,
+    recipient,
+    recipientAddress,
+    showConfirm,
+    swapCallback,
+    swap,
+    singleHopOnly
+  ])
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
@@ -372,6 +394,7 @@ export default function DoSwap() {
             ) : noRoute && userHasSpecifiedInputOutput ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
+                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
               </GreyCard>
             ) : showApproveFlow ? (
               <RowBetween>

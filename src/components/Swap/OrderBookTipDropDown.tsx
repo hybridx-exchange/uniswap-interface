@@ -43,7 +43,7 @@ export default function OrderBookTipDropDown({ orderBook, currencies, ...rest }:
                   id="create-order-book"
                   to={'/orderbook/' + currencyAAddress + '/' + currencyBAddress}
                 >
-                  {!lastOrderBook ? 'Create OrderBook' : 'Edit OrderBook'}
+                  {!lastOrderBook ? 'Create order book' : 'Edit order book'}
                 </StyledInternalLink>
               </Text>
             </div>
