@@ -20,8 +20,8 @@ const SubTabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   border-radius: 3rem;
-  justify-content: space-around;
-  width: 34%;
+  justify-content: center;
+  width: 50%;
 `
 
 const activeClassName = 'ACTIVE'
@@ -69,15 +69,25 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'trade' | 'pool' | '
         <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
           {t('swap')}
         </StyledNavLink>
-        <StyledNavLink id={`trade-nav-link`} to={'/trade'} isActive={() => active === 'trade'}>
+        <StyledNavLink
+          style={{ marginLeft: '10px' }}
+          id={`trade-nav-link`}
+          to={'/trade'}
+          isActive={() => active === 'trade'}
+        >
           {t('trade')}
         </StyledNavLink>
       </SubTabs>
-      <SubTabs style={{ marginBottom: '20px', width: '40%' }}>
+      <SubTabs style={{ marginBottom: '20px', width: '50%' }}>
         <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
           {t('pool')}
         </StyledNavLink>
-        <StyledNavLink id={`order-nav-link`} to={'/order'} isActive={() => active === 'order'}>
+        <StyledNavLink
+          style={{ marginLeft: '10px' }}
+          id={`order-nav-link`}
+          to={'/order'}
+          isActive={() => active === 'order'}
+        >
           {t('order')}
         </StyledNavLink>
       </SubTabs>
