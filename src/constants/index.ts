@@ -5,7 +5,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected /*, walletconnect*/ } from '../connectors'
 
 export const ROUTER_ADDRESS = '0x8C4181aD3f2037b3D40AbD38826A3B38ac2aCACc'
-export const HYBRIDX_ROUTER_ADDRESS = '0x529A5C2aF970254628467124baAF38548c902702'
+export const HYBRIDX_ROUTER_ADDRESS = '0x00640bc770A3a023a1fd20C26f1672fc99214737'
 export const DEFAULT_LIMIT_SIZE = 8
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
