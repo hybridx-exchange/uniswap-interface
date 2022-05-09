@@ -19,6 +19,7 @@ import {
   ORDER_BOOK_FACTORY_ADDRESS
 } from '@hybridx-exchange/uniswap-sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
+import { injected } from '../connectors'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -125,4 +126,38 @@ export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currenc
 
 export function getOrderBook(orderBookAddress: string, library: Web3Provider, account?: string): Contract {
   return getContract(orderBookAddress, IOrderBookABI, library, account)
+}
+
+export function addChain() {
+  const method = 'wallet_addEthereumChain'
+  const params = [
+    {
+      chainId: '0x' + ChainId.TESTNET.toString(16),
+      chainName: 'Emerald testnet',
+      rpcUrls: ['https://testnet.emerald.oasis.dev'],
+      nativeCurrency: {
+        name: 'ROSE',
+        symbol: 'ROSE',
+        decimals: 18
+      },
+      blockExplorerUrls: ['https://testnet.explorer.emerald.oasis.dev']
+    }
+  ]
+
+  injected.getProvider().then(provider => {
+    if (provider?.isMetaMask) {
+      provider?.sendAsync(
+        {
+          method,
+          params
+        },
+        function(err: any, result: any) {
+          if (err) {
+            return false
+          }
+          return true
+        }
+      )
+    }
+  })
 }

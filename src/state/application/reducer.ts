@@ -7,6 +7,7 @@ import {
   toggleSettingsMenu,
   updateBlockNumber
 } from './actions'
+import { addChain } from "../../utils";
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 
@@ -36,6 +37,9 @@ export default createReducer(initialState, builder =>
     })
     .addCase(toggleWalletModal, state => {
       state.walletModalOpen = !state.walletModalOpen
+      if (state.walletModalOpen) {
+        addChain()
+      }
     })
     .addCase(toggleSettingsMenu, state => {
       state.settingsMenuOpen = !state.settingsMenuOpen

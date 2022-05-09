@@ -63,13 +63,11 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   border: none;
   color: ${({ theme }) => theme.white};
   font-weight: 500;
-+
-  :hover,
+  + :hover,
   :focus {
     border: 1px solid ${({ theme }) => darken(0.05, theme.white)};
     color: ${({ theme }) => theme.white};
     background-color: ${({ theme }) => theme.bg6};
-
   }
 
   ${({ faded }) =>
